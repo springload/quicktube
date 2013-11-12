@@ -1,0 +1,94 @@
+var QuickTube = (function(){
+    var YT = {
+        _settings: "?autoplay=1&showinfo=0&autohide=1&color=white&enablejsapi=1&playerapiid=ytplayer&wmode=transparent",
+        _domain: "http://www.youtube.com/embed/",
+        _players: {},
+        className: "quicktube__iframe",
+        activeClass: "quicktube--playing",
+        posterFrameHiddenClass: "quicktube__poster--hidden",
+        supportsTransitions: ('transition' in document.body.style || 'webkitTransition' in document.body.style || 'MozTransition' in document.body.style || 'msTransition' in document.body.style || 'OTransition' in document.body.style),
+        setExplicitFrameHeight: false,
+        init: function() {
+            var self = this;
+            $("[data-quicktube-play]").on("click", function() {
+                self.onClick.call(self, $(this));
+            });
+            $("[data-quicktube-stop]").on("click", function() {
+                var videoId = $(this).data("quicktube-stop");
+                self.stopVideo.call(self, videoId);
+            });
+            return this;
+        },
+        onClick: function($el) {
+            var self = this;
+            var parentId = $el.data("quicktube-play");
+            var $parent = $("[data-quicktube=\"" + parentId + "\"]");
+            var $videoContainer = $parent.find("[data-quicktube-video]");
+            var $video = $("iframe." + self.className, $videoContainer);
+            var videoId = $videoContainer.data("quicktube-video");
+            var $poster = $parent.find("[data-quicktube-poster]");
+
+            if (!$video.length) {
+                $video = self.getIframePlayer(videoId, $parent);
+                $videoContainer.html($video);
+            }
+
+            if (self.setExplicitFrameHeight) {
+                $video.height($parent.outerHeight());
+            }
+
+            if (!$parent.data("video-playing")) {
+                $parent.data("video-playing", true);
+                self.hidePosterFrame($poster);
+                self._players[parentId] = $parent;
+                $video.get(0).contentWindow.postMessage('{"event":"command","func":"' + "playVideo" + '","args":""}', '*');
+                $(window).trigger("quicktube:play", parentId, $parent);
+            }
+        },
+
+        hidePosterFrame: function($poster) {
+            var self = this;
+            $poster.addClass(self.posterFrameHiddenClass);
+            if (!self.supportsTransitions) {
+                $poster.fadeOut(300);
+            }
+        },
+
+        showPosterFrame: function($poster) {
+            var self = this;
+            $poster.removeClass(self.posterFrameHiddenClass);
+            if (!self.supportsTransitions) {
+                $poster.fadeIn(300);
+            }
+        },
+
+        getIframePlayer: function(id) {
+            var self = this;
+            var src = self._domain + src + self._settings;
+            var iframe = document.createElement("iframe");
+            iframe.src = self._domain + id + self._settings;
+            iframe.width = "100%";
+
+            iframe.className = this.className;
+            return $(iframe);
+        },
+        stopVideo: function(parentId) {
+            var self = this;
+            var $parent = $("[data-quicktube=\"" + parentId + "\"]");
+            var frame = $parent.find("iframe");
+            var func = "pauseVideo";
+
+            $("iframe[src*=\"" + self._domain + "\"]").each(function(i) {
+                if (this === frame.get(0)) {
+                    this.contentWindow.postMessage('{"event":"command","func":"' + func + '","args":""}', '*');
+                    $parent.removeClass(self.activeClass);
+                    self.showPosterFrame($parent.find("[data-quicktube-poster]"));
+                    $parent.data("video-playing", false);
+                    self._players[parentId] = false;
+                    $(window).trigger("quicktube:pause", parentId, $parent);
+                }
+            });
+        }
+    };
+    return YT;
+})();
