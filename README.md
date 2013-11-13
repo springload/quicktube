@@ -22,3 +22,18 @@ $(document).ready(function() {
     QuickTube.init();
 });
 ```
+
+### API
+
+You can hook to the `play` and `pause` events like this:
+
+```javascript
+    $(window).on("quicktube:play", function(quicktubeId, $quicktubeEl) {
+        $("[data-show-while-playing]").show();
+    });
+
+    $(window).on("quicktube:pause", function(quicktubeId, $quicktubeEl) {
+        $("[data-show-while-playing]").hide();
+    });
+
+```
