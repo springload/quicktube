@@ -1,5 +1,15 @@
 var QuickTube = (function(){
-    var YT = {
+
+    var tag = document.createElement('script');
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    // Export this to window directly.
+    window.onYouTubeIframeAPIReady = function() {
+    };
+
+    var QT = {
         _settings: "?autoplay=1&showinfo=0&autohide=1&color=white&enablejsapi=1&playerapiid=ytplayer&wmode=transparent",
         _domain: "http://www.youtube.com/embed/",
         _players: {},
@@ -29,9 +39,29 @@ var QuickTube = (function(){
             var videoId = $videoContainer.data("quicktube-video");
             var $poster = $parent.find("[data-quicktube-poster]");
 
+            var onPlayerStateChange = function(e) {
+                if (e.data == YT.PlayerState.ENDED) {
+                    self.stopVideo.call(self, parentId);
+                }
+            };
+
+            var onPlayerReady = function(e) {
+                e.target.playVideo();
+            };
+
             if (!$video.length) {
-                $video = self.getIframePlayer(videoId, $parent);
+                $video = self.getIframePlayer(videoId, $parent, parentId);
                 $videoContainer.html($video);
+                this.jamesPlayer = new YT.Player(parentId, {
+                    events: {
+                        'onStateChange': onPlayerStateChange,
+                        'onReady': onPlayerReady,
+                    }
+                });
+            }
+
+            if (this.jamesPlayer.playVideo) {
+                this.jamesPlayer.playVideo();
             }
 
             if (self.setExplicitFrameHeight) {
@@ -42,7 +72,6 @@ var QuickTube = (function(){
                 $parent.data("video-playing", true);
                 self.hidePosterFrame($poster);
                 self._players[parentId] = $parent;
-                $video.get(0).contentWindow.postMessage('{"event":"command","func":"' + "playVideo" + '","args":""}', '*');
                 $parent.addClass(self.activeClass).removeClass(self.pausedClass);
                 $(window).trigger("quicktube:play", parentId, $parent);
             }
@@ -64,34 +93,30 @@ var QuickTube = (function(){
             }
         },
 
-        getIframePlayer: function(id) {
+        getIframePlayer: function(id, parent, parentId) {
             var self = this;
             var src = self._domain + src + self._settings;
             var iframe = document.createElement("iframe");
             iframe.src = self._domain + id + self._settings;
             iframe.width = "100%";
-
+            iframe.id = parentId;
             iframe.className = this.className;
             return $(iframe);
         },
+
         stopVideo: function(parentId) {
             var self = this;
             var $parent = $("[data-quicktube=\"" + parentId + "\"]");
             var frame = $parent.find("iframe");
             var func = "pauseVideo";
 
-            $("iframe[src*=\"" + self._domain + "\"]").each(function(i) {
-                if (this === frame.get(0)) {
-                    this.contentWindow.postMessage('{"event":"command","func":"' + func + '","args":""}', '*');
-                    $parent.removeClass(self.activeClass).addClass(self.pausedClass);
-                    self.showPosterFrame($parent.find("[data-quicktube-poster]"));
-
-                    $parent.data("video-playing", false);
-                    self._players[parentId] = false;
-                    $(window).trigger("quicktube:pause", parentId, $parent);
-                }
-            });
+            this.jamesPlayer.pauseVideo();
+            $parent.removeClass(self.activeClass).addClass(self.pausedClass);
+            self.showPosterFrame($parent.find("[data-quicktube-poster]"));
+            $parent.data("video-playing", false);
+            self._players[parentId] = false;
+            $(window).trigger("quicktube:pause", parentId, $parent);
         }
     };
-    return YT;
+    return QT;
 })();
