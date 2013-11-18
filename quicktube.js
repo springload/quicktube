@@ -5,6 +5,7 @@ var QuickTube = (function(){
         _players: {},
         className: "quicktube__iframe",
         activeClass: "quicktube--playing",
+        pausedClass: "quicktube--paused",
         posterFrameHiddenClass: "quicktube__poster--hidden",
         supportsTransitions: ('transition' in document.body.style || 'webkitTransition' in document.body.style || 'MozTransition' in document.body.style || 'msTransition' in document.body.style || 'OTransition' in document.body.style),
         setExplicitFrameHeight: false,
@@ -42,6 +43,7 @@ var QuickTube = (function(){
                 self.hidePosterFrame($poster);
                 self._players[parentId] = $parent;
                 $video.get(0).contentWindow.postMessage('{"event":"command","func":"' + "playVideo" + '","args":""}', '*');
+                $parent.addClass(self.activeClass).removeClass(self.pausedClass);
                 $(window).trigger("quicktube:play", parentId, $parent);
             }
         },
@@ -81,8 +83,9 @@ var QuickTube = (function(){
             $("iframe[src*=\"" + self._domain + "\"]").each(function(i) {
                 if (this === frame.get(0)) {
                     this.contentWindow.postMessage('{"event":"command","func":"' + func + '","args":""}', '*');
-                    $parent.removeClass(self.activeClass);
+                    $parent.removeClass(self.activeClass).addClass(self.pausedClass);
                     self.showPosterFrame($parent.find("[data-quicktube-poster]"));
+
                     $parent.data("video-playing", false);
                     self._players[parentId] = false;
                     $(window).trigger("quicktube:pause", parentId, $parent);

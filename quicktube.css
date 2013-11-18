@@ -8,7 +8,11 @@
 
     /* Class applied when video is playing */
     .quicktube--playing {
+        
+    }
 
+    .quicktube--paused {
+        
     }
 
 .quicktube__poster,
