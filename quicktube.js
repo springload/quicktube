@@ -7,6 +7,9 @@ var QuickTube = (function(){
 
     // Export this to window directly.
     window.onYouTubeIframeAPIReady = function() {
+        $(document).ready(function() {
+            QuickTube.init();
+        });
     };
 
     var QT = {
@@ -46,7 +49,12 @@ var QuickTube = (function(){
             };
 
             var onPlayerReady = function(e) {
-                e.target.playVideo();
+                if ($parent.data("video-playing")) {
+                    self.stopVideo.call(self, parentId);
+                } else {
+                    $parent.data("video-playing", true);
+                   e.target.playVideo();
+                }
             };
 
             if (!$video.length) {
@@ -69,7 +77,6 @@ var QuickTube = (function(){
             }
 
             if (!$parent.data("video-playing")) {
-                $parent.data("video-playing", true);
                 self.hidePosterFrame($poster);
                 self._players[parentId] = $parent;
                 $parent.addClass(self.activeClass).removeClass(self.pausedClass);
