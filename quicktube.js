@@ -1,5 +1,12 @@
 var QuickTube = (function(){
 
+    // Mobile Safari exhibits a number of documented bugs with the
+    // youtube player API. User agent detection, but you'll live, my boy!
+    // https://groups.google.com/forum/#!topic/youtube-api-gdata/vPgKhCu4Vng
+    var isMobileSafari = function() {
+        return (/Apple.*Mobile.*Safari/).test(navigator.userAgent);
+    };
+
     var tag = document.createElement('script');
       tag.src = "https://www.youtube.com/iframe_api";
       var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -49,11 +56,13 @@ var QuickTube = (function(){
             };
 
             var onPlayerReady = function(e) {
-                if ($parent.data("video-playing")) {
-                    self.stopVideo.call(self, parentId);
-                } else {
-                    $parent.data("video-playing", true);
-                   e.target.playVideo();
+                if (!isMobileSafari()) {
+                    if ($parent.data("video-playing")) {
+                        self.stopVideo.call(self, parentId);
+                    } else {
+                        $parent.data("video-playing", true);
+                       e.target.playVideo();
+                    }
                 }
             };
 
@@ -68,8 +77,10 @@ var QuickTube = (function(){
                 });
             }
 
-            if (this.jamesPlayer.playVideo) {
-                this.jamesPlayer.playVideo();
+            if (!isMobileSafari()) {
+                if (this.jamesPlayer.playVideo) {
+                    this.jamesPlayer.playVideo();
+                }
             }
 
             if (self.setExplicitFrameHeight) {
