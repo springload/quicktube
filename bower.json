@@ -2,7 +2,10 @@
   "name": "QuickTube.js",
   "version": "0.1.4",
   "description": "A lightweight way to interact with embedded youtube videos",
-  "main": "quicktube.js",
+  "main": [
+    "quicktube.js",
+    "quicktube.css"
+  ],
   "keywords": [
     "Youtube",
     "player",
