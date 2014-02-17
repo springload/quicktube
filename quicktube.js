@@ -72,7 +72,7 @@ var QuickTube = (function(){
                 this.jamesPlayer = new YT.Player(parentId, {
                     events: {
                         'onStateChange': onPlayerStateChange,
-                        'onReady': onPlayerReady,
+                        'onReady': onPlayerReady
                     }
                 });
             }
