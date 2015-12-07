@@ -1,4 +1,28 @@
-var QuickTube = (function(){
+/**
+ * Quicktube.js
+ * http://springload.co.nz/
+ *
+ * Copyright 2015, Springload
+ * Released under the MIT license.
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define([], function () {
+            return (root.QT = factory());
+        });
+    } else if (typeof module === 'object' && module.exports) {
+        // Node. Does not work with strict CommonJS, but
+        // only CommonJS-like enviroments that support module.exports,
+        // like Node.
+        module.exports = (root.QT = factory());
+    } else {
+        // Browser globals
+        root.QT = factory();
+    }
+}(typeof global !== 'undefined' ? global : this.window || this.global, function () {
+    'use strict';
 
     // Mobile Safari exhibits a number of documented bugs with the
     // youtube player API. User agent detection, but you'll live, my boy!
@@ -11,13 +35,6 @@ var QuickTube = (function(){
       tag.src = "https://www.youtube.com/iframe_api";
       var firstScriptTag = document.getElementsByTagName('script')[0];
       firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-    // Export this to window directly.
-    window.onYouTubeIframeAPIReady = function() {
-        $(document).ready(function() {
-            QuickTube.init();
-        });
-    };
 
     var QT = {
         _settings: "?autoplay=1&showinfo=0&autohide=1&color=white&enablejsapi=1&playerapiid=ytplayer&wmode=transparent",
@@ -136,5 +153,13 @@ var QuickTube = (function(){
             $(window).trigger("quicktube:pause", parentId, $parent);
         }
     };
+
+    // Export this to window directly.
+    window.onYouTubeIframeAPIReady = function() {
+        $(document).ready(function() {
+            QT.init();
+        });
+    };
+
     return QT;
-})();
+}));
