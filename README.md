@@ -17,13 +17,26 @@ Is really simple. Just add the video ID to `data-quicktube-video='{video-id}'`
 </div>
 ```
 
-Initialise QuickTube once jQuery is ready.
+Initialise quicktube once jQuery is ready.
 
 ```javascript
 $(document).ready(function() {
-    QuickTube.init();
+    quicktube.init();
 });
 ```
+
+Using ES6 and a module bundler:
+
+```javascript
+import quicktube from 'quicktube';
+import $ from 'jquery';
+
+$(document).ready(function() {
+    quicktube.init();
+});
+```
+
+>:warning: Don't forget to include the [necessary CSS](https://github.com/springload/Quicktube.js/blob/master/quicktube.css).
 
 ### API
 
