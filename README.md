@@ -1,5 +1,7 @@
 # QuickTube.js
 
+> [Demo](https://rawgit.com/springload/Quicktube.js/master/index.html)
+
 ### Setup
 Is really simple. Just add the video ID to `data-quicktube-video='{video-id}'`
 
