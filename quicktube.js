@@ -10,16 +10,16 @@
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
         define([], function () {
-            return (root.QT = factory());
+            return (root.quicktube = factory());
         });
     } else if (typeof module === 'object' && module.exports) {
         // Node. Does not work with strict CommonJS, but
         // only CommonJS-like enviroments that support module.exports,
         // like Node.
-        module.exports = (root.QT = factory());
+        module.exports = (root.quicktube = factory());
     } else {
         // Browser globals
-        root.QT = factory();
+        root.quicktube = factory();
     }
 }(typeof global !== 'undefined' ? global : this.window || this.global, function () {
     'use strict';
