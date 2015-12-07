@@ -1,0 +1,25 @@
+{
+  "name": "quicktube",
+  "version": "2.0.0",
+  "description": "A lightweight responsive youtube player using window.postMessage",
+  "main": "quicktube.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/springload/Quicktube.js.git"
+  },
+  "keywords": [
+    "Youtube",
+    "player",
+    "API",
+    "video"
+  ],
+  "author": "Springload",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/springload/Quicktube.js/issues"
+  },
+  "homepage": "https://github.com/springload/Quicktube.js#readme"
+}
