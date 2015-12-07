@@ -27,6 +27,10 @@ $(document).ready(function() {
 
 Using ES6 and a module bundler:
 
+```
+npm install --save quicktube
+```
+
 ```javascript
 import quicktube from 'quicktube';
 import $ from 'jquery';
