@@ -21,7 +21,7 @@ var QuickTube = (function(){
 
     var QT = {
         _settings: "?autoplay=1&showinfo=0&autohide=1&color=white&enablejsapi=1&playerapiid=ytplayer&wmode=transparent",
-        _domain: "http://www.youtube.com/embed/",
+        _domain: "https://www.youtube.com/embed/",
         _players: {},
         className: "quicktube__iframe",
         activeClass: "quicktube--playing",
