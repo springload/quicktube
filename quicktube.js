@@ -51,6 +51,11 @@
             $("[data-quicktube-play]").on("click", function() {
                 self.onClick.call(self, $(this));
             });
+            $("[data-quicktube-play]").on("keydown", function(e) {
+                if(e.keyCode == 13) {
+                    self.onClick.call(self, $(this));
+                }
+            });
             $("[data-quicktube-stop]").on("click", function() {
                 var videoId = $(this).data("quicktube-stop");
                 self.stopVideo.call(self, videoId);
