@@ -65,7 +65,7 @@
         onClick: function($el) {
             var self = this;
             var parentId = $el.data("quicktube-play");
-            var $parent = $("[data-quicktube=\"" + parentId + "\"]");
+            var $parent = $el.closest("[data-quicktube=\"" + parentId + "\"]");
             var $videoContainer = $parent.find("[data-quicktube-video]");
             var $video = $("iframe." + self.className, $videoContainer);
             var videoId = $videoContainer.data("quicktube-video");
