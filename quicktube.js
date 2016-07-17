@@ -41,6 +41,7 @@
         _domain: "https://www.youtube.com/embed/",
         _players: {},
         className: "quicktube__iframe",
+        trackAnalytics: false,
         activeClass: "quicktube--playing",
         pausedClass: "quicktube--paused",
         posterFrameHiddenClass: "quicktube__poster--hidden",
@@ -62,6 +63,7 @@
             });
             return this;
         },
+
         onClick: function($el) {
             var self = this;
             var parentId = $el.data("quicktube-play");
@@ -70,12 +72,6 @@
             var $video = $("iframe." + self.className, $videoContainer);
             var videoId = $videoContainer.data("quicktube-video");
             var $poster = $parent.find("[data-quicktube-poster]");
-
-            var onPlayerStateChange = function(e) {
-                if (e.data == YT.PlayerState.ENDED) {
-                    self.stopVideo.call(self, parentId);
-                }
-            };
 
             var onPlayerReady = function(e) {
                 if (!isMobileSafari()) {
@@ -88,15 +84,93 @@
                 }
             };
 
+            // listen for play, pause and end states
+            // also report % played every second
+            function onPlayerStateChange(e) {
+
+                e["data"] == YT.PlayerState.PLAYING && setTimeout(onPlayerPercent, 1000, e["target"]);
+                var video_data = e.target["getVideoData"](),
+                    label = video_data.title;
+                // Get title of the current page
+                var pageTitle = document.title;
+
+                if(self.trackAnalytics) {
+                    if (e["data"] == YT.PlayerState.PLAYING && YT.gaLastAction == "p") {
+                        label = "Video Played - " + video_data.title;
+                        self.trackEevent({
+                            'event': 'youtube',
+                            'eventCategory': 'Youtube Videos',
+                            'eventAction': pageTitle,
+                            'eventLabel': label
+                        });
+                        YT.gaLastAction = "";
+                    }
+
+                    if (e["data"] == YT.PlayerState.PAUSED) {
+                        label = "Video Paused - " + video_data.title;
+                        self.trackEevent({
+                            'event': 'youtube',
+                            'eventCategory': 'Youtube Videos',
+                            'eventAction': pageTitle,
+                            'eventLabel': label
+                        });
+                        YT.gaLastAction = "p";
+                    }
+                }
+
+                if (e["data"] == YT.PlayerState.ENDED) {
+                    self.stopVideo.call(self, parentId);
+                }
+            }
+
+            // catch all to report errors through the GTM data layer
+            // once the error is exposed to GTM, it can be tracked in UA as an event!
+            var onPlayerError = function(e) {
+                if(self.trackAnalytics) {
+                    self.trackEevent({
+                        'event': 'error',
+                        'eventCategory': 'Youtube Videos',
+                        'eventAction': 'GTM',
+                        'eventLabel': "youtube:" + e["target"]["src"] + "-" + e["data"]
+                    })
+                };
+            };
+
+            // report the % played if it matches 0%, 25%, 50%, 75% or completed
+            function onPlayerPercent(e) {
+                if (e["getPlayerState"]() == YT.PlayerState.PLAYING) {
+                    if(self.trackAnalytics) {
+                        var t = e["getDuration"]() - e["getCurrentTime"]() <= 1.5 ? 1 : (Math.floor(e["getCurrentTime"]() / e["getDuration"]() * 4) / 4).toFixed(2);
+                        if (!e["lastP"] || t > e["lastP"]) {
+                            var video_data = e["getVideoData"](),
+                                label = video_data.title;
+                            // Get title of the current page
+                            var pageTitle = document.title;
+                            e["lastP"] = t;
+                            label = t * 100 + "% Video played - " + video_data.title;
+                            self.trackEevent({
+                                'event': 'youtube',
+                                'eventCategory': 'Youtube Videos',
+                                'eventAction': pageTitle,
+                                'eventLabel': label
+                            })
+                        }
+                        e["lastP"] != 1 && setTimeout(onPlayerPercent, 1000, e);
+                    }
+                }
+            }
+
             if (!$video.length) {
                 $video = self.getIframePlayer(videoId, $parent, parentId);
                 $videoContainer.html($video);
                 this.jamesPlayer = new YT.Player(parentId, {
                     events: {
                         'onStateChange': onPlayerStateChange,
-                        'onReady': onPlayerReady
+                        'onReady': onPlayerReady,
+                        'onError': onPlayerError
                     }
                 });
+                YT.gaLastAction = "p";
             }
 
             if (!isMobileSafari()) {
@@ -150,13 +224,26 @@
             var frame = $parent.find("iframe");
             var func = "pauseVideo";
 
+            if(!this.jamesPlayer) {
+                return;
+            }
+
             this.jamesPlayer.pauseVideo();
             $parent.removeClass(self.activeClass).addClass(self.pausedClass);
             self.showPosterFrame($parent.find("[data-quicktube-poster]"));
             $parent.data("video-playing", false);
             self._players[parentId] = false;
             $(window).trigger("quicktube:pause", parentId, $parent);
-        }
+        },
+
+        trackEevent: function (event) {
+            if (typeof window._gaq === "object") {
+                window._gaq.push(["_trackEvent", event.eventCategory, event.eventAction, event.eventLabel]);
+            } else if (typeof window.ga === "function") {
+                window.ga('send', 'event', event.eventCategory, event.eventAction, event.eventLabel);
+            } else {
+            }
+        },
     };
 
     // Export this to window directly.
