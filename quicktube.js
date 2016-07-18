@@ -37,18 +37,21 @@
       firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
     var QT = {
+        options: {
+            trackAnalytics: false
+        },
         _settings: "?autoplay=1&showinfo=0&autohide=1&color=white&enablejsapi=1&playerapiid=ytplayer&wmode=transparent",
         _domain: "https://www.youtube.com/embed/",
         _players: {},
         className: "quicktube__iframe",
-        trackAnalytics: false,
         activeClass: "quicktube--playing",
         pausedClass: "quicktube--paused",
         posterFrameHiddenClass: "quicktube__poster--hidden",
         supportsTransitions: ('transition' in document.body.style || 'webkitTransition' in document.body.style || 'MozTransition' in document.body.style || 'msTransition' in document.body.style || 'OTransition' in document.body.style),
         setExplicitFrameHeight: false,
-        init: function() {
+        init: function(options) {
             var self = this;
+            self.options = self.extend(self.options, options);
             $("[data-quicktube-play]").on("click", function() {
                 self.onClick.call(self, $(this));
             });
@@ -62,6 +65,30 @@
                 self.stopVideo.call(self, videoId);
             });
             return this;
+        },
+
+        /**
+         * Deep extend object
+         */
+        extend: function(out) {
+            var self = this;
+            out = out || {};
+            for (var i = 1; i < arguments.length; i++) {
+                var obj = arguments[i];
+                if (!obj) {
+                    continue;
+                }
+                for (var key in obj) {
+                    if (obj.hasOwnProperty(key)) {
+                        if (typeof obj[key] === 'object') {
+                            self.extend(out[key], obj[key]);
+                        } else {
+                            out[key] = obj[key];
+                        }
+                    }
+                }
+            }
+            return out;
         },
 
         onClick: function($el) {
@@ -94,7 +121,7 @@
                 // Get title of the current page
                 var pageTitle = document.title;
 
-                if(self.trackAnalytics) {
+                if(self.options.trackAnalytics) {
                     if (e["data"] == YT.PlayerState.PLAYING && YT.gaLastAction == "p") {
                         label = "Video Played - " + video_data.title;
                         self.trackEevent({
@@ -126,7 +153,7 @@
             // catch all to report errors through the GTM data layer
             // once the error is exposed to GTM, it can be tracked in UA as an event!
             var onPlayerError = function(e) {
-                if(self.trackAnalytics) {
+                if(self.options.trackAnalytics) {
                     self.trackEevent({
                         'event': 'error',
                         'eventCategory': 'Youtube Videos',
