@@ -114,7 +114,6 @@
             // listen for play, pause and end states
             // also report % played every second
             function onPlayerStateChange(e) {
-
                 e["data"] == YT.PlayerState.PLAYING && setTimeout(onPlayerPercent, 1000, e["target"]);
                 var video_data = e.target["getVideoData"](),
                     label = video_data.title;
@@ -166,7 +165,7 @@
             // report the % played if it matches 0%, 25%, 50%, 75% or completed
             function onPlayerPercent(e) {
                 if (e["getPlayerState"]() == YT.PlayerState.PLAYING) {
-                    if(self.trackAnalytics) {
+                    if(self.options.trackAnalytics) {
                         var t = e["getDuration"]() - e["getCurrentTime"]() <= 1.5 ? 1 : (Math.floor(e["getCurrentTime"]() / e["getDuration"]() * 4) / 4).toFixed(2);
                         if (!e["lastP"] || t > e["lastP"]) {
                             var video_data = e["getVideoData"](),
