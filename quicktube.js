@@ -123,7 +123,7 @@
                 if(self.options.trackAnalytics) {
                     if (e["data"] == YT.PlayerState.PLAYING && YT.gaLastAction == "p") {
                         label = "Video Played - " + video_data.title;
-                        self.trackEevent({
+                        self.trackEvent({
                             'event': 'youtube',
                             'eventCategory': 'Youtube Videos',
                             'eventAction': pageTitle,
@@ -134,7 +134,7 @@
 
                     if (e["data"] == YT.PlayerState.PAUSED) {
                         label = "Video Paused - " + video_data.title;
-                        self.trackEevent({
+                        self.trackEvent({
                             'event': 'youtube',
                             'eventCategory': 'Youtube Videos',
                             'eventAction': pageTitle,
@@ -153,7 +153,7 @@
             // once the error is exposed to GTM, it can be tracked in UA as an event!
             var onPlayerError = function(e) {
                 if(self.options.trackAnalytics) {
-                    self.trackEevent({
+                    self.trackEvent({
                         'event': 'error',
                         'eventCategory': 'Youtube Videos',
                         'eventAction': 'GTM',
@@ -174,7 +174,7 @@
                             var pageTitle = document.title;
                             e["lastP"] = t;
                             label = t * 100 + "% Video played - " + video_data.title;
-                            self.trackEevent({
+                            self.trackEvent({
                                 'event': 'youtube',
                                 'eventCategory': 'Youtube Videos',
                                 'eventAction': pageTitle,
@@ -262,7 +262,7 @@
             $(window).trigger("quicktube:pause", parentId, $parent);
         },
 
-        trackEevent: function (event) {
+        trackEvent: function (event) {
             if (typeof window._gaq === "object") {
                 window._gaq.push(["_trackEvent", event.eventCategory, event.eventAction, event.eventLabel]);
             } else if (typeof window.ga === "function") {
