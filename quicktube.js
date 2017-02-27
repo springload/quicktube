@@ -14,8 +14,24 @@ const isMobileSafari = () => {
     return (/Apple.*Mobile.*Safari/).test(navigator.userAgent);
 };
 
-function quicktubeController(ROOT, factory) {
-
+function quicktubeController(root, factory) {
+    // TODO this is all old no idea what's going on
+    // need to automatically execute this somewhere?
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define([], function () {
+            return (root.quicktube = factory());
+        });
+    } else if (typeof module === 'object' && module.exports) {
+        // OLD can we rewrite?
+        // Node. Does not work with strict CommonJS, but
+        // only CommonJS-like enviroments that support module.exports,
+        // like Node.
+        module.exports = (root.quicktube = factory());
+    } else {
+        // Browser globals
+        root.quicktube = factory();
+    }
 }
 
 function factory() {
@@ -63,7 +79,10 @@ class Quicktube = {
 
     init(options) {
         const self = this;
-        this.options = this.extend(this.options, options);
+        // this.options = this.extend(this.options, options);
+        // TODO is this what that extend function is actually trying to do?
+        this.options = Object.assign(this.options, options);
+
         const playButton = document.querySelector('[data-quicktube-play]');
         const stopButton = document.querySelector('[data-quicktube-stop]');
 
@@ -79,8 +98,7 @@ class Quicktube = {
 
         stopButton.addEventListener('click', () => {
             const videoId = $(this).data("quicktube-stop");
-            this.stopVideo.bind(this);
-            this.stopVideo(videoId);
+            this.stopVideo.bind(this, videoId);
         }, false);
 
         // $("[data-quicktube-play]").on("click", () => {
@@ -103,26 +121,28 @@ class Quicktube = {
     /**
      * Deep extend object
      */
-    extend(out) {
-        var self = this;
-        out = out || {};
-        for (var i = 1; i < arguments.length; i++) {
-            var obj = arguments[i];
-            if (!obj) {
-                continue;
-            }
-            for (var key in obj) {
-                if (obj.hasOwnProperty(key)) {
-                    if (typeof obj[key] === 'object') {
-                        self.extend(out[key], obj[key]);
-                    } else {
-                        out[key] = obj[key];
-                    }
-                }
-            }
-        }
-        return out;
-    },
+    // TODO now redundant if we can use Object.assign no?
+    // will need polyfill https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill
+    // extend(out) {
+    //     var self = this;
+    //     out = out || {};
+    //     for (var i = 1; i < arguments.length; i++) {
+    //         var obj = arguments[i];
+    //         if (!obj) {
+    //             continue;
+    //         }
+    //         for (var key in obj) {
+    //             if (obj.hasOwnProperty(key)) {
+    //                 if (typeof obj[key] === 'object') {
+    //                     self.extend(out[key], obj[key]);
+    //                 } else {
+    //                     out[key] = obj[key];
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     return out;
+    // },
 
     onClick(el) {
         var self = this;
