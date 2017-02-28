@@ -4,7 +4,8 @@
   "description": "A lightweight responsive youtube player using window.postMessage",
   "main": "quicktube.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test:coverage": "echo 'TODO'",
+    "coveralls": "echo 'TODO'"
   },
   "repository": {
     "type": "git",
