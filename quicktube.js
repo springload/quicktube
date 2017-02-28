@@ -1,7 +1,5 @@
 'use strict';
 
-const SUPPORTS_TRANSITIONS = 'transition' in document.body.style || 'webkitTransition' in document.body.style || 'MozTransition' in document.body.style || 'msTransition' in document.body.style || 'OTransition' in document.body.style;
-
 // TODO has youtube api improved since this was written in 2015?
 // Mobile Safari exhibits a number of documented bugs with the
 // youtube player API. User agent detection, but you'll live, my boy!
@@ -43,7 +41,6 @@ const Quicktube = {
     activeClass: 'quicktube--playing',
     pausedClass: 'quicktube--paused',
     posterFrameHiddenClass: 'quicktube__poster--hidden',
-    supportsTransitions: SUPPORTS_TRANSITIONS,
     setExplicitFrameHeight: false,
 
     init(options) {
@@ -206,16 +203,10 @@ const Quicktube = {
 
     hidePosterFrame(poster) {
         poster.classList.add(this.posterFrameHiddenClass);
-        if (!this.supportsTransitions) {
-            poster.classList.add('quicktube__poster--animate');
-        }
     },
 
     showPosterFrame(poster) {
         poster.classList.remove(this.posterFrameHiddenClass);
-        if (!this.supportsTransitions) {
-            poster.classList.remove('quicktube__poster--animate');
-        }
     },
 
     getIframePlayer(id, parent, parentId) {
