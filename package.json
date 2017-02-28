@@ -4,8 +4,10 @@
   "description": "A lightweight responsive youtube player using window.postMessage",
   "main": "quicktube.js",
   "scripts": {
-    "test:coverage": "echo 'TODO'",
-    "coveralls": "echo 'TODO'"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "coveralls": "cat ./coverage/lcov.info | coveralls"
   },
   "repository": {
     "type": "git",
@@ -25,5 +27,10 @@
   "homepage": "https://github.com/springload/Quicktube.js#readme",
   "peerDependencies": {
     "jquery": ">= 1.10.2"
+  },
+  "devDependencies": {
+    "coveralls": "^2.11.16",
+    "jest": "^19.0.2",
+    "jquery": "^1.12.4"
   }
 }
