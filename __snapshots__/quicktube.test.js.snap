@@ -1,0 +1,306 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Quicktube YT Player events onError 1`] = `
+Array [
+  "send",
+  "event",
+  "Youtube Videos",
+  "GTM",
+  "youtube:test src-test data",
+]
+`;
+
+exports[`Quicktube YT Player events onStateChange ENDED 1`] = `
+"
+<script src=\\"https://www.youtube.com/iframe_api\\"></script><script></script>
+<div class=\\"quicktube quicktube--paused\\" data-quicktube=\\"kittens\\">
+    <div class=\\"quicktube__video quicktube__video--paused\\" data-quicktube-video=\\"k6QanQUaDOo\\"><iframe src=\\"https://www.youtube.com/embed/k6QanQUaDOo?autoplay=1&amp;showinfo=0&amp;autohide=1&amp;color=white&amp;enablejsapi=1&amp;playerapiid=ytplayer&amp;wmode=transparent\\" width=\\"100%\\" id=\\"kittens\\" class=\\"quicktube__iframe\\"></iframe></div>
+    <div data-quicktube-play=\\"kittens\\" class=\\"quicktube__poster\\" data-quicktube-poster=\\"\\">
+        <div class=\\"quicktube__play quicktube__btn\\">
+            Play
+        </div>
+    </div>
+</div>
+<div data-quicktube-stop=\\"\\">Stop button</div>
+"
+`;
+
+exports[`Quicktube YT Player events onStateChange PAUSED 1`] = `
+"
+<script src=\\"https://www.youtube.com/iframe_api\\"></script><script></script>
+<div class=\\"quicktube quicktube--playing\\" data-quicktube=\\"kittens\\">
+    <div class=\\"quicktube__video quicktube__video--paused\\" data-quicktube-video=\\"k6QanQUaDOo\\"><iframe src=\\"https://www.youtube.com/embed/k6QanQUaDOo?autoplay=1&amp;showinfo=0&amp;autohide=1&amp;color=white&amp;enablejsapi=1&amp;playerapiid=ytplayer&amp;wmode=transparent\\" width=\\"100%\\" id=\\"kittens\\" class=\\"quicktube__iframe\\"></iframe></div>
+    <div data-quicktube-play=\\"kittens\\" class=\\"quicktube__poster quicktube__poster--hidden\\" data-quicktube-poster=\\"\\">
+        <div class=\\"quicktube__play quicktube__btn\\">
+            Play
+        </div>
+    </div>
+</div>
+<div data-quicktube-stop=\\"\\">Stop button</div>
+"
+`;
+
+exports[`Quicktube YT Player events onStateChange PAUSED 2`] = `
+Array [
+  "send",
+  "event",
+  "Youtube Videos",
+  "",
+  "Video Paused - test title",
+]
+`;
+
+exports[`Quicktube YT Player events onStateChange PLAYING 1`] = `
+"
+<script src=\\"https://www.youtube.com/iframe_api\\"></script><script></script>
+<div class=\\"quicktube quicktube--playing\\" data-quicktube=\\"kittens\\">
+    <div class=\\"quicktube__video quicktube__video--paused\\" data-quicktube-video=\\"k6QanQUaDOo\\"><iframe src=\\"https://www.youtube.com/embed/k6QanQUaDOo?autoplay=1&amp;showinfo=0&amp;autohide=1&amp;color=white&amp;enablejsapi=1&amp;playerapiid=ytplayer&amp;wmode=transparent\\" width=\\"100%\\" id=\\"kittens\\" class=\\"quicktube__iframe\\"></iframe></div>
+    <div data-quicktube-play=\\"kittens\\" class=\\"quicktube__poster quicktube__poster--hidden\\" data-quicktube-poster=\\"\\">
+        <div class=\\"quicktube__play quicktube__btn\\">
+            Play
+        </div>
+    </div>
+</div>
+<div data-quicktube-stop=\\"\\">Stop button</div>
+"
+`;
+
+exports[`Quicktube YT Player events onStateChange PLAYING 2`] = `
+Array [
+  "send",
+  "event",
+  "Youtube Videos",
+  "",
+  "Video Played - test title",
+]
+`;
+
+exports[`Quicktube YT Player events onStateChange PLAYING monitoring still PLAYING 0% 1`] = `
+Array [
+  "send",
+  "event",
+  "Youtube Videos",
+  "",
+  "0% Video played - test title",
+]
+`;
+
+exports[`Quicktube YT Player events onStateChange PLAYING monitoring still PLAYING 25% 1`] = `
+Array [
+  "send",
+  "event",
+  "Youtube Videos",
+  "",
+  "25% Video played - test title",
+]
+`;
+
+exports[`Quicktube YT Player events onStateChange PLAYING monitoring still PLAYING 50% 1`] = `
+Array [
+  "send",
+  "event",
+  "Youtube Videos",
+  "",
+  "50% Video played - test title",
+]
+`;
+
+exports[`Quicktube YT Player events onStateChange PLAYING monitoring still PLAYING 100% 1`] = `
+Array [
+  "send",
+  "event",
+  "Youtube Videos",
+  "",
+  "50% Video played - test title",
+]
+`;
+
+exports[`Quicktube init custom options 1`] = `
+Object {
+  "_domain": "https://www.youtube.com/embed/",
+  "_players": Object {},
+  "_settings": "?autoplay=1&showinfo=0&autohide=1&color=white&enablejsapi=1&playerapiid=ytplayer&wmode=transparent",
+  "activeClass": "quicktube--playing",
+  "className": "quicktube__iframe",
+  "extend": [Function],
+  "getIframePlayer": [Function],
+  "hidePosterFrame": [Function],
+  "init": [Function],
+  "onClick": [Function],
+  "options": Object {
+    "trackAnalytics": true,
+  },
+  "pausedClass": "quicktube--paused",
+  "posterFrameHiddenClass": "quicktube__poster--hidden",
+  "setExplicitFrameHeight": false,
+  "showPosterFrame": [Function],
+  "stopVideo": [Function],
+  "supportsTransitions": true,
+  "trackEvent": [Function],
+}
+`;
+
+exports[`Quicktube init custom options 2`] = `
+"
+<script src=\\"https://www.youtube.com/iframe_api\\"></script><script></script>
+<div class=\\"quicktube\\" data-quicktube=\\"kittens\\">
+    <div class=\\"quicktube__video quicktube__video--paused\\" data-quicktube-video=\\"k6QanQUaDOo\\">
+    </div>
+    <div data-quicktube-play=\\"kittens\\" class=\\"quicktube__poster\\" data-quicktube-poster=\\"\\">
+        <div class=\\"quicktube__play quicktube__btn\\">
+            Play
+        </div>
+    </div>
+</div>
+<div data-quicktube-stop=\\"\\">Stop button</div>
+"
+`;
+
+exports[`Quicktube init default options 1`] = `
+Object {
+  "_domain": "https://www.youtube.com/embed/",
+  "_players": Object {},
+  "_settings": "?autoplay=1&showinfo=0&autohide=1&color=white&enablejsapi=1&playerapiid=ytplayer&wmode=transparent",
+  "activeClass": "quicktube--playing",
+  "className": "quicktube__iframe",
+  "extend": [Function],
+  "getIframePlayer": [Function],
+  "hidePosterFrame": [Function],
+  "init": [Function],
+  "onClick": [Function],
+  "options": Object {
+    "trackAnalytics": false,
+  },
+  "pausedClass": "quicktube--paused",
+  "posterFrameHiddenClass": "quicktube__poster--hidden",
+  "setExplicitFrameHeight": false,
+  "showPosterFrame": [Function],
+  "stopVideo": [Function],
+  "supportsTransitions": true,
+  "trackEvent": [Function],
+}
+`;
+
+exports[`Quicktube init default options 2`] = `
+"
+<script src=\\"https://www.youtube.com/iframe_api\\"></script><script></script>
+<div class=\\"quicktube\\" data-quicktube=\\"kittens\\">
+    <div class=\\"quicktube__video quicktube__video--paused\\" data-quicktube-video=\\"k6QanQUaDOo\\">
+    </div>
+    <div data-quicktube-play=\\"kittens\\" class=\\"quicktube__poster\\" data-quicktube-poster=\\"\\">
+        <div class=\\"quicktube__play quicktube__btn\\">
+            Play
+        </div>
+    </div>
+</div>
+<div data-quicktube-stop=\\"\\">Stop button</div>
+"
+`;
+
+exports[`Quicktube loaded 1`] = `
+"
+<script src=\\"https://www.youtube.com/iframe_api\\"></script><script></script>
+<div class=\\"quicktube\\" data-quicktube=\\"kittens\\">
+    <div class=\\"quicktube__video quicktube__video--paused\\" data-quicktube-video=\\"k6QanQUaDOo\\">
+    </div>
+    <div data-quicktube-play=\\"kittens\\" class=\\"quicktube__poster\\" data-quicktube-poster=\\"\\">
+        <div class=\\"quicktube__play quicktube__btn\\">
+            Play
+        </div>
+    </div>
+</div>
+<div data-quicktube-stop=\\"\\">Stop button</div>
+"
+`;
+
+exports[`Quicktube onYouTubeIframeAPIReady initialises on page ready 1`] = `
+"
+<script src=\\"https://www.youtube.com/iframe_api\\"></script><script></script>
+<div class=\\"quicktube\\" data-quicktube=\\"kittens\\">
+    <div class=\\"quicktube__video quicktube__video--paused\\" data-quicktube-video=\\"k6QanQUaDOo\\">
+    </div>
+    <div data-quicktube-play=\\"kittens\\" class=\\"quicktube__poster\\" data-quicktube-poster=\\"\\">
+        <div class=\\"quicktube__play quicktube__btn\\">
+            Play
+        </div>
+    </div>
+</div>
+<div data-quicktube-stop=\\"\\">Stop button</div>
+"
+`;
+
+exports[`Quicktube play click 1`] = `
+"
+<script src=\\"https://www.youtube.com/iframe_api\\"></script><script></script>
+<div class=\\"quicktube quicktube--playing\\" data-quicktube=\\"kittens\\">
+    <div class=\\"quicktube__video quicktube__video--paused\\" data-quicktube-video=\\"k6QanQUaDOo\\"><iframe src=\\"https://www.youtube.com/embed/k6QanQUaDOo?autoplay=1&amp;showinfo=0&amp;autohide=1&amp;color=white&amp;enablejsapi=1&amp;playerapiid=ytplayer&amp;wmode=transparent\\" width=\\"100%\\" id=\\"kittens\\" class=\\"quicktube__iframe\\"></iframe></div>
+    <div data-quicktube-play=\\"kittens\\" class=\\"quicktube__poster quicktube__poster--hidden\\" data-quicktube-poster=\\"\\">
+        <div class=\\"quicktube__play quicktube__btn\\">
+            Play
+        </div>
+    </div>
+</div>
+<div data-quicktube-stop=\\"\\">Stop button</div>
+"
+`;
+
+exports[`Quicktube play iOS click 1`] = `
+"
+<script src=\\"https://www.youtube.com/iframe_api\\"></script><script></script>
+<div class=\\"quicktube\\" data-quicktube=\\"kittens\\">
+    <div class=\\"quicktube__video quicktube__video--paused\\" data-quicktube-video=\\"k6QanQUaDOo\\"><iframe src=\\"https://www.youtube.com/embed/k6QanQUaDOo?autoplay=1&amp;showinfo=0&amp;autohide=1&amp;color=white&amp;enablejsapi=1&amp;playerapiid=ytplayer&amp;wmode=transparent\\" width=\\"100%\\" id=\\"kittens\\" class=\\"quicktube__iframe\\"></iframe></div>
+    <div data-quicktube-play=\\"kittens\\" class=\\"quicktube__poster\\" data-quicktube-poster=\\"\\">
+        <div class=\\"quicktube__play quicktube__btn\\">
+            Play
+        </div>
+    </div>
+</div>
+"
+`;
+
+exports[`Quicktube play keydown right key 1`] = `
+"
+<script src=\\"https://www.youtube.com/iframe_api\\"></script><script></script>
+<div class=\\"quicktube quicktube--playing\\" data-quicktube=\\"kittens\\">
+    <div class=\\"quicktube__video quicktube__video--paused\\" data-quicktube-video=\\"k6QanQUaDOo\\"><iframe src=\\"https://www.youtube.com/embed/k6QanQUaDOo?autoplay=1&amp;showinfo=0&amp;autohide=1&amp;color=white&amp;enablejsapi=1&amp;playerapiid=ytplayer&amp;wmode=transparent\\" width=\\"100%\\" id=\\"kittens\\" class=\\"quicktube__iframe\\"></iframe></div>
+    <div data-quicktube-play=\\"kittens\\" class=\\"quicktube__poster quicktube__poster--hidden\\" data-quicktube-poster=\\"\\">
+        <div class=\\"quicktube__play quicktube__btn\\">
+            Play
+        </div>
+    </div>
+</div>
+<div data-quicktube-stop=\\"\\">Stop button</div>
+"
+`;
+
+exports[`Quicktube play keydown wrong key 1`] = `
+"
+<script src=\\"https://www.youtube.com/iframe_api\\"></script><script></script>
+<div class=\\"quicktube\\" data-quicktube=\\"kittens\\">
+    <div class=\\"quicktube__video quicktube__video--paused\\" data-quicktube-video=\\"k6QanQUaDOo\\">
+    </div>
+    <div data-quicktube-play=\\"kittens\\" class=\\"quicktube__poster\\" data-quicktube-poster=\\"\\">
+        <div class=\\"quicktube__play quicktube__btn\\">
+            Play
+        </div>
+    </div>
+</div>
+<div data-quicktube-stop=\\"\\">Stop button</div>
+"
+`;
+
+exports[`Quicktube stop click 1`] = `
+"
+<script src=\\"https://www.youtube.com/iframe_api\\"></script><script></script>
+<div class=\\"quicktube\\" data-quicktube=\\"kittens\\">
+    <div class=\\"quicktube__video quicktube__video--paused\\" data-quicktube-video=\\"k6QanQUaDOo\\">
+    </div>
+    <div data-quicktube-play=\\"kittens\\" class=\\"quicktube__poster\\" data-quicktube-poster=\\"\\">
+        <div class=\\"quicktube__play quicktube__btn\\">
+            Play
+        </div>
+    </div>
+</div>
+<div data-quicktube-stop=\\"\\">Stop button</div>
+"
+`;
