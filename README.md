@@ -64,3 +64,12 @@ nvm install
 # Then, install all project dependencies.
 npm install
 ```
+
+### Publish
+
+```sh
+git release vx.y.z
+# Use irish-pub to check the package content. Install w/ npm install -g first.
+irish-pub
+npm publish
+```
