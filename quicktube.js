@@ -18,6 +18,15 @@ const Quicktube = {
 
     options: {
         trackAnalytics: false,
+        activeClass: 'quicktube--playing',
+        pausedClass: 'quicktube--paused',
+        posterFrameHiddenClass: 'quicktube__poster--hidden',
+        autoplay: 1,
+        showInfo: 0,
+        autohide: 1,
+        color: 'white',
+        enablejsapi: 1,
+        wmode: 'transparent',
     },
     _settings: "?autoplay=1&showinfo=0&autohide=1&color=white&enablejsapi=1&playerapiid=ytplayer&wmode=transparent",
     _domain: "https://www.youtube.com/embed/",
@@ -29,29 +38,28 @@ const Quicktube = {
     supportsTransitions: SUPPORTS_TRANSITIONS,
     setExplicitFrameHeight: false,
 
-    init: (options) => {
-        const self = this;
+    init(options) {
+        // const self = this;
         // this.options = this.extend(this.options, options);
         // TODO is this what that extend function is actually trying to do?
         this.options = Object.assign(this.options || {}, options);
-        console.log('init');
 
         const playButton = document.querySelector('[data-quicktube-play]');
         const stopButton = document.querySelector('[data-quicktube-stop]');
 
-        playButton.addEventListener('click', this.onClick.bind(this), false);
+        playButton.addEventListener('click', this.onClick.bind(this, playButton), false);
 
         playButton.addEventListener('keydown', (e) => {
             if(e.keyCode == 13) {
                 // TODO what do we need to pass to this onclick function
-                this.onClick();
+                this.onClick(playButton);
                 // self.onClick.call(self, $(this));
             }
         }, false);
 
-        stopButton.addEventListener('click', () => {
-            const videoId = $(this).data("quicktube-stop");
-            this.stopVideo.bind(this, videoId);
+        stopButton.addEventListener('click', (e) => {
+            const videoId = e.target.getAttribute('data-quicktube-stop');
+            this.stopVideo.call(this, videoId);
         }, false);
 
         // $("[data-quicktube-play]").on("click", () => {
@@ -67,52 +75,34 @@ const Quicktube = {
         //     var videoId = $(this).data("quicktube-stop");
         //     self.stopVideo.call(self, videoId);
         // });
-        
+
         return this;
     },
 
-    /**
-     * Deep extend object
-     */
-    // TODO now redundant if we can use Object.assign or something like that no?
-    // will need polyfill https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill
-    // extend(out) {
-    //     var self = this;
-    //     out = out || {};
-    //     for (var i = 1; i < arguments.length; i++) {
-    //         var obj = arguments[i];
-    //         if (!obj) {
-    //             continue;
-    //         }
-    //         for (var key in obj) {
-    //             if (obj.hasOwnProperty(key)) {
-    //                 if (typeof obj[key] === 'object') {
-    //                     self.extend(out[key], obj[key]);
-    //                 } else {
-    //                     out[key] = obj[key];
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     return out;
-    // },
-
-    onClick: (el) => {
+    onClick(el) {
         var self = this;
-        var parentId = el.data("quicktube-play");
-        var $parent = el.closest("[data-quicktube=\"" + parentId + "\"]");
-        var $videoContainer = $parent.find("[data-quicktube-video]");
-        var $video = $("iframe." + self.className, $videoContainer);
-        var videoId = $videoContainer.data("quicktube-video");
-        var $poster = $parent.find("[data-quicktube-poster]");
+        
+        var parentId = el.getAttribute('data-quicktube-play');
+        var parentEl = el.parentElement;
+        var videoContainer = parentEl.querySelector('[data-quicktube-video]');
+
+        // defines whether video has already loaded and you want to play again
+        var videoIframes = videoContainer.getElementsByTagName('iframe');
+        let video = false;
+        if (videoIframes.length > 0) {
+            video = videoIframes[0];
+        }
+        // var $video = $("iframe." + self.className, videoContainer);
+        var videoId = videoContainer.getAttribute('data-quicktube-video');
+        var poster = parentEl.querySelector('[data-quicktube-poster]');
 
         const onPlayerReady = (e) => {
             if (!isMobileSafari()) {
-                if ($parent.data("video-playing")) {
-                    self.stopVideo.call(self, parentId);
+                if (parentEl.getAttribute('data-video-playing')) {
+                    self.stopVideo.bind(this, parentId);
                 } else {
-                    $parent.data("video-playing", true);
-                   e.target.playVideo();
+                    parentEl.getAttribute('data-video-playing');
+                    e.target.playVideo();
                 }
             }
         };
@@ -192,9 +182,10 @@ const Quicktube = {
             }
         }
 
-        if (!$video.length) {
-            $video = self.getIframePlayer(videoId, $parent, parentId);
-            $videoContainer.html($video);
+        if (!video) {
+            video = this.getIframePlayer(videoId, parentEl, parentId);
+            videoContainer.appendChild(video);
+            console.log(video);
             this.quicktubePlayer = new YT.Player(parentId, {
                 events: {
                     'onStateChange': onPlayerStateChange,
@@ -212,34 +203,33 @@ const Quicktube = {
         }
 
         if (self.setExplicitFrameHeight) {
-            $video.height($parent.outerHeight());
+            $video.height(parentEl.outerHeight());
         }
 
-        if (!$parent.data("video-playing")) {
-            self.hidePosterFrame($poster);
-            self._players[parentId] = $parent;
-            $parent.addClass(self.activeClass).removeClass(self.pausedClass);
-            $(window).trigger("quicktube:play", parentId, $parent);
-        }
-    },
-
-    hidePosterFrame: ($poster) => {
-        var self = this;
-        $poster.addClass(self.posterFrameHiddenClass);
-        if (!self.supportsTransitions) {
-            $poster.fadeOut(300);
+        if (!parentEl.getAttribute("data-video-playing")) {
+            self.hidePosterFrame(poster);
+            self._players[parentId] = parentEl;
+            parentEl.classList.add(self.activeClass);
+            parentEl.classList.remove(self.pausedClass);
+            window.dispatchEvent(new Event("quicktube:play"));
         }
     },
 
-    showPosterFrame($poster) {
-        var self = this;
-        $poster.removeClass(self.posterFrameHiddenClass);
-        if (!self.supportsTransitions) {
-            $poster.fadeIn(300);
+    hidePosterFrame(poster) {
+        poster.classList.add(this.posterFrameHiddenClass);
+        if (!this.supportsTransitions) {
+            poster.classList.add('quicktube__poster--animate');
         }
     },
 
-    getIframePlayer: (id, parent, parentId) => {
+    showPosterFrame(poster) {
+        poster.classList.remove(this.posterFrameHiddenClass);
+        if (!this.supportsTransitions) {
+            poster.classList.remove('quicktube__poster--animate');
+        }
+    },
+
+    getIframePlayer(id, parent, parentId) {
         var self = this;
         var src = self._domain + src + self._settings;
         var iframe = document.createElement("iframe");
@@ -247,13 +237,13 @@ const Quicktube = {
         iframe.width = "100%";
         iframe.id = parentId;
         iframe.className = this.className;
-        return $(iframe);
+        return iframe;
     },
 
-    stopVideo: (parentId) => {
+    stopVideo(parentId) {
         var self = this;
-        var $parent = $("[data-quicktube=\"" + parentId + "\"]");
-        var frame = $parent.find("iframe");
+        var playerEl = document.querySelector(`[data-quicktube="${parentId}"]`);
+
         var func = "pauseVideo";
 
         if(!this.quicktubePlayer) {
@@ -261,14 +251,15 @@ const Quicktube = {
         }
 
         this.quicktubePlayer.pauseVideo();
-        $parent.removeClass(self.activeClass).addClass(self.pausedClass);
-        self.showPosterFrame($parent.find("[data-quicktube-poster]"));
-        $parent.data("video-playing", false);
+        playerEl.classList.remove(self.activeClass);
+        playerEl.classList.add(self.pausedClass);
+        self.showPosterFrame(playerEl.querySelector("[data-quicktube-poster]"));
+        playerEl.getAttribute("data-video-playing");
         self._players[parentId] = false;
-        $(window).trigger("quicktube:pause", parentId, $parent);
+        window.dispatchEvent(new Event("quicktube:pause"));
     },
 
-    trackEvent: (event) => {
+    trackEvent(event) {
         if (typeof window._gaq === "object") {
             window._gaq.push(["_trackEvent", event.eventCategory, event.eventAction, event.eventLabel]);
         } else if (typeof window.ga === "function") {
@@ -283,12 +274,13 @@ function quicktubeController(root, factory) {
     // need to automatically execute this somewhere?
     
     root.quicktube = factory();
-    
+
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
         define([], function () {
             return root.quicktube;
         });
+
     } else if (typeof module === 'object' && module.exports) {
         // OLD can we rewrite?
         // Node. Does not work with strict CommonJS, but
@@ -299,6 +291,7 @@ function quicktubeController(root, factory) {
         // Browser globals
         return root.quicktube;
     }
+
 }
 
 function factory() {
@@ -308,21 +301,18 @@ function factory() {
     // Mobile Safari exhibits a number of documented bugs with the
     // youtube player API. User agent detection, but you'll live, my boy!
     // https://groups.google.com/forum/#!topic/youtube-api-gdata/vPgKhCu4Vng
-    
     let newScriptTag = document.createElement('script');
         newScriptTag.src = "https://www.youtube.com/iframe_api";
 
-    const documentFirstScriptTag = document.getElementsByTagName('script')[0];
-
-    if (documentFirstScriptTag.length > 0) {
-        documentFirstScriptTag.parentNode.insertBefore(newScriptTag, documentFirstScriptTag);
+    const documentScripts = document.getElementsByTagName('script');
+    if (documentScripts.length > 0) {
+        const firstScriptTag = documentScripts[0];
+        firstScriptTag.parentNode.insertBefore(newScriptTag, firstScriptTag);
     }
 
     // Export this to window directly.
     window.onYouTubeIframeAPIReady = () => {
-        document.addEventListener('DOMContentLoaded', () => {
-            Quicktube.init();
-        });
+        Quicktube.init();
     };
 
     return Quicktube;
@@ -419,18 +409,18 @@ quicktubeController(ROOT, factory);
 //         onClick: function($el) {
 //             var self = this;
 //             var parentId = $el.data("quicktube-play");
-//             var $parent = $el.closest("[data-quicktube=\"" + parentId + "\"]");
-//             var $videoContainer = $parent.find("[data-quicktube-video]");
+//             var parent = $el.closest("[data-quicktube=\"" + parentId + "\"]");
+//             var videoContainer = parent.find("[data-quicktube-video]");
 //             var $video = $("iframe." + self.className, $videoContainer);
 //             var videoId = $videoContainer.data("quicktube-video");
-//             var $poster = $parent.find("[data-quicktube-poster]");
+//             var poster = parent.find("[data-quicktube-poster]");
 
 //             var onPlayerReady = function(e) {
 //                 if (!isMobileSafari()) {
-//                     if ($parent.data("video-playing")) {
+//                     if (parent.data("video-playing")) {
 //                         self.stopVideo.call(self, parentId);
 //                     } else {
-//                         $parent.data("video-playing", true);
+//                         parent.data("video-playing", true);
 //                        e.target.playVideo();
 //                     }
 //                 }
@@ -512,7 +502,7 @@ quicktubeController(ROOT, factory);
 //             }
 
 //             if (!$video.length) {
-//                 $video = self.getIframePlayer(videoId, $parent, parentId);
+//                 $video = self.getIframePlayer(videoId, parent, parentId);
 //                 $videoContainer.html($video);
 //                 this.quicktubePlayer = new YT.Player(parentId, {
 //                     events: {
@@ -531,14 +521,14 @@ quicktubeController(ROOT, factory);
 //             }
 
 //             if (self.setExplicitFrameHeight) {
-//                 $video.height($parent.outerHeight());
+//                 $video.height(parent.outerHeight());
 //             }
 
-//             if (!$parent.data("video-playing")) {
+//             if (!parent.data("video-playing")) {
 //                 self.hidePosterFrame($poster);
-//                 self._players[parentId] = $parent;
-//                 $parent.addClass(self.activeClass).removeClass(self.pausedClass);
-//                 $(window).trigger("quicktube:play", parentId, $parent);
+//                 self._players[parentId] = parent;
+//                 parent.addClass(self.activeClass).removeClass(self.pausedClass);
+//                 $(window).trigger("quicktube:play", parentId, parent);
 //             }
 //         },
 
@@ -571,8 +561,8 @@ quicktubeController(ROOT, factory);
 
 //         stopVideo: function(parentId) {
 //             var self = this;
-//             var $parent = $("[data-quicktube=\"" + parentId + "\"]");
-//             var frame = $parent.find("iframe");
+//             var parent = $("[data-quicktube=\"" + parentId + "\"]");
+//             var frame = parent.find("iframe");
 //             var func = "pauseVideo";
 
 //             if(!this.quicktubePlayer) {
@@ -580,11 +570,11 @@ quicktubeController(ROOT, factory);
 //             }
 
 //             this.quicktubePlayer.pauseVideo();
-//             $parent.removeClass(self.activeClass).addClass(self.pausedClass);
-//             self.showPosterFrame($parent.find("[data-quicktube-poster]"));
-//             $parent.data("video-playing", false);
+//             parent.removeClass(self.activeClass).addClass(self.pausedClass);
+//             self.showPosterFrame(parent.find("[data-quicktube-poster]"));
+//             parent.data("video-playing", false);
 //             self._players[parentId] = false;
-//             $(window).trigger("quicktube:pause", parentId, $parent);
+//             $(window).trigger("quicktube:pause", parentId, parent);
 //         },
 
 //         trackEvent: function (event) {

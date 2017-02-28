@@ -40,18 +40,17 @@
 
 <!-- /Demonstration -->
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="quicktube.js"></script>
 <script>
     // Remember to initialise QuickTube at some point in your app
-    $(document).ready(function() {
-        // Demonstration...
-        $(window).on("quicktube:play", function() {
-            $("[data-show-while-playing]").show();
+    document.addEventListener('DOMContentLoaded', function() {
+        const showingItem = document.querySelector('[data-show-while-playing]');
+        window.addEventListener("quicktube:play", function() {
+            showingItem.style.display = 'block';
         });
 
-        $(window).on("quicktube:pause", function() {
-            $("[data-show-while-playing]").hide();
+        window.addEventListener("quicktube:pause", function() {
+            showingItem.style.display = 'none';
         });
     });
 </script>

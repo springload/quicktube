@@ -1,7 +1,7 @@
 {
   "name": "quicktube",
-  "version": "0.2.6",
-  "description": "A lightweight responsive youtube player using window.postMessage",
+  "version": "0.3.0",
+  "description": "A lightweight responsive youtube player",
   "main": "quicktube.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -21,8 +21,5 @@
   "bugs": {
     "url": "https://github.com/springload/Quicktube.js/issues"
   },
-  "homepage": "https://github.com/springload/Quicktube.js#readme",
-  "peerDependencies": {
-    "jquery": ">= 1.10.2"
-  }
+  "homepage": "https://github.com/springload/Quicktube.js#readme"
 }
