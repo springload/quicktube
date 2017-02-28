@@ -226,11 +226,8 @@ const Quicktube = {
     },
 
     trackEvent(event) {
-        if (typeof window._gaq === 'object') {
-            window._gaq.push(['_trackEvent', event.eventCategory, event.eventAction, event.eventLabel]);
-        } else if (typeof window.ga === "function") {
+        if (typeof window.ga === 'function') {
             window.ga('send', 'event', event.eventCategory, event.eventAction, event.eventLabel);
-        } else {
         }
     },
 };
