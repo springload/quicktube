@@ -41,7 +41,6 @@ const Quicktube = {
     activeClass: 'quicktube--playing',
     pausedClass: 'quicktube--paused',
     posterFrameHiddenClass: 'quicktube__poster--hidden',
-    setExplicitFrameHeight: false,
 
     init(options) {
         this.options = Object.assign({}, this.options, options);
@@ -92,14 +91,14 @@ const Quicktube = {
         // listen for play, pause and end states
         // also report % played every second
         const onPlayerStateChange = (e) => {
-            e['data'] == YT.PlayerState.PLAYING && setTimeout(onPlayerPercent, 1000, e['target']);
+            e.data == YT.PlayerState.PLAYING && setTimeout(onPlayerPercent, 1000, e.target);
             const video_data = e.target['getVideoData']();
             let label = video_data.title;
             // Get title of the current page
             const pageTitle = document.title;
 
             if(this.options.trackAnalytics) {
-                if (e['data'] == YT.PlayerState.PLAYING && YT.gaLastAction == 'p') {
+                if (e.data == YT.PlayerState.PLAYING && YT.gaLastAction == 'p') {
                     label = `Video Played - ${video_data.title}`;
                     this.trackEvent({
                         'event': 'youtube',
@@ -110,7 +109,7 @@ const Quicktube = {
                     YT.gaLastAction = "";
                 }
 
-                if (e['data'] == YT.PlayerState.PAUSED) {
+                if (e.data == YT.PlayerState.PAUSED) {
                     label = `Video Paused - ${video_data.title}`;
                     this.trackEvent({
                         'event': 'youtube',
@@ -122,7 +121,7 @@ const Quicktube = {
                 }
             }
 
-            if (e['data'] == YT.PlayerState.ENDED) {
+            if (e.data == YT.PlayerState.ENDED) {
                 this.stopVideo.call(this, parentId);
             }
         }
@@ -135,7 +134,7 @@ const Quicktube = {
                     'event': 'error',
                     'eventCategory': 'Youtube Videos',
                     'eventAction': 'GTM',
-                    'eventLabel': `youtube:${e['target']['src']}-${e['data']}`
+                    'eventLabel': `youtube:${e.target.src}-${e.data}`
                 })
             };
         };
@@ -182,12 +181,6 @@ const Quicktube = {
             if (this.quicktubePlayer.playVideo) {
                 this.quicktubePlayer.playVideo();
             }
-        }
-
-        // TODO does this ever get set to true? if so how?
-        // Doesn't appear to be an overridable setting
-        if (this.setExplicitFrameHeight) {
-            video.setAttribute('height', parentEl.offsetHeight);
         }
 
         if (!parentEl.getAttribute('data-video-playing')) {
