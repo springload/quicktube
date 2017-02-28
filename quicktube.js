@@ -1,22 +1,25 @@
-/**
- * Quicktube.js
- * http://springload.co.nz/
- *
- * Copyright 2017, Springload
- * Released under the MIT license.
- * http://www.opensource.org/licenses/mit-license.php
- */
+'use strict';
 
-const ROOT = typeof global !== 'undefined' ? global : this.window || this.global;
 const SUPPORTS_TRANSITIONS = 'transition' in document.body.style || 'webkitTransition' in document.body.style || 'MozTransition' in document.body.style || 'msTransition' in document.body.style || 'OTransition' in document.body.style;
 
 // TODO has youtube api improved since this was written in 2015?
 // Mobile Safari exhibits a number of documented bugs with the
 // youtube player API. User agent detection, but you'll live, my boy!
 // https://groups.google.com/forum/#!topic/youtube-api-gdata/vPgKhCu4Vng
-const isMobileSafari = () => {
-    return (/Apple.*Mobile.*Safari/).test(navigator.userAgent);
-};
+const isMobileSafari = () => (/Apple.*Mobile.*Safari/).test(navigator.userAgent);
+
+// Inject the YouTube API onto the page.
+// TODO It is bad to do this systematically outside of any `init` function –
+// - It should be done only on init.
+// - It should check whether `YT` exists already so it does not load it multiple times.
+const newScriptTag = document.createElement('script');
+newScriptTag.src = 'https://www.youtube.com/iframe_api';
+
+const documentScripts = document.getElementsByTagName('script');
+if (documentScripts.length > 0) {
+    const firstScriptTag = documentScripts[0];
+    firstScriptTag.parentNode.insertBefore(newScriptTag, firstScriptTag);
+}
 
 const Quicktube = {
 
@@ -76,7 +79,7 @@ const Quicktube = {
         if (videoIframes.length > 0) {
             video = videoIframes[0];
         }
-        
+
         const videoId = videoContainer.getAttribute('data-quicktube-video');
         const poster = parentEl.querySelector('[data-quicktube-poster]');
 
@@ -250,70 +253,13 @@ const Quicktube = {
     },
 };
 
-function quicktubeController(root, factory) {
-    // TODO this is all old no idea what's going on
-    // need to automatically execute this somewhere?
-    
-    root.quicktube = factory();
+// Export this to window directly.
+window.onYouTubeIframeAPIReady = () => {
+    Quicktube.init();
+};
 
-    if (typeof define === 'function' && define.amd) {
-        // AMD. Register as an anonymous module.
-        define([], function () {
-            return root.quicktube;
-        });
+module.exports = Quicktube;
 
-    } else if (typeof module === 'object' && module.exports) {
-        // OLD can we rewrite?
-        // Node. Does not work with strict CommonJS, but
-        // only CommonJS-like enviroments that support module.exports,
-        // like Node.
-        module.exports = root.quicktube;
-    } else {
-        // Browser globals
-        return root.quicktube;
-    }
-
-}
-
-function factory() {
-    'use strict';
-
-    let newScriptTag = document.createElement('script');
-        newScriptTag.src = 'https://www.youtube.com/iframe_api';
-
-    const documentScripts = document.getElementsByTagName('script');
-    if (documentScripts.length > 0) {
-        const firstScriptTag = documentScripts[0];
-        firstScriptTag.parentNode.insertBefore(newScriptTag, firstScriptTag);
-    }
-
-    // Export this to window directly.
-    window.onYouTubeIframeAPIReady = () => {
-        Quicktube.init();
-    };
-
-    return Quicktube;
-}
-
-quicktubeController(ROOT, factory);
-
-
-// (function (root, factory) {
-//     if (typeof define === 'function' && define.amd) {
-//         // AMD. Register as an anonymous module.
-//         define([], function () {
-//             return (root.quicktube = factory());
-//         });
-//     } else if (typeof module === 'object' && module.exports) {
-//         // Node. Does not work with strict CommonJS, but
-//         // only CommonJS-like enviroments that support module.exports,
-//         // like Node.
-//         module.exports = (root.quicktube = factory());
-//     } else {
-//         // Browser globals
-//         root.quicktube = factory();
-//     }
-// }(typeof global !== 'undefined' ? global : this.window || this.global, function () {
 //     'use strict';
 
 //     // Mobile Safari exhibits a number of documented bugs with the
@@ -570,6 +516,3 @@ quicktubeController(ROOT, factory);
 //             QT.init();
 //         });
 //     };
-
-//     return QT;
-// }));
