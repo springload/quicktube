@@ -1,6 +1,6 @@
 {
   "name": "quicktube",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A lightweight responsive youtube player using window.postMessage",
   "main": "quicktube.js",
   "scripts": {

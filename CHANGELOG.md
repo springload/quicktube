@@ -4,7 +4,7 @@ Changelog
 > All notable changes to this project are documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [[v1.0.0]](https://github.com/springload/Quicktube.js/releases/tag/v1.0.0)
+## [[v1.0.1]](https://github.com/springload/Quicktube.js/releases/tag/v1.0.1)
 
 Stable release of v0.2.5 before we move on to a new version with breaking changes.
 
