@@ -1,6 +1,6 @@
 # Quicktube [![npm](https://img.shields.io/npm/v/quicktube.svg?style=flat-square)](https://www.npmjs.com/package/quicktube) [![Build Status](https://travis-ci.org/springload/Quicktube.js.svg?branch=master)](https://travis-ci.org/springload/Quicktube.js) [![Coverage Status](https://coveralls.io/repos/github/springload/Quicktube.js/badge.svg)](https://coveralls.io/github/springload/Quicktube.js)
 
-> A lightweight responsive YouTube player using `window.postMessage`. [Demo](https://rawgit.com/springload/Quicktube.js/master/index.html)
+> A lightweight responsive YouTube player. [Demo](https://rawgit.com/springload/Quicktube.js/master/index.html)
 
 ## Installation
 
@@ -26,15 +26,14 @@ Is really simple. Just add the video ID to `data-quicktube-video='{video-id}'`
 </div>
 ```
 
-Initialise Quicktube once jQuery is ready.
+Initialise quicktube.
 
-```js
+```javascript
 import quicktube from 'quicktube';
-import $ from 'jquery';
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
     quicktube.init();
-});
+}, false);
 ```
 
 >:warning: Don't forget to include the [necessary CSS](https://github.com/springload/Quicktube.js/blob/master/quicktube.css).
@@ -44,13 +43,13 @@ $(document).ready(function() {
 You can hook to the `play` and `pause` events like this:
 
 ```js
-$(window).on("quicktube:play", function(quicktubeId, $quicktubeEl) {
-    $("[data-show-while-playing]").show();
-});
+window.addEventListener('quicktube:play', () => {
+    showingItem.style.display = 'block';
+}, false);
 
-$(window).on("quicktube:pause", function(quicktubeId, $quicktubeEl) {
-    $("[data-show-while-playing]").hide();
-});
+window.addEventListener('quicktube:pause', () => {
+    showingItem.style.display = 'none';
+}, false);
 ```
 
 ## Development

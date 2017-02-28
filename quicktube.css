@@ -1,50 +1,65 @@
 .quicktube {
-    width: 100%;
     position: relative;
+    width: 100%;
     padding-bottom: 56.25%;
     background: #111;
     overflow: hidden;
 }
 
-    /* Class applied when video is playing */
-    .quicktube--playing {
-        
-    }
-
-    .quicktube--paused {
-        
-    }
-
-.quicktube__poster,
-.quicktube__video,
-.quicktube__iframe {
-    position: absolute;
+/* Class applied when video is playing */
+.quicktube--playing {
+    
 }
 
-.quicktube__poster,
-.quicktube__video {
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+.quicktube--paused {
+    
 }
+
+    .quicktube__poster,
+    .quicktube__video,
+    .quicktube__iframe {
+        position: absolute;
+    }
+
+    .quicktube__poster,
+    .quicktube__video {
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
 
     /* Poster image */
     .quicktube__poster {
         cursor: pointer;
-        transition: opacity 100ms linear, bottom 0ms linear 0ms;
+        transition: opacity .1s linear, bottom 0s linear 0s;
         overflow: hidden;
     }
-        /* Class applied when poster image gets hidden */
-        .quicktube__poster--hidden {
-            opacity: 0;
-            bottom: 100%;
-            transition-delay: 0ms, 100ms;
-        }
+
+    /* Class applied when poster image gets hidden */
+    .quicktube__poster--hidden {
+        opacity: 0;
+        bottom: 100%;
+        transition-delay: 0s, .1s;
+    }
 
         .quicktube__poster--hidden .quicktube__play {
             display: none;
         }
+
+    .quicktube__poster-image {
+        display: block;
+        max-width: 100%;
+        height: auto;
+    }
+
+    @supports (object-fit: cover) {
+        .quicktube__poster-image {
+            min-height: 100%;
+            min-width: 100%;
+            object-fit: cover;
+        }
+    }
 
     .quicktube__iframe {
         border: none;
@@ -63,31 +78,6 @@
         margin-top: -1.5em;
     }
 
-    .quicktube__btn {
-        padding: .5em;
-        border: solid 2px #222;
-        text-transform: uppercase;
-        font-weight: bold;
-        display: inline-block;
-        cursor: pointer;
-    }
-
-    .quicktube__poster:hover .quicktube__btn,
-    .quicktube__btn:hover {
-        background: #222;
-        color: #fff;
-    }
-
-    /* A stop button */
-    .quicktube__btn--stop {
-        border-color: red;
-        color: red;
-    }
-
-    .quicktube__btn--stop:hover {
-        background: red;
-    }
-
 
 /**
  * ----------------------------------------------
@@ -96,11 +86,35 @@
  */
 .quicktube__poster {
     background: #eee;
-    padding: 3em;
     text-align: center;
 }
 
-.text--center {
+.quicktube__btn {
+    padding: .5em;
+    border: solid 2px #222;
+    text-transform: uppercase;
+    font-weight: bold;
+    display: inline-block;
+    cursor: pointer;
+}
+
+ /* A stop button */
+.quicktube__btn--stop {
+    border-color: red;
+    color: red;
+}
+
+.quicktube__btn--stop:hover {
+    background: red;
+}
+
+.quicktube__poster:hover .quicktube__btn,
+.quicktube__btn:hover {
+    background: #222;
+    color: #fff;
+}
+
+.u-text-center {
     text-align: center;
 }
 

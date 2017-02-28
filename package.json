@@ -1,7 +1,7 @@
 {
   "name": "quicktube",
   "version": "2.0.0",
-  "description": "A lightweight responsive youtube player using window.postMessage",
+  "description": "A lightweight responsive youtube player",
   "main": "quicktube.js",
   "scripts": {
     "test": "jest",
@@ -27,7 +27,6 @@
   "homepage": "https://github.com/springload/Quicktube.js#readme",
   "devDependencies": {
     "coveralls": "^2.11.16",
-    "jest": "^19.0.2",
-    "jquery": "^1.12.4"
+    "jest": "^19.0.2"
   }
 }
