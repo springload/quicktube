@@ -2,7 +2,7 @@
  * Quicktube.js
  * http://springload.co.nz/
  *
- * Copyright 2015, Springload
+ * Copyright 2017, Springload
  * Released under the MIT license.
  * http://www.opensource.org/licenses/mit-license.php
  */
@@ -10,12 +10,20 @@
 const ROOT = typeof global !== 'undefined' ? global : this.window || this.global;
 const SUPPORTS_TRANSITIONS = 'transition' in document.body.style || 'webkitTransition' in document.body.style || 'MozTransition' in document.body.style || 'msTransition' in document.body.style || 'OTransition' in document.body.style;
 
+// TODO has youtube api improved since this was written in 2015?
+// Mobile Safari exhibits a number of documented bugs with the
+// youtube player API. User agent detection, but you'll live, my boy!
+// https://groups.google.com/forum/#!topic/youtube-api-gdata/vPgKhCu4Vng
 const isMobileSafari = () => {
     return (/Apple.*Mobile.*Safari/).test(navigator.userAgent);
 };
 
 const Quicktube = {
 
+    _settings: '?autoplay=1&showinfo=0&autohide=1&color=white&enablejsapi=1&playerapiid=ytplayer&wmode=transparent',
+    _domain: 'https://www.youtube.com/embed/',
+    _players: {},
+    // TODO Decide which settings you want to be able to configure from site init
     options: {
         trackAnalytics: false,
         activeClass: 'quicktube--playing',
@@ -28,18 +36,14 @@ const Quicktube = {
         enablejsapi: 1,
         wmode: 'transparent',
     },
-    _settings: "?autoplay=1&showinfo=0&autohide=1&color=white&enablejsapi=1&playerapiid=ytplayer&wmode=transparent",
-    _domain: "https://www.youtube.com/embed/",
-    _players: {},
-    className: "quicktube__iframe",
-    activeClass: "quicktube--playing",
-    pausedClass: "quicktube--paused",
-    posterFrameHiddenClass: "quicktube__poster--hidden",
+    iframeClass: 'quicktube__iframe',
+    activeClass: 'quicktube--playing',
+    pausedClass: 'quicktube--paused',
+    posterFrameHiddenClass: 'quicktube__poster--hidden',
     supportsTransitions: SUPPORTS_TRANSITIONS,
     setExplicitFrameHeight: false,
 
     init(options) {
-        // const self = this;
         // this.options = this.extend(this.options, options);
         // TODO is this what that extend function is actually trying to do?
         this.options = Object.assign(this.options || {}, options);
@@ -51,9 +55,7 @@ const Quicktube = {
 
         playButton.addEventListener('keydown', (e) => {
             if(e.keyCode == 13) {
-                // TODO what do we need to pass to this onclick function
-                this.onClick(playButton);
-                // self.onClick.call(self, $(this));
+                this.onClick.call(this, playButton);
             }
         }, false);
 
@@ -61,45 +63,27 @@ const Quicktube = {
             const videoId = e.target.getAttribute('data-quicktube-stop');
             this.stopVideo.call(this, videoId);
         }, false);
-
-        // $("[data-quicktube-play]").on("click", () => {
-        //     self.onClick.call(self, $(this));
-        // });
-
-        // $("[data-quicktube-play]").on("keydown", (e) => {
-        //     if(e.keyCode == 13) {
-        //         self.onClick.call(self, $(this));
-        //     }
-        // });
-        // $("[data-quicktube-stop]").on("click", () => {
-        //     var videoId = $(this).data("quicktube-stop");
-        //     self.stopVideo.call(self, videoId);
-        // });
-
-        return this;
     },
 
     onClick(el) {
-        var self = this;
-        
-        var parentId = el.getAttribute('data-quicktube-play');
-        var parentEl = el.parentElement;
-        var videoContainer = parentEl.querySelector('[data-quicktube-video]');
+        const parentId = el.getAttribute('data-quicktube-play');
+        let parentEl = el.parentElement;
+        let videoContainer = parentEl.querySelector('[data-quicktube-video]');
 
-        // defines whether video has already loaded and you want to play again
-        var videoIframes = videoContainer.getElementsByTagName('iframe');
+        // defines whether video has already been loaded and you want to play again
+        const videoIframes = videoContainer.getElementsByTagName('iframe');
         let video = false;
         if (videoIframes.length > 0) {
             video = videoIframes[0];
         }
-        // var $video = $("iframe." + self.className, videoContainer);
-        var videoId = videoContainer.getAttribute('data-quicktube-video');
-        var poster = parentEl.querySelector('[data-quicktube-poster]');
+        
+        const videoId = videoContainer.getAttribute('data-quicktube-video');
+        const poster = parentEl.querySelector('[data-quicktube-poster]');
 
         const onPlayerReady = (e) => {
             if (!isMobileSafari()) {
                 if (parentEl.getAttribute('data-video-playing')) {
-                    self.stopVideo.bind(this, parentId);
+                    this.stopVideo.call(this, parentId);
                 } else {
                     parentEl.getAttribute('data-video-playing');
                     e.target.playVideo();
@@ -109,17 +93,17 @@ const Quicktube = {
 
         // listen for play, pause and end states
         // also report % played every second
-        function onPlayerStateChange(e) {
-            e["data"] == YT.PlayerState.PLAYING && setTimeout(onPlayerPercent, 1000, e["target"]);
-            var video_data = e.target["getVideoData"](),
-                label = video_data.title;
+        const onPlayerStateChange = (e) => {
+            e['data'] == YT.PlayerState.PLAYING && setTimeout(onPlayerPercent, 1000, e['target']);
+            const video_data = e.target['getVideoData']();
+            let label = video_data.title;
             // Get title of the current page
-            var pageTitle = document.title;
+            const pageTitle = document.title;
 
-            if(self.options.trackAnalytics) {
-                if (e["data"] == YT.PlayerState.PLAYING && YT.gaLastAction == "p") {
-                    label = "Video Played - " + video_data.title;
-                    self.trackEvent({
+            if(this.options.trackAnalytics) {
+                if (e['data'] == YT.PlayerState.PLAYING && YT.gaLastAction == 'p') {
+                    label = `Video Played - ${video_data.title}`;
+                    this.trackEvent({
                         'event': 'youtube',
                         'eventCategory': 'Youtube Videos',
                         'eventAction': pageTitle,
@@ -128,56 +112,56 @@ const Quicktube = {
                     YT.gaLastAction = "";
                 }
 
-                if (e["data"] == YT.PlayerState.PAUSED) {
-                    label = "Video Paused - " + video_data.title;
-                    self.trackEvent({
+                if (e['data'] == YT.PlayerState.PAUSED) {
+                    label = `Video Paused - ${video_data.title}`;
+                    this.trackEvent({
                         'event': 'youtube',
                         'eventCategory': 'Youtube Videos',
                         'eventAction': pageTitle,
                         'eventLabel': label
                     });
-                    YT.gaLastAction = "p";
+                    YT.gaLastAction = 'p';
                 }
             }
 
-            if (e["data"] == YT.PlayerState.ENDED) {
-                self.stopVideo.call(self, parentId);
+            if (e['data'] == YT.PlayerState.ENDED) {
+                this.stopVideo.call(this, parentId);
             }
         }
 
         // catch all to report errors through the GTM data layer
         // once the error is exposed to GTM, it can be tracked in UA as an event!
         const onPlayerError = (e) => {
-            if(self.options.trackAnalytics) {
-                self.trackEvent({
+            if(this.options.trackAnalytics) {
+                this.trackEvent({
                     'event': 'error',
                     'eventCategory': 'Youtube Videos',
                     'eventAction': 'GTM',
-                    'eventLabel': "youtube:" + e["target"]["src"] + "-" + e["data"]
+                    'eventLabel': `youtube:${e['target']['src']}-${e['data']}`
                 })
             };
         };
 
         // report the % played if it matches 0%, 25%, 50%, 75% or completed
-        function onPlayerPercent(e) {
-            if (e["getPlayerState"]() == YT.PlayerState.PLAYING) {
-                if(self.options.trackAnalytics) {
-                    var t = e["getDuration"]() - e["getCurrentTime"]() <= 1.5 ? 1 : (Math.floor(e["getCurrentTime"]() / e["getDuration"]() * 4) / 4).toFixed(2);
-                    if (!e["lastP"] || t > e["lastP"]) {
-                        var video_data = e["getVideoData"](),
-                            label = video_data.title;
+        const onPlayerPercent = (e) => {
+            if (e['getPlayerState']() == YT.PlayerState.PLAYING) {
+                if(this.options.trackAnalytics) {
+                    const time = e['getDuration']() - e['getCurrentTime']() <= 1.5 ? 1 : (Math.floor(e['getCurrentTime']() / e['getDuration']() * 4) / 4).toFixed(2);
+                    if (!e['lastP'] || time > e['lastP']) {
+                        const video_data = e['getVideoData']();
+                        let label = video_data.title;
                         // Get title of the current page
-                        var pageTitle = document.title;
-                        e["lastP"] = t;
-                        label = t * 100 + "% Video played - " + video_data.title;
-                        self.trackEvent({
+                        const pageTitle = document.title;
+                        e['lastP'] = time;
+                        label = `${time * 100}% Video played - ${video_data.title}`;
+                        this.trackEvent({
                             'event': 'youtube',
                             'eventCategory': 'Youtube Videos',
                             'eventAction': pageTitle,
                             'eventLabel': label
                         })
                     }
-                    e["lastP"] != 1 && setTimeout(onPlayerPercent, 1000, e);
+                    e['lastP'] != 1 && setTimeout(onPlayerPercent, 1000, e);
                 }
             }
         }
@@ -185,7 +169,7 @@ const Quicktube = {
         if (!video) {
             video = this.getIframePlayer(videoId, parentEl, parentId);
             videoContainer.appendChild(video);
-            console.log(video);
+
             this.quicktubePlayer = new YT.Player(parentId, {
                 events: {
                     'onStateChange': onPlayerStateChange,
@@ -193,7 +177,7 @@ const Quicktube = {
                     'onError': onPlayerError
                 }
             });
-            YT.gaLastAction = "p";
+            YT.gaLastAction = 'p';
         }
 
         if (!isMobileSafari()) {
@@ -202,16 +186,18 @@ const Quicktube = {
             }
         }
 
-        if (self.setExplicitFrameHeight) {
-            $video.height(parentEl.outerHeight());
+        // TODO does this ever get set to true? if so how?
+        // Doesn't appear to be an overridable setting
+        if (this.setExplicitFrameHeight) {
+            video.setAttribute('height', parentEl.offsetHeight);
         }
 
-        if (!parentEl.getAttribute("data-video-playing")) {
-            self.hidePosterFrame(poster);
-            self._players[parentId] = parentEl;
-            parentEl.classList.add(self.activeClass);
-            parentEl.classList.remove(self.pausedClass);
-            window.dispatchEvent(new Event("quicktube:play"));
+        if (!parentEl.getAttribute('data-video-playing')) {
+            this.hidePosterFrame(poster);
+            this._players[parentId] = parentEl;
+            parentEl.classList.add(this.activeClass);
+            parentEl.classList.remove(this.pausedClass);
+            window.dispatchEvent(new Event('quicktube:play'));
         }
     },
 
@@ -230,38 +216,33 @@ const Quicktube = {
     },
 
     getIframePlayer(id, parent, parentId) {
-        var self = this;
-        var src = self._domain + src + self._settings;
-        var iframe = document.createElement("iframe");
-        iframe.src = self._domain + id + self._settings;
-        iframe.width = "100%";
+        let iframe = document.createElement('iframe');
+        iframe.src = this._domain + id + this._settings;
+        iframe.width = '100%';
         iframe.id = parentId;
-        iframe.className = this.className;
+        iframe.className = this.iframeClass;
         return iframe;
     },
 
     stopVideo(parentId) {
-        var self = this;
-        var playerEl = document.querySelector(`[data-quicktube="${parentId}"]`);
-
-        var func = "pauseVideo";
+        let playerEl = document.querySelector(`[data-quicktube='${parentId}']`);
 
         if(!this.quicktubePlayer) {
             return;
         }
 
         this.quicktubePlayer.pauseVideo();
-        playerEl.classList.remove(self.activeClass);
-        playerEl.classList.add(self.pausedClass);
-        self.showPosterFrame(playerEl.querySelector("[data-quicktube-poster]"));
-        playerEl.getAttribute("data-video-playing");
-        self._players[parentId] = false;
-        window.dispatchEvent(new Event("quicktube:pause"));
+        playerEl.classList.remove(this.activeClass);
+        playerEl.classList.add(this.pausedClass);
+        this.showPosterFrame(playerEl.querySelector('[data-quicktube-poster]'));
+        playerEl.getAttribute('data-video-playing');
+        this._players[parentId] = false;
+        window.dispatchEvent(new Event('quicktube:pause'));
     },
 
     trackEvent(event) {
-        if (typeof window._gaq === "object") {
-            window._gaq.push(["_trackEvent", event.eventCategory, event.eventAction, event.eventLabel]);
+        if (typeof window._gaq === 'object') {
+            window._gaq.push(['_trackEvent', event.eventCategory, event.eventAction, event.eventLabel]);
         } else if (typeof window.ga === "function") {
             window.ga('send', 'event', event.eventCategory, event.eventAction, event.eventLabel);
         } else {
@@ -297,12 +278,8 @@ function quicktubeController(root, factory) {
 function factory() {
     'use strict';
 
-    // TODO has youtube api improved since this was written in 2015?
-    // Mobile Safari exhibits a number of documented bugs with the
-    // youtube player API. User agent detection, but you'll live, my boy!
-    // https://groups.google.com/forum/#!topic/youtube-api-gdata/vPgKhCu4Vng
     let newScriptTag = document.createElement('script');
-        newScriptTag.src = "https://www.youtube.com/iframe_api";
+        newScriptTag.src = 'https://www.youtube.com/iframe_api';
 
     const documentScripts = document.getElementsByTagName('script');
     if (documentScripts.length > 0) {
