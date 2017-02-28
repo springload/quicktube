@@ -44,9 +44,7 @@ const Quicktube = {
     setExplicitFrameHeight: false,
 
     init(options) {
-        // this.options = this.extend(this.options, options);
-        // TODO is this what that extend function is actually trying to do?
-        this.options = Object.assign(this.options || {}, options);
+        this.options = Object.assign({}, this.options, options);
 
         const playButton = document.querySelector('[data-quicktube-play]');
         const stopButton = document.querySelector('[data-quicktube-stop]');
