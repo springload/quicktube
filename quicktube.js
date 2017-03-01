@@ -6,13 +6,8 @@
 // https://groups.google.com/forum/#!topic/youtube-api-gdata/vPgKhCu4Vng
 const isMobileSafari = () => (/Apple.*Mobile.*Safari/).test(navigator.userAgent);
 
-// Inject the YouTube API onto the page.
-// TODO It is bad to do this systematically outside of any `init` function –
-// - It should be done only on init.
-// - It should check whether `YT` exists already so it does not load it multiple times.
-
 const quicktubeController = () => {
-
+    // Inject the YouTube API onto the page.
     if(!window.YT) {
         const newScriptTag = document.createElement('script');
         newScriptTag.src = 'https://www.youtube.com/iframe_api';
@@ -32,10 +27,6 @@ const quicktubeController = () => {
         const options = video.getAttribute('data-quicktube-options');
         new Quicktube(videoId, options);
     });
-
-    // stopButtons.forEach((stopButton) => {
-
-    // });
 }
 
 class Quicktube {
@@ -245,4 +236,7 @@ class Quicktube {
 
 }
 
-module.exports = quicktubeController;
+module.exports = {
+    quicktubeController: quicktubeController,
+    Quicktube: Quicktube
+}
