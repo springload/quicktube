@@ -45,7 +45,7 @@
     // Remember to initialise QuickTube at some point in your app
     document.addEventListener('DOMContentLoaded', function() {
         const showingItem = document.querySelector('[data-show-while-playing]');
-        quicktube.init();
+        Quicktube.init();
 
         window.addEventListener("quicktube:play", function() {
             showingItem.style.display = 'block';

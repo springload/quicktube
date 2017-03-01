@@ -232,11 +232,6 @@ const Quicktube = {
     },
 };
 
-// Export this to window directly.
-window.onYouTubeIframeAPIReady = () => {
-    Quicktube.init();
-};
-
 module.exports = Quicktube;
 
 //     'use strict';
