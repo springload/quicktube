@@ -13,13 +13,13 @@ const isMobileSafari = () => (/Apple.*Mobile.*Safari/).test(navigator.userAgent)
 
 const quicktubeController = () => {
 
-    const newScriptTag = document.createElement('script');
-    newScriptTag.src = 'https://www.youtube.com/iframe_api';
+    if(!window.YT) {
+        const newScriptTag = document.createElement('script');
+        newScriptTag.src = 'https://www.youtube.com/iframe_api';
 
-    const documentScripts = document.getElementsByTagName('script');
-    if (documentScripts.length > 0) {
-        const firstScriptTag = documentScripts[0];
-        if(!window.YT) {
+        const documentScripts = document.getElementsByTagName('script');
+        if (documentScripts.length > 0) {
+            const firstScriptTag = documentScripts[0];
             firstScriptTag.parentNode.insertBefore(newScriptTag, firstScriptTag);
         }
     }

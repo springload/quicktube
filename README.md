@@ -12,13 +12,13 @@ npm install --save quicktube
 
 ### Initial setup
 
-Is really simple. Just add the video ID to `data-quicktube-video='{video-id}'`
+Is really simple. Just add the video ID to `data-quicktube='{video-id}'`
 
 ```html
-<div class="quicktube" data-quicktube="kittens">
-    <div class="quicktube__video" data-quicktube-video="k6QanQUaDOo">
+<div class="quicktube" data-quicktube="k6QanQUaDOo">
+    <div class="quicktube__video" data-quicktube-video>
     </div>
-    <div data-quicktube-play="kittens" class="quicktube__poster" data-quicktube-poster>
+    <div class="quicktube__poster" data-quicktube-play data-quicktube-poster>
         <div class="quicktube__play quicktube__btn">
             Play
         </div>
@@ -32,7 +32,7 @@ Initialise quicktube.
 import quicktube from 'quicktube';
 
 document.addEventListener('DOMContentLoaded', () => {
-    quicktube.init();
+    quicktube();
 }, false);
 ```
 

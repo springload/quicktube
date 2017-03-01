@@ -9,27 +9,13 @@
 <!-- HTML you need -->
 
 <div class="page-container">
-    <div class="quicktube" data-quicktube="k6QanQUaDOo">
+    <div class="quicktube" data-quicktube="gneBUA39mnI">
         <div class="quicktube__video quicktube__video--paused" data-quicktube-video></div>
         <div data-quicktube-play  class="quicktube__poster" data-quicktube-poster>
             <div class="quicktube__play quicktube__btn" tabindex="0">
                 Play
             </div>
         </div>
-    </div>
-
-    <div data-show-while-playing class="u-text-center">
-        <p class="quicktube__btn quicktube__btn--stop" data-quicktube-stop="k6QanQUaDOo">
-            Stop kittens vid!
-        </p>
-        <p>
-            Oh, hey... you can trigger stuff to happen when the video starts/stops via:
-            <code>
-                window.addEventListener('quicktube:play', function() {
-                    // do something
-                }, false);
-            </code>
-        </p>
     </div>
 
     <div class="quicktube" data-quicktube="QFmLReorTSY">
@@ -41,17 +27,12 @@
         </div>
     </div>
 
-    <div data-show-while-playing class="u-text-center">
-        <p class="quicktube__btn quicktube__btn--stop" data-quicktube-stop="QFmLReorTSY">
-            Stop dailyshow vid!
+    <div data-show-while-playing class="u-text-center" style="display: none;">
+        <p class="quicktube__btn quicktube__btn--stop" data-quicktube-stop="gneBUA39mnI" tabindex="0">
+            Stop first video!
         </p>
-        <p>
-            Oh, hey... you can trigger stuff to happen when the video starts/stops via:
-            <code>
-                window.addEventListener('quicktube:play', function() {
-                    // do something
-                }, false);
-            </code>
+        <p class="quicktube__btn quicktube__btn--stop" data-quicktube-stop="QFmLReorTSY" tabindex="0">
+            Stop second video!
         </p>
     </div>
 </div>
@@ -68,24 +49,20 @@
 
 <script src="quicktube.js"></script>
 <script>
-    // TODO this is initialised already inside above included quicktube script.
-    // Investigate what happens when you intialise
+
     // Remember to initialise QuickTube at some point in your app
     document.addEventListener('DOMContentLoaded', function() {
-        const showingItems = document.querySelectorAll('[data-show-while-playing]');
+        const showingItem = document.querySelector('[data-show-while-playing]');
+
         quicktubeController();
 
-        // showingItems.forEach(function(showingItem) {
-        //     window.addEventListener("quicktube:play", function() {
-        //         console.log(showingItem);
-        //         showingItem.style.display = 'block';
-        //     }, false);
+        window.addEventListener("quicktube:play", function() {
+            showingItem.style.display = 'block';
+        }, false);
 
-        //     window.addEventListener("quicktube:pause", function() {
-        //         console.log(showingItem);
-        //         showingItem.style.display = 'none';
-        //     }, false);
-        // });
+        window.addEventListener("quicktube:pause", function() {
+            showingItem.style.display = 'none';
+        }, false);
 
     });
 </script>
