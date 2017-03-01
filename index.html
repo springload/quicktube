@@ -12,7 +12,7 @@
     <div class="quicktube__video quicktube__video--paused" data-quicktube-video="k6QanQUaDOo">
     </div>
     <div data-quicktube-play="kittens"  class="quicktube__poster" data-quicktube-poster>
-        <div class="quicktube__play quicktube__btn">
+        <div class="quicktube__play quicktube__btn" tabindex="0">
             Play
         </div>
     </div>
@@ -22,37 +22,38 @@
 
 <!-- Demonstration -->
 
-<div data-show-while-playing class="text--center" style="display: none;">
+<div data-show-while-playing class="u-text-center" style="display: none;">
     <p class="quicktube__btn quicktube__btn--stop" data-quicktube-stop="kittens">
         Stop the vid!
     </p>
-</div>
-<div data-show-while-playing style="display: none; padding-left: 1em; padding-right: 1em;">
     <p>
         Oh, hey... you can trigger stuff to happen when the video starts/stops via:
         <code>
-            $(window).on("quicktube:play", function(quicktubeId, $quicktubeEl) {
+            window.addEventListener('quicktube:play', function() {
                 // do something
-            });
+            }, false);
         </code>
     </p>
 </div>
 
 <!-- /Demonstration -->
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="quicktube.js"></script>
 <script>
+    // TODO this is initialised already inside above included quicktube script.
+    // Investigate what happens when you intialise
     // Remember to initialise QuickTube at some point in your app
-    $(document).ready(function() {
-        // Demonstration...
-        $(window).on("quicktube:play", function() {
-            $("[data-show-while-playing]").show();
-        });
+    document.addEventListener('DOMContentLoaded', function() {
+        const showingItem = document.querySelector('[data-show-while-playing]');
+        Quicktube.init();
 
-        $(window).on("quicktube:pause", function() {
-            $("[data-show-while-playing]").hide();
-        });
+        window.addEventListener("quicktube:play", function() {
+            showingItem.style.display = 'block';
+        }, false);
+
+        window.addEventListener("quicktube:pause", function() {
+            showingItem.style.display = 'none';
+        }, false);
     });
 </script>
 </body>

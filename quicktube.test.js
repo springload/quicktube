@@ -1,5 +1,3 @@
-const jQuery = require('jquery');
-
 // Mock for Google Analytics.
 const ga = jest.fn();
 
@@ -27,7 +25,6 @@ const YT = {
 };
 
 // Mock for
-window.$ = jQuery;
 window.ga = ga;
 window.YT = YT;
 
@@ -82,18 +79,36 @@ describe('Quicktube', () => {
     });
 
     describe('init', () => {
-        beforeEach(() => {
-            document.body.innerHTML = loadedHTML;
-        });
-
         it('default options', () => {
-            expect(Quicktube.init()).toMatchSnapshot();
-            expect(document.body.innerHTML).toMatchSnapshot();
+            Quicktube.init();
+            expect(Quicktube.options).toEqual({
+                trackAnalytics: false,
+                activeClass: 'quicktube--playing',
+                pausedClass: 'quicktube--paused',
+                posterFrameHiddenClass: 'quicktube__poster--hidden',
+                autoplay: 1,
+                showInfo: 0,
+                autohide: 1,
+                color: 'white',
+                enablejsapi: 1,
+                wmode: 'transparent'
+            });
         });
 
         it('custom options', () => {
-            expect(Quicktube.init({ trackAnalytics: true })).toMatchSnapshot();
-            expect(document.body.innerHTML).toMatchSnapshot();
+            Quicktube.init({ trackAnalytics: true });
+            expect(Quicktube.options).toEqual({
+                trackAnalytics: true,
+                activeClass: 'quicktube--playing',
+                pausedClass: 'quicktube--paused',
+                posterFrameHiddenClass: 'quicktube__poster--hidden',
+                autoplay: 1,
+                showInfo: 0,
+                autohide: 1,
+                color: 'white',
+                enablejsapi: 1,
+                wmode: 'transparent'
+            });
         });
     });
 
@@ -108,7 +123,7 @@ describe('Quicktube', () => {
         it('click', () => {
             simulateEvent('[data-quicktube-play]', 'click');
             expect(document.body.innerHTML).toMatchSnapshot();
-            expect(quicktube.jamesPlayer).toBe(mockPlayer);
+            expect(Quicktube.quicktubePlayer).toBe(mockPlayer);
         });
 
         it('keydown wrong key', () => {
@@ -133,7 +148,7 @@ describe('Quicktube', () => {
         it('click', () => {
             simulateEvent('[data-quicktube-stop]', 'click');
             expect(document.body.innerHTML).toMatchSnapshot();
-            expect(quicktube.jamesPlayer).toBe(mockPlayer);
+            expect(Quicktube.quicktubePlayer).toBe(mockPlayer);
         })
     });
 
@@ -148,11 +163,6 @@ describe('Quicktube', () => {
             simulateEvent('[data-quicktube-play]', 'click');
             expect(document.body.innerHTML).toMatchSnapshot();
         });
-    });
-
-    // TODO Check QT.supportsTransition false.
-    describe.skip('no transitions', () => {
-        it('click', () => {});
     });
 
     describe('YT Player events', () => {
@@ -175,10 +185,10 @@ describe('Quicktube', () => {
 
             it('playing - stop video', () => {
                 const playVideo = jest.fn();
+                const pauseVideo = jest.fn();
                 playerEvents.onReady({ target: { playVideo } });
-                playVideo.mockClear();
-                playerEvents.onReady({ target: { playVideo } });
-                expect(playVideo).not.toHaveBeenCalled();
+                expect(playVideo).toHaveBeenCalled();
+                Quicktube.stopVideo('kittens');
                 expect(mockPlayer.pauseVideo).toHaveBeenCalled();
             });
         });
