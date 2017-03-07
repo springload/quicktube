@@ -1,33 +1,10 @@
-'use strict';
+
 
 // TODO has youtube api improved since this was written in 2015?
 // Mobile Safari exhibits a number of documented bugs with the
 // youtube player API. User agent detection, but you'll live, my boy!
 // https://groups.google.com/forum/#!topic/youtube-api-gdata/vPgKhCu4Vng
 const isMobileSafari = () => (/Apple.*Mobile.*Safari/).test(navigator.userAgent);
-
-const quicktubeController = () => {
-    // Inject the YouTube API onto the page.
-    if(!window.YT) {
-        const newScriptTag = document.createElement('script');
-        newScriptTag.src = 'https://www.youtube.com/iframe_api';
-
-        const documentScripts = document.getElementsByTagName('script');
-        if (documentScripts.length > 0) {
-            const firstScriptTag = documentScripts[0];
-            firstScriptTag.parentNode.insertBefore(newScriptTag, firstScriptTag);
-        }
-    }
-
-    const videos = document.querySelectorAll('[data-quicktube]');
-    const stopButtons = document.querySelectorAll('[data-quicktube-stop]');
-
-    videos.forEach((video) => {
-        const videoId = video.getAttribute('data-quicktube');
-        const options = video.getAttribute('data-quicktube-options');
-        new Quicktube(videoId, options);
-    });
-}
 
 class Quicktube {
 
@@ -60,7 +37,7 @@ class Quicktube {
         playButton.addEventListener('click', this.onClick.bind(this, videoEl), false);
 
         playButton.addEventListener('keydown', (e) => {
-            if(e.keyCode == 13) {
+            if (e.keyCode === 13) {
                 this.onClick.call(this, videoEl);
             }
         }, false);
@@ -72,7 +49,7 @@ class Quicktube {
 
 
     onClick(videoEl) {
-        let iframeContainer = videoEl.querySelector('[data-quicktube-video]');
+        const iframeContainer = videoEl.querySelector('[data-quicktube-video]');
 
         // defines whether video has already been loaded and you want to play again
         const videoIframes = iframeContainer.getElementsByTagName('iframe');
@@ -94,90 +71,96 @@ class Quicktube {
             }
         };
 
+        // report the % played if it matches 0%, 25%, 50%, 75% or completed
+        const onPlayerPercent = (originalEvent) => {
+            const event = originalEvent;
+            if (event.getPlayerState() === YT.PlayerStatevent.PLAYING) {
+                if (this.options.trackAnalytics) {
+                    const time = event.getDuration() - event.getCurrentTime() <= 1.5 ? 1 : (Math.floor(event.getCurrentTime() / (event.getDuration() * 4)) / 4).toFixed(2);
+                    if (!event.lastP || time > event.lastP) {
+                        const videoData = event.getVideoData();
+                        let label = videoData.title;
+                        // Get title of the current page
+                        const pageTitle = document.title;
+                        event.lastP = time;
+                        label = `${time * 100}% Video played - ${videoData.title}`;
+                        this.trackEvent({
+                            event: 'youtube',
+                            eventCategory: 'Youtube Videos',
+                            eventAction: pageTitle,
+                            eventLabel: label,
+                        });
+                    }
+                    if (event.lastP !== 1) {
+                        setTimeout(onPlayerPercent, 1000, event);
+                    }
+                }
+            }
+        };
+
         // listen for play, pause and end states
         // also report % played every second
         const onPlayerStateChange = (e) => {
-            e.data == YT.PlayerState.PLAYING && setTimeout(onPlayerPercent, 1000, e.target);
-            const video_data = e.target.getVideoData();
-            let label = video_data.title;
+            if (e.data === YT.PlayerState.PLAYING) {
+                setTimeout(onPlayerPercent, 1000, e.target);
+            }
+
+            const videoData = e.target.getVideoData();
+            let label = videoData.title;
             // Get title of the current page
             const pageTitle = document.title;
 
-            if(this.options.trackAnalytics) {
-                if (e.data == YT.PlayerState.PLAYING && YT.gaLastAction == 'p') {
-                    label = `Video Played - ${video_data.title}`;
+            if (this.options.trackAnalytics) {
+                if (e.data === YT.PlayerState.PLAYING && YT.gaLastAction === 'p') {
+                    label = `Video Played - ${videoData.title}`;
                     this.trackEvent({
-                        'event': 'youtube',
-                        'eventCategory': 'Youtube Videos',
-                        'eventAction': pageTitle,
-                        'eventLabel': label
+                        event: 'youtube',
+                        eventCategory: 'Youtube Videos',
+                        eventAction: pageTitle,
+                        eventLabel: label,
                     });
-                    YT.gaLastAction = "";
+                    YT.gaLastAction = '';
                 }
 
-                if (e.data == YT.PlayerState.PAUSED) {
-                    label = `Video Paused - ${video_data.title}`;
+                if (e.data === YT.PlayerState.PAUSED) {
+                    label = `Video Paused - ${videoData.title}`;
                     this.trackEvent({
-                        'event': 'youtube',
-                        'eventCategory': 'Youtube Videos',
-                        'eventAction': pageTitle,
-                        'eventLabel': label
+                        event: 'youtube',
+                        eventCategory: 'Youtube Videos',
+                        eventAction: pageTitle,
+                        eventLabel: label,
                     });
                     YT.gaLastAction = 'p';
                 }
             }
 
-            if (e.data == YT.PlayerState.ENDED) {
-                this.stopVideo.call(this, parentId);
+            if (e.data === YT.PlayerState.ENDED) {
+                this.stopVideo.call(this, this.videoId);
             }
-        }
+        };
 
         // catch all to report errors through the GTM data layer
         // once the error is exposed to GTM, it can be tracked in UA as an event!
         const onPlayerError = (e) => {
-            if(this.options.trackAnalytics) {
+            if (this.options.trackAnalytics) {
                 this.trackEvent({
-                    'event': 'error',
-                    'eventCategory': 'Youtube Videos',
-                    'eventAction': 'GTM',
-                    'eventLabel': `youtube:${e.target.src}-${e.data}`
-                })
-            };
-        };
-
-        // report the % played if it matches 0%, 25%, 50%, 75% or completed
-        const onPlayerPercent = (e) => {
-            if (e.getPlayerState() == YT.PlayerState.PLAYING) {
-                if(this.options.trackAnalytics) {
-                    const time = e.getDuration() - e.getCurrentTime() <= 1.5 ? 1 : (Math.floor(e.getCurrentTime() / e.getDuration() * 4) / 4).toFixed(2);
-                    if (!e.lastP || time > e.lastP) {
-                        const video_data = e.getVideoData();
-                        let label = video_data.title;
-                        // Get title of the current page
-                        const pageTitle = document.title;
-                        e.lastP = time;
-                        label = `${time * 100}% Video played - ${video_data.title}`;
-                        this.trackEvent({
-                            'event': 'youtube',
-                            'eventCategory': 'Youtube Videos',
-                            'eventAction': pageTitle,
-                            'eventLabel': label
-                        })
-                    }
-                    e.lastP != 1 && setTimeout(onPlayerPercent, 1000, e);
-                }
+                    event: 'error',
+                    eventCategory: 'Youtube Videos',
+                    eventAction: 'GTM',
+                    eventLabel: `youtube:${e.target.src}-${e.data}`,
+                });
             }
-        }
+        };
 
         if (!iframe) {
             iframe = this.getIframePlayer(this.videoId, videoEl);
             iframeContainer.appendChild(iframe);
             this.quicktubePlayer = new YT.Player(this.videoId, {
                 events: {
-                    'onStateChange': onPlayerStateChange,
-                    'onReady': onPlayerReady,
-                    'onError': onPlayerError
-                }
+                    onStateChange: onPlayerStateChange,
+                    onReady: onPlayerReady,
+                    onError: onPlayerError,
+                },
             });
             YT.gaLastAction = 'p';
         }
@@ -204,8 +187,8 @@ class Quicktube {
         poster.classList.remove(this.posterFrameHiddenClass);
     }
 
-    getIframePlayer(id, parent) {
-        let iframe = document.createElement('iframe');
+    getIframePlayer(id) {
+        const iframe = document.createElement('iframe');
         iframe.src = this._domain + id + this._settings;
         iframe.width = '100%';
         iframe.id = id;
@@ -214,9 +197,9 @@ class Quicktube {
     }
 
     stopVideo(videoId) {
-        let videoEl = document.querySelector(`[data-quicktube='${videoId}']`);
+        const videoEl = document.querySelector(`[data-quicktube='${videoId}']`);
 
-        if(!this.quicktubePlayer) {
+        if (!this.quicktubePlayer) {
             return;
         }
 
@@ -228,7 +211,7 @@ class Quicktube {
         window.dispatchEvent(new Event('quicktube:pause'));
     }
 
-    trackEvent(event) {
+    static trackEvent(event) {
         if (typeof window.ga === 'function') {
             window.ga('send', 'event', event.eventCategory, event.eventAction, event.eventLabel);
         }
@@ -236,7 +219,29 @@ class Quicktube {
 
 }
 
+const quicktubeController = () => {
+    // Inject the YouTube API onto the page.
+    if (!window.YT) {
+        const newScriptTag = document.createElement('script');
+        newScriptTag.src = 'https://www.youtube.com/iframe_api';
+
+        const documentScripts = document.getElementsByTagName('script');
+        if (documentScripts.length > 0) {
+            const firstScriptTag = documentScripts[0];
+            firstScriptTag.parentNode.insertBefore(newScriptTag, firstScriptTag);
+        }
+    }
+
+    const videos = document.querySelectorAll('[data-quicktube]');
+    videos.forEach((video) => {
+        const videoId = video.getAttribute('data-quicktube');
+        const options = video.getAttribute('data-quicktube-options');
+        new Quicktube(videoId, options);
+    });
+};
+
+
 module.exports = {
     quicktubeController: quicktubeController,
-    Quicktube: Quicktube
-}
+    Quicktube: Quicktube,
+};

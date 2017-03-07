@@ -7,11 +7,18 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "coveralls": "cat ./coverage/lcov.info | coveralls"
+    "coveralls": "cat ./coverage/lcov.info | coveralls",
+    "lint": "eslint"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/springload/Quicktube.js.git"
+  },
+  "babel": {
+    "presets": [
+      "latest",
+      "react"
+    ]
   },
   "keywords": [
     "Youtube",
@@ -26,7 +33,13 @@
   },
   "homepage": "https://github.com/springload/Quicktube.js#readme",
   "devDependencies": {
+    "babel-eslint": "^7.1.1",
     "coveralls": "^2.11.16",
+    "eslint": "^3.17.1",
+    "eslint-config-airbnb": "^14.1.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^4.0.0",
+    "eslint-plugin-react": "^6.10.0",
     "jest": "^19.0.2"
   }
 }

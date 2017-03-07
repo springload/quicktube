@@ -18,7 +18,7 @@ const YT = {
         UNSTARTED: -1,
     },
     // Mock the YT.Player API, return a mock player object and store events.
-    Player: jest.fn(function(playerId, config) {
+    Player: jest.fn((playerId, config) => {
         playerEvents = config.events;
         return mockPlayer;
     }),
@@ -51,11 +51,9 @@ const simulateEvent = (selector, type, data = {}) => {
 };
 
 describe('Quicktube', () => {
-    let loadedHTML;
-
     document.body.innerHTML = mockHTML;
     const Quicktube = require('./quicktube');
-    loadedHTML = document.body.innerHTML;
+    const loadedHTML = document.body.innerHTML;
 
     it('exists', () => {
         expect(Quicktube).toBeDefined();
@@ -91,7 +89,7 @@ describe('Quicktube', () => {
                 autohide: 1,
                 color: 'white',
                 enablejsapi: 1,
-                wmode: 'transparent'
+                wmode: 'transparent',
             });
         });
 
@@ -107,17 +105,15 @@ describe('Quicktube', () => {
                 autohide: 1,
                 color: 'white',
                 enablejsapi: 1,
-                wmode: 'transparent'
+                wmode: 'transparent',
             });
         });
     });
 
     describe('play', () => {
-        let quicktube;
-
         beforeEach(() => {
             document.body.innerHTML = loadedHTML;
-            quicktube = Quicktube.init({ trackAnalytics: true });
+            // const quicktube = Quicktube.init({ trackAnalytics: true });
         });
 
         it('click', () => {
@@ -138,24 +134,22 @@ describe('Quicktube', () => {
     });
 
     describe('stop', () => {
-        let quicktube;
-
         beforeEach(() => {
             document.body.innerHTML = loadedHTML;
-            quicktube = Quicktube.init({ trackAnalytics: true });
+            // const quicktube = Quicktube.init({ trackAnalytics: true });
         });
 
         it('click', () => {
             simulateEvent('[data-quicktube-stop]', 'click');
             expect(document.body.innerHTML).toMatchSnapshot();
             expect(Quicktube.quicktubePlayer).toBe(mockPlayer);
-        })
+        });
     });
 
     describe.skip('play iOS', () => {
         beforeEach(() => {
             document.body.innerHTML = loadedHTML;
-            navigator.userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1";
+            navigator.userAgent = 'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1';
             Quicktube.init();
         });
 
@@ -166,11 +160,9 @@ describe('Quicktube', () => {
     });
 
     describe('YT Player events', () => {
-        let quicktube;
-
         beforeEach(() => {
             document.body.innerHTML = loadedHTML;
-            quicktube = Quicktube.init({ trackAnalytics: true });
+            // const quicktube = Quicktube.init({ trackAnalytics: true });
             simulateEvent('[data-quicktube-play]', 'click');
             ga.mockClear();
             mockPlayer.pauseVideo.mockClear();
@@ -185,7 +177,6 @@ describe('Quicktube', () => {
 
             it('playing - stop video', () => {
                 const playVideo = jest.fn();
-                const pauseVideo = jest.fn();
                 playerEvents.onReady({ target: { playVideo } });
                 expect(playVideo).toHaveBeenCalled();
                 Quicktube.stopVideo('kittens');
@@ -199,7 +190,7 @@ describe('Quicktube', () => {
                     target: {
                         getVideoData: jest.fn(() => ({ title: 'test title' })),
                     },
-                    data: YT.PlayerState.PLAYING
+                    data: YT.PlayerState.PLAYING,
                 });
                 expect(document.body.innerHTML).toMatchSnapshot();
                 expect(ga.mock.calls[0]).toMatchSnapshot();
@@ -216,7 +207,7 @@ describe('Quicktube', () => {
                             getCurrentTime: jest.fn(() => 0),
                             // lastP: '',
                         },
-                        data: YT.PlayerState.PLAYING
+                        data: YT.PlayerState.PLAYING,
                     });
                     jest.runOnlyPendingTimers();
                     expect(ga.mock.calls[1]).toMatchSnapshot();
@@ -232,7 +223,7 @@ describe('Quicktube', () => {
                             getCurrentTime: jest.fn(() => 25),
                             // lastP: '',
                         },
-                        data: YT.PlayerState.PLAYING
+                        data: YT.PlayerState.PLAYING,
                     });
                     jest.runOnlyPendingTimers();
                     expect(ga.mock.calls[1]).toMatchSnapshot();
@@ -248,7 +239,7 @@ describe('Quicktube', () => {
                             getCurrentTime: jest.fn(() => 50),
                             // lastP: '',
                         },
-                        data: YT.PlayerState.PLAYING
+                        data: YT.PlayerState.PLAYING,
                     });
                     jest.runOnlyPendingTimers();
                     expect(ga.mock.calls[1]).toMatchSnapshot();
@@ -264,7 +255,7 @@ describe('Quicktube', () => {
                             getCurrentTime: jest.fn(() => 50),
                             // lastP: '',
                         },
-                        data: YT.PlayerState.PLAYING
+                        data: YT.PlayerState.PLAYING,
                     });
                     jest.runOnlyPendingTimers();
                     expect(ga.mock.calls[1]).toMatchSnapshot();
@@ -276,7 +267,7 @@ describe('Quicktube', () => {
                     target: {
                         getVideoData: jest.fn(() => ({ title: 'test title' })),
                     },
-                    data: YT.PlayerState.PAUSED
+                    data: YT.PlayerState.PAUSED,
                 });
                 expect(document.body.innerHTML).toMatchSnapshot();
                 expect(ga.mock.calls[0]).toMatchSnapshot();
@@ -287,7 +278,7 @@ describe('Quicktube', () => {
                     target: {
                         getVideoData: jest.fn(() => ({ title: 'test title' })),
                     },
-                    data: YT.PlayerState.ENDED
+                    data: YT.PlayerState.ENDED,
                 });
                 expect(document.body.innerHTML).toMatchSnapshot();
                 expect(mockPlayer.pauseVideo).toHaveBeenCalled();
