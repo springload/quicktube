@@ -11,13 +11,11 @@ class Quicktube {
     constructor(videoId, options = {}) {
         this._settings = '?autoplay=1&showinfo=0&autohide=1&color=white&enablejsapi=1&playerapiid=ytplayer&wmode=transparent';
         this._domain = 'https://www.youtube.com/embed/';
-        // TODO Decide which settings you want to be able to configure from site init
         this.options = Object.assign({
             trackAnalytics: false,
             activeClass: 'quicktube--playing',
             pausedClass: 'quicktube--paused',
             posterFrameHiddenClass: 'quicktube__poster--hidden',
-            autoplay: 1,
             showInfo: 0,
             autohide: 1,
             color: 'white',
@@ -25,20 +23,17 @@ class Quicktube {
             wmode: 'transparent',
         }, options);
         this.iframeClass = 'quicktube__iframe';
-        this.activeClass = 'quicktube--playing';
-        this.pausedClass = 'quicktube--paused';
-        this.posterFrameHiddenClass = 'quicktube__poster--hidden';
         this.videoId = videoId;
+        this.videoEl = document.querySelector(`[data-quicktube="${videoId}"]`);
 
-        const videoEl = document.querySelector(`[data-quicktube="${videoId}"]`);
-        const playButton = videoEl.querySelector('[data-quicktube-play]');
+        const playButton = this.videoEl.querySelector('[data-quicktube-play]');
         const stopButton = document.querySelector(`[data-quicktube-stop="${videoId}"]`);
 
-        playButton.addEventListener('click', this.onClick.bind(this, videoEl), false);
+        playButton.addEventListener('click', this.onClick.bind(this, this.videoEl), false);
 
         playButton.addEventListener('keydown', (e) => {
             if (e.keyCode === 13) {
-                this.onClick.call(this, videoEl);
+                this.onClick.call(this, this.videoEl);
             }
         }, false);
 
@@ -48,8 +43,8 @@ class Quicktube {
     }
 
 
-    onClick(videoEl) {
-        const iframeContainer = videoEl.querySelector('[data-quicktube-video]');
+    onClick() {
+        const iframeContainer = this.videoEl.querySelector('[data-quicktube-video]');
 
         // defines whether video has already been loaded and you want to play again
         const videoIframes = iframeContainer.getElementsByTagName('iframe');
@@ -58,14 +53,16 @@ class Quicktube {
             iframe = videoIframes[0];
         }
 
-        const poster = videoEl.querySelector('[data-quicktube-poster]');
+        const poster = this.videoEl.querySelector('[data-quicktube-poster]');
 
         const onPlayerReady = (e) => {
+            //
+            const isPlaying = this.videoEl.getAttribute('data-video-playing');
             if (!isMobileSafari()) {
-                if (videoEl.getAttribute('data-video-playing')) {
+                if (isPlaying) {
                     this.stopVideo.call(this, this.videoId);
                 } else {
-                    videoEl.getAttribute('data-video-playing');
+                    this.videoEl.setAttribute('data-video-playing', true);
                     e.target.playVideo();
                 }
             }
@@ -74,9 +71,18 @@ class Quicktube {
         // report the % played if it matches 0%, 25%, 50%, 75% or completed
         const onPlayerPercent = (originalEvent) => {
             const event = originalEvent;
-            if (event.getPlayerState() === YT.PlayerStatevent.PLAYING) {
+            if (event.getPlayerState() === YT.PlayerState.PLAYING) {
                 if (this.options.trackAnalytics) {
-                    const time = event.getDuration() - event.getCurrentTime() <= 1.5 ? 1 : (Math.floor(event.getCurrentTime() / (event.getDuration() * 4)) / 4).toFixed(2);
+                    const currenDuration = event.getDuration();
+                    const currentTime = event.getCurrentTime();
+                    let time;
+
+                    if (currenDuration - currentTime <= 1.5) {
+                        time = 1;
+                    } else {
+                        time = (Math.floor(currentTime / (currenDuration * 4)) / 4).toFixed(2);
+                    }
+
                     if (!event.lastP || time > event.lastP) {
                         const videoData = event.getVideoData();
                         let label = videoData.title;
@@ -100,18 +106,27 @@ class Quicktube {
 
         // listen for play, pause and end states
         // also report % played every second
-        const onPlayerStateChange = (e) => {
-            if (e.data === YT.PlayerState.PLAYING) {
-                setTimeout(onPlayerPercent, 1000, e.target);
+        const onPlayerStateChange = (event) => {
+            if (event.data === YT.PlayerState.PLAYING) {
+                this.videoEl.setAttribute('data-video-playing', true);
+                this.videoEl.classList.add(this.options.activeClass);
+                this.videoEl.classList.remove(this.options.pausedClass);
+                setTimeout(onPlayerPercent, 1000, event.target);
             }
 
-            const videoData = e.target.getVideoData();
+            if (event.data === YT.PlayerState.PAUSED) {
+                this.videoEl.removeAttribute('data-video-playing', false);
+                this.videoEl.classList.remove(this.options.activeClass);
+                this.videoEl.classList.add(this.options.pausedClass);
+            }
+
+            const videoData = event.target.getVideoData();
             let label = videoData.title;
             // Get title of the current page
             const pageTitle = document.title;
 
             if (this.options.trackAnalytics) {
-                if (e.data === YT.PlayerState.PLAYING && YT.gaLastAction === 'p') {
+                if (event.data === YT.PlayerState.PLAYING && YT.gaLastAction === 'p') {
                     label = `Video Played - ${videoData.title}`;
                     this.trackEvent({
                         event: 'youtube',
@@ -122,7 +137,7 @@ class Quicktube {
                     YT.gaLastAction = '';
                 }
 
-                if (e.data === YT.PlayerState.PAUSED) {
+                if (event.data === YT.PlayerState.PAUSED) {
                     label = `Video Paused - ${videoData.title}`;
                     this.trackEvent({
                         event: 'youtube',
@@ -134,26 +149,26 @@ class Quicktube {
                 }
             }
 
-            if (e.data === YT.PlayerState.ENDED) {
+            if (event.data === YT.PlayerState.ENDED) {
                 this.stopVideo.call(this, this.videoId);
             }
         };
 
         // catch all to report errors through the GTM data layer
         // once the error is exposed to GTM, it can be tracked in UA as an event!
-        const onPlayerError = (e) => {
+        const onPlayerError = (event) => {
             if (this.options.trackAnalytics) {
                 this.trackEvent({
                     event: 'error',
                     eventCategory: 'Youtube Videos',
                     eventAction: 'GTM',
-                    eventLabel: `youtube:${e.target.src}-${e.data}`,
+                    eventLabel: `youtube:${event.target.src}-${event.data}`,
                 });
             }
         };
 
         if (!iframe) {
-            iframe = this.getIframePlayer(this.videoId, videoEl);
+            iframe = this.getIframePlayer(this.videoId, this.videoEl);
             iframeContainer.appendChild(iframe);
             this.quicktubePlayer = new YT.Player(this.videoId, {
                 events: {
@@ -171,20 +186,20 @@ class Quicktube {
             }
         }
 
-        if (!videoEl.getAttribute('data-video-playing')) {
+        if (!this.videoEl.getAttribute('data-video-playing')) {
             this.hidePosterFrame(poster);
-            videoEl.classList.add(this.activeClass);
-            videoEl.classList.remove(this.pausedClass);
+            this.videoEl.classList.add(this.options.activeClass);
+            this.videoEl.classList.remove(this.options.pausedClass);
             window.dispatchEvent(new Event('quicktube:play'));
         }
     }
 
     hidePosterFrame(poster) {
-        poster.classList.add(this.posterFrameHiddenClass);
+        poster.classList.add(this.options.posterFrameHiddenClass);
     }
 
     showPosterFrame(poster) {
-        poster.classList.remove(this.posterFrameHiddenClass);
+        poster.classList.remove(this.options.posterFrameHiddenClass);
     }
 
     getIframePlayer(id) {
@@ -196,18 +211,16 @@ class Quicktube {
         return iframe;
     }
 
-    stopVideo(videoId) {
-        const videoEl = document.querySelector(`[data-quicktube='${videoId}']`);
-
+    stopVideo() {
         if (!this.quicktubePlayer) {
             return;
         }
 
         this.quicktubePlayer.pauseVideo();
-        videoEl.classList.remove(this.activeClass);
-        videoEl.classList.add(this.pausedClass);
-        this.showPosterFrame(videoEl.querySelector('[data-quicktube-poster]'));
-        videoEl.getAttribute('data-video-playing');
+        this.videoEl.classList.remove(this.options.activeClass);
+        this.videoEl.classList.add(this.options.pausedClass);
+        this.showPosterFrame(this.videoEl.querySelector('[data-quicktube-poster]'));
+        this.videoEl.removeAttribute('data-video-playing');
         window.dispatchEvent(new Event('quicktube:pause'));
     }
 
@@ -235,7 +248,7 @@ const quicktubeController = () => {
     const videos = document.querySelectorAll('[data-quicktube]');
     videos.forEach((video) => {
         const videoId = video.getAttribute('data-quicktube');
-        const options = video.getAttribute('data-quicktube-options');
+        const options = JSON.parse(video.getAttribute('data-quicktube-options'));
         new Quicktube(videoId, options);
     });
 };
