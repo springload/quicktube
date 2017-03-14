@@ -248,7 +248,7 @@ class Quicktube {
 
 }
 
-const controller = () => {
+const quicktubeController = () => {
     // Inject the YouTube API onto the page.
     if (!window.YT) {
         const newScriptTag = document.createElement('script');
@@ -261,7 +261,7 @@ const controller = () => {
         }
     }
 
-    const videos = document.querySelectorAll('[data-quicktube]');
+    const videos = Array.prototype.slice.call(document.querySelectorAll('[data-quicktube]'));
     videos.forEach((video) => {
         const videoId = video.getAttribute('data-quicktube');
         const options = JSON.parse(video.getAttribute('data-quicktube-options'));
