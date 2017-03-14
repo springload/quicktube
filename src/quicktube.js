@@ -2,9 +2,8 @@ const KEY_CODES = {
     enter: 13,
 };
 
-// TODO has youtube api improved since this was written in 2015?
 // Mobile Safari exhibits a number of documented bugs with the
-// youtube player API. User agent detection, but you'll live, my boy!
+// youtube player API
 // https://groups.google.com/forum/#!topic/youtube-api-gdata/vPgKhCu4Vng
 const isMobileSafari = () => (/Apple.*Mobile.*Safari/).test(navigator.userAgent);
 
@@ -41,6 +40,7 @@ class Quicktube {
         this.iframeClass = 'quicktube__iframe';
         this.videoId = videoId;
         this.videoEl = document.querySelector(`[data-quicktube="${videoId}"]`);
+        this.poster = this.videoEl.querySelector('[data-quicktube-poster]');
         this.isMobileSafari = isMobileSafari();
         this.onClick = this.onClick.bind(this);
         this.stopVideo = this.stopVideo.bind(this);
@@ -66,18 +66,16 @@ class Quicktube {
 
     onClick() {
         const iframeContainer = this.videoEl.querySelector('[data-quicktube-video]');
+        const videoIframes = iframeContainer.getElementsByTagName('iframe');
 
         // defines whether video has already been loaded and you want to play again
-        const videoIframes = iframeContainer.getElementsByTagName('iframe');
         let iframe = false;
         if (videoIframes.length > 0) {
             iframe = videoIframes[0];
         }
 
-        const poster = this.videoEl.querySelector('[data-quicktube-poster]');
-
         if (!iframe) {
-            iframe = this.createIframePlayer(this.videoId, this.videoEl);
+            iframe = this.createIframePlayer();
             iframeContainer.appendChild(iframe);
             this.quicktubePlayer = new YT.Player(this.videoId, {
                 events: {
@@ -89,48 +87,55 @@ class Quicktube {
             YT.gaLastAction = 'p';
         }
 
+        // Only trigger video play if not Mobile safari as playVideo function not supported
         if (!this.isMobileSafari) {
             if (this.quicktubePlayer.playVideo) {
                 this.quicktubePlayer.playVideo();
             }
         }
 
+        // Check if video isn't already playing
         if (!this.videoEl.getAttribute('data-video-playing')) {
-            this.hidePosterFrame(poster);
-            this.videoEl.classList.add(this.options.activeClass);
-            this.videoEl.classList.remove(this.options.pausedClass);
+            this.playVideo();
             window.dispatchEvent(new Event('quicktube:play'));
         }
     }
 
-    hidePosterFrame(poster) {
-        poster.classList.add(this.options.posterFrameHiddenClass);
+    playVideo() {
+        this.hidePosterFrame(this.poster);
+        this.videoEl.classList.add(this.options.activeClass);
+        this.videoEl.classList.remove(this.options.pausedClass);
     }
 
-    showPosterFrame(poster) {
-        poster.classList.remove(this.options.posterFrameHiddenClass);
-    }
-
-    createIframePlayer(id) {
-        const iframe = document.createElement('iframe');
-        iframe.src = this._domain + id + this._settings;
-        iframe.width = '100%';
-        iframe.id = id;
-        iframe.className = this.iframeClass;
-        return iframe;
-    }
-
+    // TODO need to differentiate between an actual stop scenario and a pause
     stopVideo() {
         if (!this.quicktubePlayer) {
             return;
         }
 
-        this.quicktubePlayer.pauseVideo();
+        this.quicktubePlayer.stopVideo();
         this.videoEl.classList.remove(this.options.activeClass);
         this.videoEl.classList.add(this.options.pausedClass);
         this.showPosterFrame(this.videoEl.querySelector('[data-quicktube-poster]'));
         this.videoEl.removeAttribute('data-video-playing');
         window.dispatchEvent(new Event('quicktube:pause'));
+    }
+
+    hidePosterFrame() {
+        this.poster.classList.add(this.options.posterFrameHiddenClass);
+    }
+
+    showPosterFrame() {
+        this.poster.classList.remove(this.options.posterFrameHiddenClass);
+    }
+
+    createIframePlayer() {
+        const iframe = document.createElement('iframe');
+        iframe.src = this._domain + this.videoId + this._settings;
+        iframe.width = '100%';
+        iframe.id = this.videoId;
+        iframe.className = this.iframeClass;
+        return iframe;
     }
 
     onPlayerReady(e) {
@@ -144,7 +149,6 @@ class Quicktube {
             }
         }
     }
-
 
     // report the % played if it matches 0%, 25%, 50%, 75% or completed
     onPlayerPercent(originalEvent) {
