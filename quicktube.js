@@ -42,6 +42,8 @@ class Quicktube {
         this.videoId = videoId;
         this.videoEl = document.querySelector(`[data-quicktube="${videoId}"]`);
         this.isMobileSafari = isMobileSafari();
+        this.onClick = this.onClick.bind(this);
+        this.stopVideo = this.stopVideo.bind(this);
         this.onPlayerReady = this.onPlayerReady.bind(this);
         this.onPlayerStateChange = this.onPlayerStateChange.bind(this);
         this.onPlayerError = this.onPlayerError.bind(this);
@@ -49,16 +51,16 @@ class Quicktube {
         const playButton = document.querySelector(`[data-quicktube-play="${videoId}"]`);
         const stopButton = document.querySelector(`[data-quicktube-stop="${videoId}"]`);
 
-        playButton.addEventListener('click', this.onClick.bind(this, this.videoEl), false);
+        playButton.addEventListener('click', this.onClick, false);
 
         playButton.addEventListener('keydown', (e) => {
             if (e.keyCode === KEY_CODES.enter) {
-                this.onClick.bind(this);
+                this.onClick();
             }
         }, false);
 
         stopButton.addEventListener('click', () => {
-            this.stopVideo.bind(this);
+            this.stopVideo();
         }, false);
     }
 
@@ -135,7 +137,7 @@ class Quicktube {
         const isPlaying = this.videoEl.getAttribute('data-video-playing');
         if (!this.isMobileSafari) {
             if (isPlaying) {
-                this.stopVideo.call(this, this.videoId);
+                this.stopVideo();
             } else {
                 this.videoEl.setAttribute('data-video-playing', true);
                 e.target.playVideo();
@@ -227,7 +229,7 @@ class Quicktube {
         }
 
         if (event.data === YT.PlayerState.ENDED) {
-            this.stopVideo.call(this, this.videoId);
+            this.stopVideo();
         }
     }
 

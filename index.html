@@ -4,6 +4,58 @@
     <title>Quicktube</title>
     <link rel="stylesheet" href="quicktube.css"/>
     <meta name='viewport' content="width=device-width, initial-scale=1" />
+    <style type="text/css">
+        /**
+        * ----------------------------------------------
+        * Demo styles
+        * ----------------------------------------------
+        **/
+
+        body {
+            font-family: sans-serif;
+            margin: 0;
+        }
+
+        .quicktube__poster {
+            background: #eee;
+            text-align: center;
+        }
+
+        .quicktube__btn {
+            padding: .5em;
+            border: solid 2px #222;
+            text-transform: uppercase;
+            font-weight: bold;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+         /* A stop button */
+        .quicktube__btn--stop {
+            border-color: red;
+            color: red;
+        }
+
+        .quicktube__btn--stop:hover {
+            background: red;
+        }
+
+        .quicktube__poster:hover .quicktube__btn,
+        .quicktube__btn:hover {
+            background: #222;
+            color: #fff;
+        }
+
+        .u-text-center {
+            text-align: center;
+        }
+
+        .page-container {
+            max-width: 50rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
 </head>
 <body>
 
