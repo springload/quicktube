@@ -248,7 +248,7 @@ class Quicktube {
 
 }
 
-const quicktubeController = () => {
+const controller = () => {
     // Inject the YouTube API onto the page.
     if (!window.YT) {
         const newScriptTag = document.createElement('script');
@@ -271,6 +271,6 @@ const quicktubeController = () => {
 
 // Need to figure out the best way to export these to use inside tests as well as projects
 module.exports = {
-    quicktubeController: quicktubeController,
+    controller: quicktubeController,
     Quicktube: Quicktube,
 };

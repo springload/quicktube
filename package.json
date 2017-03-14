@@ -2,7 +2,7 @@
   "name": "quicktube",
   "version": "2.0.0",
   "description": "A lightweight responsive youtube player",
-  "main": "./src/quicktube.js",
+  "main": "./dist/quicktube.js",
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",

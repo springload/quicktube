@@ -12,13 +12,15 @@ npm install --save quicktube
 
 ### Initial setup
 
-Is really simple. Just add the video ID to `data-quicktube='{video-id}'`
+Is really simple. Just add the video ID to `data-quicktube='{video-id}'` and `data-quicktube-play='{video-id}'` to the play trigger element.
 
 ```html
 <div class="quicktube" data-quicktube="k6QanQUaDOo">
     <div class="quicktube__video" data-quicktube-video>
     </div>
-    <div class="quicktube__poster" data-quicktube-play data-quicktube-poster>
+    <div data-quicktube-play="k6QanQUaDOo" class="quicktube__poster" data-quicktube-poster>
+        <!-- Optional poster frame image -->
+        <img class="quicktube__poster-image" src="/path/to/image" />
         <div class="quicktube__play quicktube__btn">
             Play
         </div>
@@ -32,7 +34,7 @@ Initialise quicktube.
 import quicktube from 'quicktube';
 
 document.addEventListener('DOMContentLoaded', () => {
-    quicktube();
+    quicktube.controller();
 }, false);
 ```
 
