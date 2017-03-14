@@ -12,6 +12,8 @@ module.exports = {
     output: {
         path: distPath,
         filename: '[name].js',
+        libraryTarget: 'umd',
+        library: 'quicktube',
     },
     plugins: [],
     module: {
