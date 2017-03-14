@@ -31,10 +31,9 @@ window.YT = YT;
 const mockHTML = `
 <script></script>
 <div class="quicktube" data-quicktube="k6QanQUaDOo">
-    <div class="quicktube__video quicktube__video--paused" data-quicktube-video>
-    </div>
-    <div class="quicktube__poster" data-quicktube-play data-quicktube-poster>
-        <div class="quicktube__play quicktube__btn">
+    <div class="quicktube__video quicktube__video--paused" data-quicktube-video></div>
+    <div data-quicktube-play="k6QanQUaDOo" class="quicktube__poster" data-quicktube-poster>
+        <div class="quicktube__play quicktube__btn" tabindex="0">
             Play
         </div>
     </div>
@@ -84,11 +83,9 @@ describe('Quicktube', () => {
                 activeClass: 'quicktube--playing',
                 pausedClass: 'quicktube--paused',
                 posterFrameHiddenClass: 'quicktube__poster--hidden',
-                autoplay: 1,
                 showInfo: 0,
                 autohide: 1,
                 color: 'white',
-                enablejsapi: 1,
                 wmode: 'transparent',
             });
         });
@@ -100,11 +97,9 @@ describe('Quicktube', () => {
                 activeClass: 'quicktube--playing',
                 pausedClass: 'quicktube--paused',
                 posterFrameHiddenClass: 'quicktube__poster--hidden',
-                autoplay: 1,
                 showInfo: 0,
                 autohide: 1,
                 color: 'white',
-                enablejsapi: 1,
                 wmode: 'transparent',
             });
         });
