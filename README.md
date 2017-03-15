@@ -16,14 +16,13 @@ Is really simple. Just add the video ID to `data-quicktube='{video-id}'` and `da
 
 ```html
 <div class="quicktube" data-quicktube="k6QanQUaDOo">
-    <div class="quicktube__video" data-quicktube-video>
-    </div>
+    <div class="quicktube__video" data-quicktube-video></div>
     <div data-quicktube-play="k6QanQUaDOo" class="quicktube__poster" data-quicktube-poster>
         <!-- Optional poster frame image -->
         <img class="quicktube__poster-image" src="/path/to/image" />
-        <div class="quicktube__play quicktube__btn">
+        <button class="quicktube__play quicktube__btn">
             Play
-        </div>
+        </button>
     </div>
 </div>
 ```

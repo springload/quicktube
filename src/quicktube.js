@@ -87,7 +87,7 @@ class Quicktube {
             YT.gaLastAction = 'p';
         }
 
-        // Only trigger video play if not Mobile safari as playVideo function not supported
+        // Only trigger force video play if not Mobile safari as playVideo function not supported
         if (!this.isMobileSafari) {
             if (this.quicktubePlayer.playVideo) {
                 this.quicktubePlayer.playVideo();
@@ -96,29 +96,32 @@ class Quicktube {
 
         // Check if video isn't already playing
         if (!this.videoEl.getAttribute('data-video-playing')) {
-            this.playVideo();
+            this.hidePosterFrame();
+            this.addActiveState();
             window.dispatchEvent(new Event('quicktube:play'));
         }
     }
 
-    playVideo() {
-        this.hidePosterFrame(this.poster);
+    addActiveState() {
         this.videoEl.classList.add(this.options.activeClass);
         this.videoEl.classList.remove(this.options.pausedClass);
     }
 
-    // TODO need to differentiate between an actual stop scenario and a pause
+    removeActiveState() {
+        this.videoEl.classList.remove(this.options.activeClass);
+        this.videoEl.classList.add(this.options.pausedClass);
+        this.videoEl.removeAttribute('data-video-playing');
+    }
+
     stopVideo() {
         if (!this.quicktubePlayer) {
             return;
         }
 
         this.quicktubePlayer.stopVideo();
-        this.videoEl.classList.remove(this.options.activeClass);
-        this.videoEl.classList.add(this.options.pausedClass);
-        this.showPosterFrame(this.videoEl.querySelector('[data-quicktube-poster]'));
-        this.videoEl.removeAttribute('data-video-playing');
-        window.dispatchEvent(new Event('quicktube:pause'));
+        this.removeActiveState();
+        this.showPosterFrame();
+        window.dispatchEvent(new Event('quicktube:stop'));
     }
 
     hidePosterFrame() {
@@ -138,23 +141,74 @@ class Quicktube {
         return iframe;
     }
 
-    onPlayerReady(e) {
+
+    onPlayerReady(event) {
         const isPlaying = this.videoEl.getAttribute('data-video-playing');
         if (!this.isMobileSafari) {
             if (isPlaying) {
+                // TODO evaluate if this is needed
+                // Not sure it ever gets to this point
                 this.stopVideo();
             } else {
                 this.videoEl.setAttribute('data-video-playing', true);
-                e.target.playVideo();
+                event.target.playVideo();
             }
+        }
+    }
+
+    // listen for play, pause and end states
+    // also report % played every second
+    onPlayerStateChange(event) {
+        if (event.data === YT.PlayerState.PLAYING) {
+            this.videoEl.setAttribute('data-video-playing', true);
+            this.addActiveState();
+            setTimeout(this.onPlayerPercent.bind(this), 1000, event.target);
+        }
+
+        if (event.data === YT.PlayerState.PAUSED) {
+            this.removeActiveState();
+        }
+
+        const videoData = event.target.getVideoData();
+        let label = videoData.title;
+        // Get title of the current page
+        const pageTitle = document.title;
+
+        // TODO figure out what this is all doing and test it
+        if (this.options.trackAnalytics) {
+            if (event.data === YT.PlayerState.PLAYING && YT.gaLastAction === 'p') {
+                label = `Video Played - ${videoData.title}`;
+                trackEvent({
+                    event: 'youtube',
+                    eventCategory: 'Youtube Videos',
+                    eventAction: pageTitle,
+                    eventLabel: label,
+                });
+                YT.gaLastAction = '';
+            }
+
+            if (event.data === YT.PlayerState.PAUSED) {
+                label = `Video Paused - ${videoData.title}`;
+                trackEvent({
+                    event: 'youtube',
+                    eventCategory: 'Youtube Videos',
+                    eventAction: pageTitle,
+                    eventLabel: label,
+                });
+                YT.gaLastAction = 'p';
+            }
+        }
+
+        if (event.data === YT.PlayerState.ENDED) {
+            this.stopVideo();
         }
     }
 
     // report the % played if it matches 0%, 25%, 50%, 75% or completed
     onPlayerPercent(originalEvent) {
         const event = originalEvent;
-        if (event.getPlayerState() === YT.PlayerState.PLAYING) {
-            if (this.options.trackAnalytics) {
+        if (this.options.trackAnalytics) {
+            if (event.getPlayerState() === YT.PlayerState.PLAYING) {
                 const currenDuration = event.getDuration();
                 const currentTime = event.getCurrentTime();
                 let time;
@@ -184,56 +238,6 @@ class Quicktube {
                     setTimeout(this.onPlayerPercent.bind(this), 1000, event);
                 }
             }
-        }
-    }
-
-    // listen for play, pause and end states
-    // also report % played every second
-    onPlayerStateChange(event) {
-        if (event.data === YT.PlayerState.PLAYING) {
-            this.videoEl.setAttribute('data-video-playing', true);
-            this.videoEl.classList.add(this.options.activeClass);
-            this.videoEl.classList.remove(this.options.pausedClass);
-            setTimeout(this.onPlayerPercent.bind(this), 1000, event.target);
-        }
-
-        if (event.data === YT.PlayerState.PAUSED) {
-            this.videoEl.removeAttribute('data-video-playing', false);
-            this.videoEl.classList.remove(this.options.activeClass);
-            this.videoEl.classList.add(this.options.pausedClass);
-        }
-
-        const videoData = event.target.getVideoData();
-        let label = videoData.title;
-        // Get title of the current page
-        const pageTitle = document.title;
-
-        if (this.options.trackAnalytics) {
-            if (event.data === YT.PlayerState.PLAYING && YT.gaLastAction === 'p') {
-                label = `Video Played - ${videoData.title}`;
-                trackEvent({
-                    event: 'youtube',
-                    eventCategory: 'Youtube Videos',
-                    eventAction: pageTitle,
-                    eventLabel: label,
-                });
-                YT.gaLastAction = '';
-            }
-
-            if (event.data === YT.PlayerState.PAUSED) {
-                label = `Video Paused - ${videoData.title}`;
-                trackEvent({
-                    event: 'youtube',
-                    eventCategory: 'Youtube Videos',
-                    eventAction: pageTitle,
-                    eventLabel: label,
-                });
-                YT.gaLastAction = 'p';
-            }
-        }
-
-        if (event.data === YT.PlayerState.ENDED) {
-            this.stopVideo();
         }
     }
 

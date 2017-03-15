@@ -31,14 +31,14 @@ window.YT = YT;
 const mockHTML = `
 <script></script>
 <div class="quicktube" data-quicktube="k6QanQUaDOo">
-    <div class="quicktube__video quicktube__video--paused" data-quicktube-video></div>
+    <div class="quicktube__video" data-quicktube-video></div>
     <div data-quicktube-play="k6QanQUaDOo" class="quicktube__poster" data-quicktube-poster>
-        <div class="quicktube__play quicktube__btn" tabindex="0">
+        <button class="quicktube__play quicktube__btn">
             Play
-        </div>
+        </button>
     </div>
 </div>
-<div data-quicktube-stop="k6QanQUaDOo">Stop button</div>
+<button class="quicktube__play quicktube__btn" data-quicktube-stop="k6QanQUaDOo">Stop button</button>
 `;
 
 const simulateEvent = (selector, type, data = {}) => {
