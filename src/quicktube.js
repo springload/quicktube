@@ -1,5 +1,5 @@
 const KEY_CODES = {
-    enter: 13,
+    ENTER: 13,
 };
 
 // Mobile Safari exhibits a number of documented bugs with the
@@ -54,7 +54,7 @@ class Quicktube {
         playButton.addEventListener('click', this.onClick, false);
 
         playButton.addEventListener('keydown', (e) => {
-            if (e.keyCode === KEY_CODES.enter) {
+            if (e.keyCode === KEY_CODES.ENTER) {
                 this.onClick();
             }
         }, false);
