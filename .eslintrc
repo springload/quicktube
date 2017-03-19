@@ -24,8 +24,6 @@
         "browser": true
     },
     "globals": {
-        "document": true,
-        "window": true,
         "YT": true
     }
 }
