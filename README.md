@@ -33,7 +33,7 @@ Initialise quicktube.
 import quicktube from 'quicktube';
 
 document.addEventListener('DOMContentLoaded', () => {
-    quicktube.controller();
+    quicktube.init();
 }, false);
 ```
 

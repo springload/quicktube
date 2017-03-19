@@ -102,7 +102,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         const showingItem = document.querySelector('[data-show-while-playing]');
 
-        window.quicktube.controller();
+        window.quicktube.init();
 
         window.addEventListener("quicktube:play", function() {
             showingItem.style.display = 'block';
