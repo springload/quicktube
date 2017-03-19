@@ -57,11 +57,11 @@ class Quicktube {
             if (e.keyCode === KEY_CODES.ENTER) {
                 this.onClick();
             }
-        }, false);
+        });
 
         stopButton.addEventListener('click', () => {
             this.stopVideo();
-        }, false);
+        });
     }
 
     onClick() {
