@@ -51,7 +51,7 @@ class Quicktube {
         const playButton = document.querySelector(`[data-quicktube-play="${videoId}"]`);
         const stopButton = document.querySelector(`[data-quicktube-stop="${videoId}"]`);
 
-        playButton.addEventListener('click', this.onClick, false);
+        playButton.addEventListener('click', this.onClick);
 
         playButton.addEventListener('keydown', (e) => {
             if (e.keyCode === KEY_CODES.ENTER) {
