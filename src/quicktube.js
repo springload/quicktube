@@ -98,7 +98,6 @@ class Quicktube {
         if (!this.videoEl.getAttribute('data-video-playing')) {
             this.hidePosterFrame();
             this.addActiveState();
-            window.dispatchEvent(new Event('quicktube:play'));
         }
     }
 
@@ -121,7 +120,6 @@ class Quicktube {
         this.quicktubePlayer.stopVideo();
         this.removeActiveState();
         this.showPosterFrame();
-        window.dispatchEvent(new Event('quicktube:stop'));
     }
 
     hidePosterFrame() {

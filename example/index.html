@@ -84,7 +84,7 @@
         </div>
     </div>
 
-    <div data-show-while-playing class="u-text-center" style="display: none;">
+    <div data-show-while-playing class="u-text-center" style="margin-top: 1.5rem;">
         <button class="quicktube__btn quicktube__btn--stop" data-quicktube-stop="gneBUA39mnI">
             Stop first video!
         </button>
@@ -101,17 +101,7 @@
     // Remember to initialise QuickTube at some point in your app
     document.addEventListener('DOMContentLoaded', function() {
         const showingItem = document.querySelector('[data-show-while-playing]');
-
         window.quicktube.init();
-
-        window.addEventListener("quicktube:play", function() {
-            showingItem.style.display = 'block';
-        }, false);
-
-        window.addEventListener("quicktube:stop", function() {
-            showingItem.style.display = 'none';
-        }, false);
-
     });
 </script>
 </body>
