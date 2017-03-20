@@ -7,10 +7,23 @@ const KEY_CODES = {
 // https://groups.google.com/forum/#!topic/youtube-api-gdata/vPgKhCu4Vng
 const isMobileSafari = () => (/Apple.*Mobile.*Safari/).test(navigator.userAgent);
 
+const numberOfSegments = 4;
+
 const trackEvent = (event) => {
+    const settings = Object.assign({
+        eventCategory: 'Youtube Videos',
+        eventAction: 'GTM',
+        eventLabel: '',
+    }, event);
+
     if (typeof window.ga === 'function') {
-        window.ga('send', 'event', event.eventCategory, event.eventAction, event.eventLabel);
+        window.ga('send', 'event', settings.eventCategory, settings.eventAction, settings.eventLabel);
     }
+};
+
+const getCurrentSegment = (currentPosition, duration) => {
+    const percentage = (currentPosition / duration);
+    return (Math.floor(percentage * numberOfSegments) / numberOfSegments).toFixed(2);
 };
 
 class Quicktube {
@@ -154,13 +167,13 @@ class Quicktube {
         }
     }
 
-    // listen for play, pause and end states
-    // also report % played every second
+    // listen for play, pause, percentage play, and end states
     onPlayerStateChange(event) {
         if (event.data === YT.PlayerState.PLAYING) {
             this.videoEl.setAttribute('data-video-playing', true);
             this.addActiveState();
-            setTimeout(this.onPlayerPercent.bind(this), 1000, event.target);
+            // Report % played every second
+            setTimeout(this.onPlayerPercent.bind(this, event.target), 1000);
         }
 
         if (event.data === YT.PlayerState.PAUSED) {
@@ -178,7 +191,6 @@ class Quicktube {
                 label = `Video Played - ${videoData.title}`;
                 trackEvent({
                     event: 'youtube',
-                    eventCategory: 'Youtube Videos',
                     eventAction: pageTitle,
                     eventLabel: label,
                 });
@@ -189,7 +201,6 @@ class Quicktube {
                 label = `Video Paused - ${videoData.title}`;
                 trackEvent({
                     event: 'youtube',
-                    eventCategory: 'Youtube Videos',
                     eventAction: pageTitle,
                     eventLabel: label,
                 });
@@ -205,35 +216,35 @@ class Quicktube {
     // report the % played if it matches 0%, 25%, 50%, 75% or completed
     onPlayerPercent(originalEvent) {
         const event = originalEvent;
+
         if (this.options.trackAnalytics) {
             if (event.getPlayerState() === YT.PlayerState.PLAYING) {
-                const currenDuration = event.getDuration();
-                const currentTime = event.getCurrentTime();
-                let time;
+                const videoDuration = event.getDuration();
+                const videoProgress = event.getCurrentTime();
+                let currentSegment;
 
-                if (currenDuration - currentTime <= 1.5) {
-                    time = 1;
+                // If less than 1.5 seconds from the end of the video
+                if (videoDuration - videoProgress <= 1.5) {
+                    currentSegment = 1;
                 } else {
-                    time = (Math.floor(currentTime / (currenDuration * 4)) / 4).toFixed(2);
+                    currentSegment = getCurrentSegment(videoProgress, videoDuration);
                 }
 
-                if (!event.lastP || time > event.lastP) {
+                // Only fire tracking event at 0, .25, .50, .75 or 1 segment mark
+                if (!event.previousSegment || currentSegment > event.previousSegment) {
                     const videoData = event.getVideoData();
-                    let label = videoData.title;
-                    // Get title of the current page
                     const pageTitle = document.title;
-                    event.lastP = time;
-                    label = `${time * 100}% Video played - ${videoData.title}`;
+                    event.previousSegment = currentSegment;
+                    const label = `${currentSegment * 100}% Video played - ${videoData.title}`;
                     trackEvent({
                         event: 'youtube',
-                        eventCategory: 'Youtube Videos',
                         eventAction: pageTitle,
                         eventLabel: label,
                     });
                 }
 
-                if (event.lastP !== 1) {
-                    setTimeout(this.onPlayerPercent.bind(this), 1000, event);
+                if (event.previousSegment !== 1) {
+                    setTimeout(this.onPlayerPercent.bind(this, event), 1000);
                 }
             }
         }
@@ -245,7 +256,6 @@ class Quicktube {
         if (this.options.trackAnalytics) {
             trackEvent({
                 event: 'error',
-                eventCategory: 'Youtube Videos',
                 eventAction: 'GTM',
                 eventLabel: `youtube:${event.target.src}-${event.data}`,
             });
@@ -254,24 +264,28 @@ class Quicktube {
 
 }
 
+// This is a requirement of the YouTube Player API for iframe embeds
+// https://developers.google.com/youtube/iframe_api_reference#Requirements
+window.onYouTubeIframeAPIReady = () => {
+    console.log('onYouTubeIframeAPIReady');
+};
+
 const quicktubeInit = () => {
     // Inject the YouTube API onto the page.
     if (!window.YT) {
         const newScriptTag = document.createElement('script');
         newScriptTag.src = 'https://www.youtube.com/iframe_api';
 
-        const documentScripts = document.getElementsByTagName('script');
-        if (documentScripts.length > 0) {
-            const firstScriptTag = documentScripts[0];
-            firstScriptTag.parentNode.insertBefore(newScriptTag, firstScriptTag);
-        }
+        const firstDocumentScript = document.getElementsByTagName('script')[0];
+        firstDocumentScript.parentNode.insertBefore(newScriptTag, firstDocumentScript);
     }
 
     const videos = Array.prototype.slice.call(document.querySelectorAll('[data-quicktube]'));
     videos.forEach((video) => {
         const videoId = video.getAttribute('data-quicktube');
         const options = JSON.parse(video.getAttribute('data-quicktube-options'));
-        new Quicktube(videoId, options);
+        const player = new Quicktube(videoId, options);
+        return player;
     });
 };
 
