@@ -1,6 +1,6 @@
 # Quicktube [![npm](https://img.shields.io/npm/v/quicktube.svg?style=flat-square)](https://www.npmjs.com/package/quicktube) [![Build Status](https://travis-ci.org/springload/Quicktube.js.svg?branch=master)](https://travis-ci.org/springload/Quicktube.js) [![Coverage Status](https://coveralls.io/repos/github/springload/Quicktube.js/badge.svg)](https://coveralls.io/github/springload/Quicktube.js)
 
-> A lightweight responsive YouTube player using `window.postMessage`. [Demo](https://rawgit.com/springload/Quicktube.js/master/index.html)
+> A lightweight responsive YouTube player. [Demo](https://rawgit.com/springload/Quicktube.js/master/index.html)
 
 ## Installation
 
@@ -12,29 +12,29 @@ npm install --save quicktube
 
 ### Initial setup
 
-Is really simple. Just add the video ID to `data-quicktube-video='{video-id}'`
+Is really simple. Just add the video ID to `data-quicktube='{video-id}'` and `data-quicktube-play='{video-id}'` to the play trigger element.
 
 ```html
-<div class="quicktube" data-quicktube="kittens">
-    <div class="quicktube__video" data-quicktube-video="k6QanQUaDOo">
-    </div>
-    <div data-quicktube-play="kittens" class="quicktube__poster" data-quicktube-poster>
-        <div class="quicktube__play quicktube__btn">
+<div class="quicktube" data-quicktube="k6QanQUaDOo">
+    <div class="quicktube__video" data-quicktube-video></div>
+    <div data-quicktube-play="k6QanQUaDOo" class="quicktube__poster" data-quicktube-poster>
+        <!-- Optional poster frame image -->
+        <img class="quicktube__poster-image" src="/path/to/image" />
+        <button class="quicktube__play quicktube__btn">
             Play
-        </div>
+        </button>
     </div>
 </div>
 ```
 
-Initialise Quicktube once jQuery is ready.
+Initialise quicktube.
 
-```js
+```javascript
 import quicktube from 'quicktube';
-import $ from 'jquery';
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
     quicktube.init();
-});
+}, false);
 ```
 
 >:warning: Don't forget to include the [necessary CSS](https://github.com/springload/Quicktube.js/blob/master/quicktube.css).
@@ -44,13 +44,13 @@ $(document).ready(function() {
 You can hook to the `play` and `pause` events like this:
 
 ```js
-$(window).on("quicktube:play", function(quicktubeId, $quicktubeEl) {
-    $("[data-show-while-playing]").show();
-});
+window.addEventListener('quicktube:play', () => {
+    showingItem.style.display = 'block';
+}, false);
 
-$(window).on("quicktube:pause", function(quicktubeId, $quicktubeEl) {
-    $("[data-show-while-playing]").hide();
-});
+window.addEventListener('quicktube:pause', () => {
+    showingItem.style.display = 'none';
+}, false);
 ```
 
 ## Development

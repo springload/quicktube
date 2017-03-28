@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <title>Quicktube</title>
+    <link rel="stylesheet" href="../dist/quicktube.css"/>
+    <meta name='viewport' content="width=device-width, initial-scale=1" />
+    <style type="text/css">
+        /**
+        * ----------------------------------------------
+        * Demo styles
+        * ----------------------------------------------
+        **/
+
+        body {
+            font-family: sans-serif;
+            margin: 0;
+        }
+
+        .quicktube__poster {
+            background: #eee;
+            text-align: center;
+        }
+
+        .quicktube__btn {
+            display: inline-block;
+            padding: .5em;
+            background-color: transparent;
+            border: solid 2px #222;
+            font-size: inherit;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+         /* A stop button */
+        .quicktube__btn--stop {
+            border-color: red;
+            color: red;
+        }
+
+        .quicktube__btn--stop:hover {
+            background: red;
+        }
+
+        .quicktube__poster:hover .quicktube__btn,
+        .quicktube__btn:hover {
+            background: #222;
+            color: #fff;
+        }
+
+        .page-container {
+            max-width: 50rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .u-text-center {
+            text-align: center;
+        }
+    </style>
+    <script>
+        document.documentElement.className = document.documentElement.className.replace("no-js", "js");
+    </script>
+</head>
+<body>
+
+<!-- HTML you need -->
+
+<div class="page-container">
+    <div class="quicktube" data-quicktube="gneBUA39mnI">
+        <div class="quicktube__video" data-quicktube-video></div>
+        <div data-quicktube-play="gneBUA39mnI" class="quicktube__poster" data-quicktube-poster>
+            <button class="quicktube__play quicktube__btn">
+                Play
+            </button>
+        </div>
+    </div>
+
+    <button class="quicktube__btn quicktube__btn--stop" data-quicktube-stop="gneBUA39mnI">
+        Stop video!
+    </button>
+
+    <div class="quicktube" data-quicktube="QFmLReorTSY" data-quicktube-options='{"trackAnalytics": true, "activeClass": "playing", "pausedClass": "paused"}'>
+        <div class="quicktube__video" data-quicktube-video></div>
+        <div data-quicktube-play="QFmLReorTSY" class="quicktube__poster" data-quicktube-poster>
+            <!-- Optional poster frame image -->
+            <!--<img src="http://www.lovethispic.com/uploaded_images/90725-Colorful-Kittens.jpg?w=240" class="quicktube__poster-image">-->
+            <button class="quicktube__play quicktube__btn">
+                Play
+            </button>
+        </div>
+    </div>
+
+    <button class="quicktube__btn quicktube__btn--stop" data-quicktube-stop="QFmLReorTSY">
+        Stop video!
+    </button>
+</div>
+
+<!-- /HTML you need -->
+
+<script src="../dist/quicktube.js"></script>
+<script>
+    // Remember to initialise QuickTube at some point in your app
+    document.addEventListener('DOMContentLoaded', function() {
+        const showingItem = document.querySelector('[data-show-while-playing]');
+        window.quicktube.init();
+    });
+</script>
+</body>
+</html>

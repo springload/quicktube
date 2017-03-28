@@ -1,5 +1,3 @@
-const jQuery = require('jquery');
-
 // Mock for Google Analytics.
 const ga = jest.fn();
 
@@ -20,29 +18,27 @@ const YT = {
         UNSTARTED: -1,
     },
     // Mock the YT.Player API, return a mock player object and store events.
-    Player: jest.fn(function(playerId, config) {
+    Player: jest.fn((playerId, config) => {
         playerEvents = config.events;
         return mockPlayer;
     }),
 };
 
 // Mock for
-window.$ = jQuery;
 window.ga = ga;
 window.YT = YT;
 
 const mockHTML = `
 <script></script>
-<div class="quicktube" data-quicktube="kittens">
-    <div class="quicktube__video quicktube__video--paused" data-quicktube-video="k6QanQUaDOo">
-    </div>
-    <div data-quicktube-play="kittens"  class="quicktube__poster" data-quicktube-poster>
-        <div class="quicktube__play quicktube__btn">
+<div class="quicktube" data-quicktube="k6QanQUaDOo">
+    <div class="quicktube__video" data-quicktube-video></div>
+    <div data-quicktube-play="k6QanQUaDOo" class="quicktube__poster" data-quicktube-poster>
+        <button class="quicktube__play quicktube__btn">
             Play
-        </div>
+        </button>
     </div>
 </div>
-<div data-quicktube-stop="">Stop button</div>
+<button class="quicktube__play quicktube__btn" data-quicktube-stop="k6QanQUaDOo">Stop button</button>
 `;
 
 const simulateEvent = (selector, type, data = {}) => {
@@ -54,11 +50,9 @@ const simulateEvent = (selector, type, data = {}) => {
 };
 
 describe('Quicktube', () => {
-    let loadedHTML;
-
     document.body.innerHTML = mockHTML;
     const Quicktube = require('./quicktube');
-    loadedHTML = document.body.innerHTML;
+    const loadedHTML = document.body.innerHTML;
 
     it('exists', () => {
         expect(Quicktube).toBeDefined();
@@ -82,33 +76,45 @@ describe('Quicktube', () => {
     });
 
     describe('init', () => {
-        beforeEach(() => {
-            document.body.innerHTML = loadedHTML;
-        });
-
         it('default options', () => {
-            expect(Quicktube.init()).toMatchSnapshot();
-            expect(document.body.innerHTML).toMatchSnapshot();
+            Quicktube.init();
+            expect(Quicktube.options).toEqual({
+                trackAnalytics: false,
+                activeClass: 'quicktube--playing',
+                pausedClass: 'quicktube--paused',
+                posterFrameHiddenClass: 'quicktube__poster--hidden',
+                showInfo: 0,
+                autohide: 1,
+                color: 'white',
+                wmode: 'transparent',
+            });
         });
 
         it('custom options', () => {
-            expect(Quicktube.init({ trackAnalytics: true })).toMatchSnapshot();
-            expect(document.body.innerHTML).toMatchSnapshot();
+            Quicktube.init({ trackAnalytics: true });
+            expect(Quicktube.options).toEqual({
+                trackAnalytics: true,
+                activeClass: 'quicktube--playing',
+                pausedClass: 'quicktube--paused',
+                posterFrameHiddenClass: 'quicktube__poster--hidden',
+                showInfo: 0,
+                autohide: 1,
+                color: 'white',
+                wmode: 'transparent',
+            });
         });
     });
 
     describe('play', () => {
-        let quicktube;
-
         beforeEach(() => {
             document.body.innerHTML = loadedHTML;
-            quicktube = Quicktube.init({ trackAnalytics: true });
+            // const quicktube = Quicktube.init({ trackAnalytics: true });
         });
 
         it('click', () => {
             simulateEvent('[data-quicktube-play]', 'click');
             expect(document.body.innerHTML).toMatchSnapshot();
-            expect(quicktube.jamesPlayer).toBe(mockPlayer);
+            expect(Quicktube.quicktubePlayer).toBe(mockPlayer);
         });
 
         it('keydown wrong key', () => {
@@ -123,24 +129,22 @@ describe('Quicktube', () => {
     });
 
     describe('stop', () => {
-        let quicktube;
-
         beforeEach(() => {
             document.body.innerHTML = loadedHTML;
-            quicktube = Quicktube.init({ trackAnalytics: true });
+            // const quicktube = Quicktube.init({ trackAnalytics: true });
         });
 
         it('click', () => {
             simulateEvent('[data-quicktube-stop]', 'click');
             expect(document.body.innerHTML).toMatchSnapshot();
-            expect(quicktube.jamesPlayer).toBe(mockPlayer);
-        })
+            expect(Quicktube.quicktubePlayer).toBe(mockPlayer);
+        });
     });
 
     describe.skip('play iOS', () => {
         beforeEach(() => {
             document.body.innerHTML = loadedHTML;
-            navigator.userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1";
+            navigator.userAgent = 'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1';
             Quicktube.init();
         });
 
@@ -150,17 +154,10 @@ describe('Quicktube', () => {
         });
     });
 
-    // TODO Check QT.supportsTransition false.
-    describe.skip('no transitions', () => {
-        it('click', () => {});
-    });
-
     describe('YT Player events', () => {
-        let quicktube;
-
         beforeEach(() => {
             document.body.innerHTML = loadedHTML;
-            quicktube = Quicktube.init({ trackAnalytics: true });
+            // const quicktube = Quicktube.init({ trackAnalytics: true });
             simulateEvent('[data-quicktube-play]', 'click');
             ga.mockClear();
             mockPlayer.pauseVideo.mockClear();
@@ -176,9 +173,8 @@ describe('Quicktube', () => {
             it('playing - stop video', () => {
                 const playVideo = jest.fn();
                 playerEvents.onReady({ target: { playVideo } });
-                playVideo.mockClear();
-                playerEvents.onReady({ target: { playVideo } });
-                expect(playVideo).not.toHaveBeenCalled();
+                expect(playVideo).toHaveBeenCalled();
+                Quicktube.stopVideo('kittens');
                 expect(mockPlayer.pauseVideo).toHaveBeenCalled();
             });
         });
@@ -189,7 +185,7 @@ describe('Quicktube', () => {
                     target: {
                         getVideoData: jest.fn(() => ({ title: 'test title' })),
                     },
-                    data: YT.PlayerState.PLAYING
+                    data: YT.PlayerState.PLAYING,
                 });
                 expect(document.body.innerHTML).toMatchSnapshot();
                 expect(ga.mock.calls[0]).toMatchSnapshot();
@@ -206,7 +202,7 @@ describe('Quicktube', () => {
                             getCurrentTime: jest.fn(() => 0),
                             // lastP: '',
                         },
-                        data: YT.PlayerState.PLAYING
+                        data: YT.PlayerState.PLAYING,
                     });
                     jest.runOnlyPendingTimers();
                     expect(ga.mock.calls[1]).toMatchSnapshot();
@@ -222,7 +218,7 @@ describe('Quicktube', () => {
                             getCurrentTime: jest.fn(() => 25),
                             // lastP: '',
                         },
-                        data: YT.PlayerState.PLAYING
+                        data: YT.PlayerState.PLAYING,
                     });
                     jest.runOnlyPendingTimers();
                     expect(ga.mock.calls[1]).toMatchSnapshot();
@@ -238,7 +234,7 @@ describe('Quicktube', () => {
                             getCurrentTime: jest.fn(() => 50),
                             // lastP: '',
                         },
-                        data: YT.PlayerState.PLAYING
+                        data: YT.PlayerState.PLAYING,
                     });
                     jest.runOnlyPendingTimers();
                     expect(ga.mock.calls[1]).toMatchSnapshot();
@@ -254,7 +250,7 @@ describe('Quicktube', () => {
                             getCurrentTime: jest.fn(() => 50),
                             // lastP: '',
                         },
-                        data: YT.PlayerState.PLAYING
+                        data: YT.PlayerState.PLAYING,
                     });
                     jest.runOnlyPendingTimers();
                     expect(ga.mock.calls[1]).toMatchSnapshot();
@@ -266,7 +262,7 @@ describe('Quicktube', () => {
                     target: {
                         getVideoData: jest.fn(() => ({ title: 'test title' })),
                     },
-                    data: YT.PlayerState.PAUSED
+                    data: YT.PlayerState.PAUSED,
                 });
                 expect(document.body.innerHTML).toMatchSnapshot();
                 expect(ga.mock.calls[0]).toMatchSnapshot();
@@ -277,7 +273,7 @@ describe('Quicktube', () => {
                     target: {
                         getVideoData: jest.fn(() => ({ title: 'test title' })),
                     },
-                    data: YT.PlayerState.ENDED
+                    data: YT.PlayerState.ENDED,
                 });
                 expect(document.body.innerHTML).toMatchSnapshot();
                 expect(mockPlayer.pauseVideo).toHaveBeenCalled();
