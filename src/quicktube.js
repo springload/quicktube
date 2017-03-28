@@ -2,6 +2,12 @@ const KEY_CODES = {
     ENTER: 13,
 };
 
+const YOUTUBE_API = 'https://www.youtube.com/iframe_api';
+const YOUTUBE_EMBED = 'https://www.youtube.com/embed/';
+const VIMEO_API = 'https://player.vimeo.com/api/player.js';
+const VIMEO_EMBED = 'https://player.vimeo.com/video/';
+const FIRST_SCRIPT_TAG = document.getElementsByTagName('script')[0];
+
 // Mobile Safari exhibits a number of documented bugs with the
 // youtube player API
 // https://groups.google.com/forum/#!topic/youtube-api-gdata/vPgKhCu4Vng
@@ -11,7 +17,7 @@ const numberOfSegments = 4;
 
 const trackEvent = (event) => {
     const settings = Object.assign({
-        eventCategory: 'Youtube Videos',
+        eventCategory: 'Videos',
         eventAction: 'GTM',
         eventLabel: '',
     }, event);
@@ -21,6 +27,15 @@ const trackEvent = (event) => {
     }
 };
 
+const createPlayerUrl = (playerEmbedUrl, playerId, options) => {
+    let url = `${playerEmbedUrl}${playerId}?autoplay=1`;
+    const optionKeys = Object.keys(options);
+    optionKeys.forEach((key) => {
+        url += `&${key}=${options[key]}`;
+    });
+    return url;
+};
+
 const getCurrentSegment = (currentPosition, duration) => {
     const percentage = (currentPosition / duration);
     return (Math.floor(percentage * numberOfSegments) / numberOfSegments).toFixed(2);
@@ -28,27 +43,13 @@ const getCurrentSegment = (currentPosition, duration) => {
 
 class Quicktube {
 
-    constructor(videoId, options = {}) {
-        this._domain = 'https://www.youtube.com/embed/';
+    constructor(videoId, videoEmbedUrl, options = {}) {
         this.options = Object.assign({
             trackAnalytics: false,
             activeClass: 'quicktube--playing',
             pausedClass: 'quicktube--paused',
             posterFrameHiddenClass: 'quicktube__poster--hidden',
-            showInfo: 0,
-            autohide: 1,
-            color: 'white',
-            wmode: 'transparent',
         }, options);
-
-        // Concatenate in a more readable way :D
-        this._settings = `?autoplay=1\
-&showinfo=${this.options.showInfo}\
-&autohide=${this.options.autohide}\
-&color=${this.options.color}\
-&enablejsapi=1\
-&playerapiid=ytplayer\
-&wmode=${this.options.wmode}`;
 
         this.iframeClass = 'quicktube__iframe';
         this.videoId = videoId;
@@ -60,6 +61,17 @@ class Quicktube {
         this.onPlayerReady = this.onPlayerReady.bind(this);
         this.onPlayerStateChange = this.onPlayerStateChange.bind(this);
         this.onPlayerError = this.onPlayerError.bind(this);
+
+        const playerOptions = this.videoEl.hasAttribute('data-quicktube-youtube') ? {
+            showInfo: 0,
+            autohide: 1,
+            color: 'white',
+            playerapi: 'ytplayer',
+            enablejsapi: 1,
+            wmode: 'transparent',
+        } : {};
+
+        this._playerUrl = createPlayerUrl(videoEmbedUrl, this.videoId, playerOptions);
 
         const playButton = document.querySelector(`[data-quicktube-play="${videoId}"]`);
         const stopButton = document.querySelector(`[data-quicktube-stop="${videoId}"]`);
@@ -145,13 +157,12 @@ class Quicktube {
 
     createIframePlayer() {
         const iframe = document.createElement('iframe');
-        iframe.src = this._domain + this.videoId + this._settings;
+        iframe.src = this._playerUrl;
         iframe.width = '100%';
         iframe.id = this.videoId;
         iframe.className = this.iframeClass;
         return iframe;
     }
-
 
     onPlayerReady(event) {
         const isPlaying = this.videoEl.getAttribute('data-video-playing');
@@ -270,21 +281,30 @@ window.onYouTubeIframeAPIReady = () => {
     // TODO investigate whether this is a set requirement
 };
 
-const quicktubeInit = () => {
-    // Inject the YouTube API onto the page.
-    if (!window.YT) {
+const insertApiScript = (url, hasBeenCreated) => {
+    if (!hasBeenCreated) {
         const newScriptTag = document.createElement('script');
-        newScriptTag.src = 'https://www.youtube.com/iframe_api';
-
-        const firstDocumentScript = document.getElementsByTagName('script')[0];
-        firstDocumentScript.parentNode.insertBefore(newScriptTag, firstDocumentScript);
+        newScriptTag.src = url;
+        FIRST_SCRIPT_TAG.parentNode.insertBefore(newScriptTag, FIRST_SCRIPT_TAG);
     }
+};
 
+const quicktubeInit = () => {
     const videos = Array.prototype.slice.call(document.querySelectorAll('[data-quicktube]'));
     videos.forEach((video) => {
+        let videoDomain;
+        if (video.hasAttribute('data-quicktube-vimeo')) {
+            // Inject the Vimeo Player API
+            insertApiScript(VIMEO_API, window.Vimeo);
+            videoDomain = VIMEO_EMBED;
+        } else {
+            // Inject the YouTube API
+            insertApiScript(YOUTUBE_API, window.YT);
+            videoDomain = YOUTUBE_EMBED;
+        }
         const videoId = video.getAttribute('data-quicktube');
         const options = JSON.parse(video.getAttribute('data-quicktube-options'));
-        const player = new Quicktube(videoId, options);
+        const player = new Quicktube(videoId, videoDomain, options);
         return player;
     });
 };

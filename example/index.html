@@ -58,16 +58,12 @@
             text-align: center;
         }
     </style>
-    <script>
-        document.documentElement.className = document.documentElement.className.replace("no-js", "js");
-    </script>
 </head>
 <body>
 
 <!-- HTML you need -->
-
 <div class="page-container">
-    <div class="quicktube" data-quicktube="gneBUA39mnI">
+    <div class="quicktube" data-quicktube="gneBUA39mnI" data-quicktube-youtube>
         <div class="quicktube__video" data-quicktube-video></div>
         <div data-quicktube-play="gneBUA39mnI" class="quicktube__poster" data-quicktube-poster>
             <button class="quicktube__play quicktube__btn">
@@ -80,9 +76,9 @@
         Stop video!
     </button>
 
-    <div class="quicktube" data-quicktube="QFmLReorTSY" data-quicktube-options='{"trackAnalytics": true, "activeClass": "playing", "pausedClass": "paused"}'>
+    <div class="quicktube" data-quicktube="76979871" data-quicktube-vimeo data-quicktube-options='{"trackAnalytics": true, "activeClass": "playing", "pausedClass": "paused"}'>
         <div class="quicktube__video" data-quicktube-video></div>
-        <div data-quicktube-play="QFmLReorTSY" class="quicktube__poster" data-quicktube-poster>
+        <div data-quicktube-play="76979871" class="quicktube__poster" data-quicktube-poster>
             <!-- Optional poster frame image -->
             <!--<img src="http://www.lovethispic.com/uploaded_images/90725-Colorful-Kittens.jpg?w=240" class="quicktube__poster-image">-->
             <button class="quicktube__play quicktube__btn">
@@ -91,13 +87,15 @@
         </div>
     </div>
 
-    <button class="quicktube__btn quicktube__btn--stop" data-quicktube-stop="QFmLReorTSY">
+    <button class="quicktube__btn quicktube__btn--stop" data-quicktube-stop="76979871">
         Stop video!
     </button>
 </div>
 
-<!-- /HTML you need -->
 
+<script>
+    document.documentElement.className = document.documentElement.className.replace("no-js", "js");
+</script>
 <script src="../dist/quicktube.js"></script>
 <script>
     // Remember to initialise QuickTube at some point in your app
