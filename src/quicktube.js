@@ -13,8 +13,6 @@ const FIRST_SCRIPT_TAG = document.getElementsByTagName('script')[0];
 // https://groups.google.com/forum/#!topic/youtube-api-gdata/vPgKhCu4Vng
 const isMobileSafari = () => (/Apple.*Mobile.*Safari/).test(navigator.userAgent);
 
-const numberOfSegments = 4;
-
 const trackEvent = (event) => {
     const settings = Object.assign({
         eventCategory: 'Videos',
@@ -36,8 +34,10 @@ const createPlayerUrl = (playerEmbedUrl, playerId, options) => {
     return url;
 };
 
+const numberOfSegments = 4;
 const getCurrentSegment = (currentPosition, duration) => {
     const percentage = (currentPosition / duration);
+    // Ensure value is rounded to nearest whole segment eg. 1, 2, 3 , 4
     return (Math.floor(percentage * numberOfSegments) / numberOfSegments).toFixed(2);
 };
 
@@ -61,8 +61,9 @@ class Quicktube {
         this.onPlayerReady = this.onPlayerReady.bind(this);
         this.onPlayerStateChange = this.onPlayerStateChange.bind(this);
         this.onPlayerError = this.onPlayerError.bind(this);
+        this.isVimeo = this.videoEl.hasAttribute('data-quicktube-vimeo');
 
-        const playerOptions = this.videoEl.hasAttribute('data-quicktube-youtube') ? {
+        const playerOptions = !this.isVimeo ? {
             showInfo: 0,
             autohide: 1,
             color: 'white',
@@ -102,7 +103,7 @@ class Quicktube {
         if (!iframe) {
             iframe = this.createIframePlayer();
             iframeContainer.appendChild(iframe);
-            this.quicktubePlayer = new YT.Player(this.videoId, {
+            this.quicktubePlayer = this.isVimeo ? new Vimeo.Player(this.videoEl) : new YT.Player(this.videoId, {
                 events: {
                     onStateChange: this.onPlayerStateChange,
                     onReady: this.onPlayerReady,
@@ -114,8 +115,13 @@ class Quicktube {
 
         // Only trigger force video play if not Mobile safari as playVideo function not supported
         if (!this.isMobileSafari) {
-            if (this.quicktubePlayer.playVideo) {
-                this.quicktubePlayer.playVideo();
+            console.log(this.quicktubePlayer);
+            if (this.quicktubePlayer) {
+                if (this.isVimeo) {
+                    this.quicktubePlayer.play();
+                } else {
+                    this.quicktubePlayer.playVideo();
+                }
             }
         }
 
@@ -142,7 +148,12 @@ class Quicktube {
             return;
         }
 
-        this.quicktubePlayer.stopVideo();
+        if (this.isVimeo) {
+            this.quicktubePlayer.unload();
+        } else {
+            this.quicktubePlayer.stopVideo();
+        }
+
         this.removeActiveState();
         this.showPosterFrame();
     }
