@@ -267,7 +267,7 @@ class Quicktube {
 // This is a requirement of the YouTube Player API for iframe embeds
 // https://developers.google.com/youtube/iframe_api_reference#Requirements
 window.onYouTubeIframeAPIReady = () => {
-    console.log('onYouTubeIframeAPIReady');
+    // TODO investigate whether this is a set requirement
 };
 
 const quicktubeInit = () => {
