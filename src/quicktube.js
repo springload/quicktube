@@ -115,12 +115,16 @@ class Quicktube {
 
         // Only trigger force video play if not Mobile safari as playVideo function not supported
         if (!this.isMobileSafari) {
-            console.log(this.quicktubePlayer);
             if (this.quicktubePlayer) {
                 if (this.isVimeo) {
                     this.quicktubePlayer.play();
                 } else {
-                    this.quicktubePlayer.playVideo();
+                    // It doesn't have playVideo function in the initial state. Is added after video is ready
+                    const isLoaded = this.quicktubePlayer.playVideo;
+
+                    if (isLoaded) {
+                        this.quicktubePlayer.playVideo();
+                    }
                 }
             }
         }
@@ -286,7 +290,7 @@ class Quicktube {
 
 }
 
-// This is a requirement of the YouTube Player API for iframe embeds
+// This seems to be a requirement of the YouTube Player API for iframe embeds
 // https://developers.google.com/youtube/iframe_api_reference#Requirements
 window.onYouTubeIframeAPIReady = () => {
     // TODO investigate whether this is a set requirement
