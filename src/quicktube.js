@@ -7,6 +7,7 @@ const YOUTUBE_EMBED = 'https://www.youtube.com/embed/';
 const VIMEO_API = 'https://player.vimeo.com/api/player.js';
 const VIMEO_EMBED = 'https://player.vimeo.com/video/';
 const FIRST_SCRIPT_TAG = document.getElementsByTagName('script')[0];
+const IFRAME_CLASS = 'quicktube__iframe';
 
 // Mobile Safari exhibits a number of documented bugs with the
 // youtube player API
@@ -34,34 +35,46 @@ const createPlayerUrl = (playerEmbedUrl, playerId, options) => {
     return url;
 };
 
-const numberOfSegments = 4;
-const getCurrentSegment = (currentPosition, duration) => {
+const getCurrentSegment = (currentPosition, duration, numberOfSegments = 4) => {
     const percentage = (currentPosition / duration);
     // Ensure value is rounded to nearest whole segment eg. 1, 2, 3 , 4
     return (Math.floor(percentage * numberOfSegments) / numberOfSegments).toFixed(2);
 };
 
+const guid = () => {
+    const s4 = () => {
+        return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+    };
+
+    return `${s4()}${s4()}-${s4()}-${s4()}-${s4()}-${s4()}${s4()}${s4()}`;
+};
+
 class Quicktube {
 
-    constructor(videoId, videoEmbedUrl, options = {}) {
+    constructor(videoId, videoGUID, videoEmbedUrl, options = {}) {
+        this.videoId = videoId;
+        this.videoGUID = videoGUID;
+        this.videoEl = document.querySelector(`[data-quicktube-quid="${this.videoGUID}"]`);
+        this.videoPoster = this.videoEl.querySelector('[data-quicktube-poster]');
+
+        // Bound functions
+        this.onClick = this.onClick.bind(this);
+        this.stopVideo = this.stopVideo.bind(this);
+        this.onPlayerReady = this.onPlayerReady.bind(this);
+        this.onPlayerStateChange = this.onPlayerStateChange.bind(this);
+        this.onPlayerError = this.onPlayerError.bind(this);
+
+        // Booleans
+        this.isMobileSafari = isMobileSafari();
+        this.isVimeo = this.videoEl.hasAttribute('data-quicktube-vimeo');
+
+        // Settings
         this.options = Object.assign({
             trackAnalytics: false,
             activeClass: 'quicktube--playing',
             pausedClass: 'quicktube--paused',
             posterFrameHiddenClass: 'quicktube__poster--hidden',
         }, options);
-
-        this.iframeClass = 'quicktube__iframe';
-        this.videoId = videoId;
-        this.videoEl = document.querySelector(`[data-quicktube="${videoId}"]`);
-        this.poster = this.videoEl.querySelector('[data-quicktube-poster]');
-        this.isMobileSafari = isMobileSafari();
-        this.onClick = this.onClick.bind(this);
-        this.stopVideo = this.stopVideo.bind(this);
-        this.onPlayerReady = this.onPlayerReady.bind(this);
-        this.onPlayerStateChange = this.onPlayerStateChange.bind(this);
-        this.onPlayerError = this.onPlayerError.bind(this);
-        this.isVimeo = this.videoEl.hasAttribute('data-quicktube-vimeo');
 
         const playerOptions = !this.isVimeo ? {
             showInfo: 0,
@@ -70,30 +83,30 @@ class Quicktube {
             playerapi: 'ytplayer',
             enablejsapi: 1,
             wmode: 'transparent',
-        } : {};
+        } : {
+            autopause: 0,
+        };
 
-        this._playerUrl = createPlayerUrl(videoEmbedUrl, this.videoId, playerOptions);
+        this.playerUrl = createPlayerUrl(videoEmbedUrl, this.videoId, playerOptions);
 
-        const playButton = document.querySelector(`[data-quicktube-play="${videoId}"]`);
-        const stopButton = document.querySelector(`[data-quicktube-stop="${videoId}"]`);
+        // Initial actions
+        // Need to have unique id's so that multiple of the same video can exist on a page without breaking
+        const playEl = this.videoEl.querySelector('[data-quicktube-play]');
+        playEl.setAttribute('data-play-guid', this.videoGUID);
+        const uniquePlayButton = document.querySelector(`[data-play-guid="${this.videoGUID}"]`);
 
-        playButton.addEventListener('click', this.onClick);
+        uniquePlayButton.addEventListener('click', this.onClick);
 
-        playButton.addEventListener('keydown', (e) => {
-            if (e.keyCode === KEY_CODES.ENTER) {
+        uniquePlayButton.addEventListener('keydown', (event) => {
+            if (event.keyCode === KEY_CODES.ENTER) {
                 this.onClick();
             }
-        });
-
-        stopButton.addEventListener('click', () => {
-            this.stopVideo();
         });
     }
 
     onClick() {
         const iframeContainer = this.videoEl.querySelector('[data-quicktube-video]');
         const videoIframes = iframeContainer.getElementsByTagName('iframe');
-
         // defines whether video has already been loaded and you want to play again
         let iframe = false;
         if (videoIframes.length > 0) {
@@ -101,15 +114,9 @@ class Quicktube {
         }
 
         if (!iframe) {
-            iframe = this.createIframePlayer();
-            iframeContainer.appendChild(iframe);
-            this.quicktubePlayer = this.isVimeo ? new Vimeo.Player(this.videoEl) : new YT.Player(this.videoId, {
-                events: {
-                    onStateChange: this.onPlayerStateChange,
-                    onReady: this.onPlayerReady,
-                    onError: this.onPlayerError,
-                },
-            });
+            this.createIframePlayer(iframeContainer);
+
+            // TODO Figure out what this is doing and why!
             YT.gaLastAction = 'p';
         }
 
@@ -163,20 +170,55 @@ class Quicktube {
     }
 
     hidePosterFrame() {
-        this.poster.classList.add(this.options.posterFrameHiddenClass);
+        this.videoPoster.classList.add(this.options.posterFrameHiddenClass);
     }
 
     showPosterFrame() {
-        this.poster.classList.remove(this.options.posterFrameHiddenClass);
+        this.videoPoster.classList.remove(this.options.posterFrameHiddenClass);
     }
 
-    createIframePlayer() {
+    createIframePlayer(iframeContainer) {
         const iframe = document.createElement('iframe');
-        iframe.src = this._playerUrl;
+        iframe.src = this.playerUrl;
         iframe.width = '100%';
-        iframe.id = this.videoId;
-        iframe.className = this.iframeClass;
-        return iframe;
+        iframe.id = this.videoGUID;
+        iframe.className = IFRAME_CLASS;
+        iframeContainer.appendChild(iframe);
+
+        if (this.isVimeo) {
+            this.quicktubePlayer = new Vimeo.Player(this.videoGUID);
+
+            this.quicktubePlayer.on('play', () => {
+                console.log(this.videoGUID, ': Vimeo played!');
+            });
+
+            this.quicktubePlayer.on('pause', () => {
+                console.log(this.videoGUID, ': Vimeo paused!');
+            });
+            // this.quicktubePlayer.on('timeupdate', () => {
+            //     console.log(this.videoGUID, ': Vimeo time update!');
+            // });
+            this.quicktubePlayer.on('loaded', () => {
+                console.log(this.videoGUID, ': Vimeo Video loaded!');
+            });
+            this.quicktubePlayer.on('error', () => {
+                console.log(this.videoGUID, ': Vimeo Error!');
+            });
+
+            // Might wanna check this functionality, may want to leave stopped player
+            // state so user can nav to other related videos?
+            this.quicktubePlayer.on('ended', () => {
+                this.stopVideo();
+            });
+        } else {
+            this.quicktubePlayer = new YT.Player(this.videoGUID, {
+                events: {
+                    onReady: this.onPlayerReady,
+                    onStateChange: this.onPlayerStateChange,
+                    onError: this.onPlayerError,
+                },
+            });
+        }
     }
 
     onPlayerReady(event) {
@@ -191,6 +233,18 @@ class Quicktube {
                 event.target.playVideo();
             }
         }
+    }
+
+    onPlayerPlay() {
+
+    }
+
+    onPlayerPause() {
+
+    }
+
+    onPlayerEnd() {
+
     }
 
     // listen for play, pause, percentage play, and end states
@@ -235,6 +289,7 @@ class Quicktube {
         }
 
         if (event.data === YT.PlayerState.ENDED) {
+            console.log('youtube ended');
             this.stopVideo();
         }
     }
@@ -319,7 +374,9 @@ const quicktubeInit = () => {
         }
         const videoId = video.getAttribute('data-quicktube');
         const options = JSON.parse(video.getAttribute('data-quicktube-options'));
-        const player = new Quicktube(videoId, videoDomain, options);
+        const videoGUID = guid();
+        video.setAttribute('data-quicktube-quid', videoGUID);
+        const player = new Quicktube(videoId, videoGUID, videoDomain, options);
         return player;
     });
 };

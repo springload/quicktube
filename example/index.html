@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html class="no-js">
+
 <head>
     <title>Quicktube</title>
-    <link rel="stylesheet" href="../dist/quicktube.css"/>
+    <link rel="stylesheet" href="../dist/quicktube.css" />
     <meta name='viewport' content="width=device-width, initial-scale=1" />
     <style type="text/css">
         /**
@@ -10,99 +11,182 @@
         * Demo styles
         * ----------------------------------------------
         **/
-
-        body {
-            font-family: sans-serif;
-            margin: 0;
+        
+        html {
+            box-sizing: border-box;
+            min-height: 100%;
+            background-color: rgb(255, 179, 236);
+            background-image: -webkit-linear-gradient(135deg, rgb(255, 179, 236) 0%, rgb(255, 217, 179) 100%);
+            background-image: -moz-linear-gradient(135deg, rgb(255, 179, 236) 0%, rgb(255, 217, 179) 100%);
+            background-image: -o-linear-gradient(135deg, rgb(255, 179, 236) 0%, rgb(255, 217, 179) 100%);
+            background-image: linear-gradient(135deg, rgb(255, 179, 236) 0%, rgb(255, 217, 179) 100%);
         }
-
+        
+        *,
+        *:before,
+        *:after {
+            box-sizing: inherit;
+        }
+        
+        body {
+            font-family: helvetica, arial, sans-serif;
+            margin: 0;
+            height: 100%;
+        }
+        
+        .quicktube {
+            box-shadow: 0px 3px 1px 0px rgba(0, 0, 0, 0.1);
+            -webkit-box-shadow: 0px 3px 1px 0px rgba(0, 0, 0, 0.1);
+            -moz-box-shadow: 0px 3px 1px 0px rgba(0, 0, 0, 0.1);
+        }
+        
         .quicktube__poster {
-            background: #eee;
+            background: #fff;
             text-align: center;
         }
-
+        
         .quicktube__btn {
             display: inline-block;
             padding: .5em;
             background-color: transparent;
-            border: solid 2px #222;
-            font-size: inherit;
+            border: solid 2px #f256a4;
+            color: #f256a4;
+            font-size: .875rem;
             font-weight: bold;
             text-transform: uppercase;
             cursor: pointer;
         }
-
-         /* A stop button */
-        .quicktube__btn--stop {
-            border-color: red;
-            color: red;
-        }
-
-        .quicktube__btn--stop:hover {
-            background: red;
-        }
-
+        
         .quicktube__poster:hover .quicktube__btn,
         .quicktube__btn:hover {
-            background: #222;
+            background-color: #f256a4;
             color: #fff;
         }
-
-        .page-container {
-            max-width: 50rem;
-            margin-left: auto;
-            margin-right: auto;
+        /* A stop button */
+        
+        .quicktube__btn--stop {
+            background-color: #f256a4;
+            border-color: #f256a4;
+            color: #fff;
         }
-
+        
+        .quicktube__btn--stop:hover {
+            background-color: #fff;
+            color: #f256a4;
+        }
+        
+        .page-container {
+            padding: 3%;
+        }
+        
+        .grid {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            font-size: 0;
+        }
+        
+        .grid--column-spacing {
+            margin-left: -1.5rem;
+        }
+        
+        .grid--row-spacing {
+            margin-bottom: -1.5rem;
+        }
+        
+        .grid>* {
+            display: inline-block;
+            vertical-align: top;
+            width: 100%;
+            font-size: medium;
+            text-justify: auto;
+        }
+        
+        .grid--column-spacing>* {
+            padding-left: 1.5rem;
+        }
+        
+        .grid--row-spacing>* {
+            padding-bottom: 1.5rem;
+        }
+        
         .u-text-center {
             text-align: center;
         }
+        
+        .u-width-half {
+            width: 50%;
+        }
     </style>
 </head>
+
 <body>
 
-<!-- HTML you need -->
-<div class="page-container">
-    <div class="quicktube" data-quicktube="gneBUA39mnI" data-quicktube-youtube>
-        <div class="quicktube__video" data-quicktube-video></div>
-        <div data-quicktube-play="gneBUA39mnI" class="quicktube__poster" data-quicktube-poster>
-            <button class="quicktube__play quicktube__btn">
-                Play
-            </button>
+    <!-- HTML you need -->
+    <div class="page-container">
+        <div class="grid grid--column-spacing grid--row-spacing">
+            <div class="u-width-half">
+                <div class="quicktube" data-quicktube="WtQ0g-GB-iQ" data-quicktube-youtube>
+                    <div class="quicktube__video" data-quicktube-video></div>
+                    <div data-quicktube-play="WtQ0g-GB-iQ" class="quicktube__poster" data-quicktube-poster>
+                        <button class="quicktube__play quicktube__btn">
+                            Play youtube video
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="u-width-half">
+                <div class="quicktube" data-quicktube="76979871" data-quicktube-vimeo data-quicktube-options='{"trackAnalytics": true, "activeClass": "playing", "pausedClass": "paused"}'>
+                    <div class="quicktube__video" data-quicktube-video></div>
+                    <div data-quicktube-play="76979871" class="quicktube__poster" data-quicktube-poster>
+                        <!-- Optional poster frame image -->
+                        <!--<img src="http://www.lovethispic.com/uploaded_images/90725-Colorful-Kittens.jpg?w=240" class="quicktube__poster-image">-->
+                        <button class="quicktube__play quicktube__btn">
+                            Play vimeo
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="u-width-half">
+                <div class="quicktube" data-quicktube="WtQ0g-GB-iQ" data-quicktube-youtube>
+                    <div class="quicktube__video" data-quicktube-video></div>
+                    <div data-quicktube-play="WtQ0g-GB-iQ" class="quicktube__poster" data-quicktube-poster>
+                        <button class="quicktube__play quicktube__btn">
+                            Play youtube video
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="u-width-half">
+                <div class="quicktube" data-quicktube="76979871" data-quicktube-vimeo data-quicktube-options='{"trackAnalytics": true, "activeClass": "playing", "pausedClass": "paused"}'>
+                    <div class="quicktube__video" data-quicktube-video></div>
+                    <div data-quicktube-play="76979871" class="quicktube__poster" data-quicktube-poster>
+                        <!-- Optional poster frame image -->
+                        <!--<img src="http://www.lovethispic.com/uploaded_images/90725-Colorful-Kittens.jpg?w=240" class="quicktube__poster-image">-->
+                        <button class="quicktube__play quicktube__btn">
+                            Play vimeo
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
+
     </div>
 
-    <button class="quicktube__btn quicktube__btn--stop" data-quicktube-stop="gneBUA39mnI">
-        Stop video!
-    </button>
-
-    <div class="quicktube" data-quicktube="76979871" data-quicktube-vimeo data-quicktube-options='{"trackAnalytics": true, "activeClass": "playing", "pausedClass": "paused"}'>
-        <div class="quicktube__video" data-quicktube-video></div>
-        <div data-quicktube-play="76979871" class="quicktube__poster" data-quicktube-poster>
-            <!-- Optional poster frame image -->
-            <!--<img src="http://www.lovethispic.com/uploaded_images/90725-Colorful-Kittens.jpg?w=240" class="quicktube__poster-image">-->
-            <button class="quicktube__play quicktube__btn">
-                Play
-            </button>
-        </div>
-    </div>
-
-    <button class="quicktube__btn quicktube__btn--stop" data-quicktube-stop="76979871">
-        Stop video!
-    </button>
-</div>
-
-
-<script>
-    document.documentElement.className = document.documentElement.className.replace("no-js", "js");
-</script>
-<script src="../dist/quicktube.js"></script>
-<script>
-    // Remember to initialise QuickTube at some point in your app
-    document.addEventListener('DOMContentLoaded', function() {
-        const showingItem = document.querySelector('[data-show-while-playing]');
-        window.quicktube.init();
-    });
-</script>
+    <script>
+        document.documentElement.className = document.documentElement.className.replace("no-js", "js");
+    </script>
+    <script src="../dist/quicktube.js"></script>
+    <script>
+        // Remember to initialise QuickTube at some point in your app
+        document.addEventListener('DOMContentLoaded', function() {
+            const showingItem = document.querySelector('[data-show-while-playing]');
+            window.quicktube.init();
+        });
+    </script>
 </body>
+
 </html>
