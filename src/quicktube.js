@@ -65,7 +65,6 @@ class Quicktube {
         this.onPlayerError = this.onPlayerError.bind(this);
 
         // Booleans
-        this.isMobileSafari = isMobileSafari();
         this.isVimeo = this.videoEl.hasAttribute('data-quicktube-vimeo');
 
         // Settings
@@ -121,7 +120,7 @@ class Quicktube {
         }
 
         // Only trigger force video play if not Mobile safari as playVideo function not supported
-        if (!this.isMobileSafari) {
+        if (!isMobileSafari()) {
             if (this.quicktubePlayer) {
                 if (this.isVimeo) {
                     this.quicktubePlayer.play();
@@ -223,7 +222,7 @@ class Quicktube {
 
     onPlayerReady(event) {
         const isPlaying = this.videoEl.getAttribute('data-video-playing');
-        if (!this.isMobileSafari) {
+        if (!isMobileSafari()) {
             if (isPlaying) {
                 // TODO evaluate if this is needed
                 // Not sure it ever gets to this point
