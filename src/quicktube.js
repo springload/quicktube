@@ -25,8 +25,8 @@ const trackEvent = (event) => {
     }
 };
 
-const createPlayerURL = (playerEmbedUrl, playerId, options) => {
-    let url = `${playerEmbedUrl}${playerId}?autoplay=1`;
+const createPlayerURL = (playerEmbedUrl, videoId, options) => {
+    let url = `${playerEmbedUrl}${videoId}?autoplay=1`;
     const optionKeys = Object.keys(options);
     optionKeys.forEach((key) => {
         url += `&${encodeURIComponent(key)}=${encodeURIComponent(options[key])}`;
@@ -40,20 +40,11 @@ const getCurrentSegment = (currentPosition, duration, numberOfSegments = 4) => {
     return (Math.floor(percentage * numberOfSegments) / numberOfSegments).toFixed(2);
 };
 
-const guid = () => {
-    const s4 = () => {
-        return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-    };
-
-    return `${s4()}${s4()}-${s4()}-${s4()}-${s4()}-${s4()}${s4()}${s4()}`;
-};
-
 class Quicktube {
-
-    constructor(videoId, videoGUID, videoEmbedUrl, options = {}) {
+    constructor(videoId, playerId, videoEl, videoEmbedUrl, options = {}) {
         this.videoId = videoId;
-        this.videoGUID = videoGUID;
-        this.videoEl = document.querySelector(`[data-quicktube-quid="${this.videoGUID}"]`);
+        this.videoEl = videoEl;
+        this.playerId = playerId;
         this.videoPoster = this.videoEl.querySelector('[data-quicktube-poster]');
 
         // Bound functions
@@ -90,7 +81,7 @@ class Quicktube {
         // Initial actions
         // Need to have unique id's so that multiple of the same video can exist on a page without breaking
         const playEl = this.videoEl.querySelector('[data-quicktube-play]');
-        playEl.setAttribute('data-play-guid', this.videoGUID);
+        playEl.setAttribute('data-play-guid', this.playerId);
 
         playEl.addEventListener('click', this.onClick);
 
@@ -173,28 +164,27 @@ class Quicktube {
         const iframe = document.createElement('iframe');
         iframe.src = this.playerURL;
         iframe.width = '100%';
-        iframe.id = this.videoGUID;
         iframe.className = IFRAME_CLASS;
         iframeContainer.appendChild(iframe);
 
         if (this.isVimeo) {
-            this.quicktubePlayer = new Vimeo.Player(this.videoGUID);
+            this.quicktubePlayer = new Vimeo.Player(iframe);
 
             this.quicktubePlayer.on('play', () => {
-                console.log(this.videoGUID, ': Vimeo played!');
+                console.log(this.playerId, ': Vimeo played!');
             });
 
             this.quicktubePlayer.on('pause', () => {
-                console.log(this.videoGUID, ': Vimeo paused!');
+                console.log(this.playerId, ': Vimeo paused!');
             });
             // this.quicktubePlayer.on('timeupdate', () => {
-            //     console.log(this.videoGUID, ': Vimeo time update!');
+            //     console.log(this.playerId, ': Vimeo time update!');
             // });
             this.quicktubePlayer.on('loaded', () => {
-                console.log(this.videoGUID, ': Vimeo Video loaded!');
+                console.log(this.playerId, ': Vimeo Video loaded!');
             });
             this.quicktubePlayer.on('error', () => {
-                console.log(this.videoGUID, ': Vimeo Error!');
+                console.log(this.playerId, ': Vimeo Error!');
             });
 
             // Might wanna check this functionality, may want to leave stopped player
@@ -203,7 +193,7 @@ class Quicktube {
                 this.stopVideo();
             });
         } else {
-            this.quicktubePlayer = new YT.Player(this.videoGUID, {
+            this.quicktubePlayer = new YT.Player(iframe, {
                 events: {
                     onReady: this.onPlayerReady,
                     onStateChange: this.onPlayerStateChange,
@@ -337,12 +327,6 @@ class Quicktube {
 
 }
 
-// This seems to be a requirement of the YouTube Player API for iframe embeds
-// https://developers.google.com/youtube/iframe_api_reference#Requirements
-window.onYouTubeIframeAPIReady = () => {
-    // TODO investigate whether this is a set requirement
-};
-
 const insertScript = (url) => {
     const isAlreadyInserted = document.querySelector(`[src="${url}"]`);
 
@@ -356,8 +340,11 @@ const insertScript = (url) => {
 
 const quicktubeInit = () => {
     const videos = Array.prototype.slice.call(document.querySelectorAll('[data-quicktube]'));
-    videos.forEach((video) => {
+    videos.forEach((video, i) => {
         const isVimeo = video.getAttribute('data-quicktube-platform') === 'vimeo';
+        const videoId = video.getAttribute('data-quicktube');
+        const playerId = video.getAttribute('data-quicktube-quid') || `quicktube-${i}`;
+        const options = JSON.parse(video.getAttribute('data-quicktube-options'));
         let videoDomain;
 
         if (isVimeo) {
@@ -369,11 +356,8 @@ const quicktubeInit = () => {
             insertScript(YOUTUBE_API);
             videoDomain = YOUTUBE_EMBED;
         }
-        const videoId = video.getAttribute('data-quicktube');
-        const options = JSON.parse(video.getAttribute('data-quicktube-options'));
-        const videoGUID = guid();
-        video.setAttribute('data-quicktube-quid', videoGUID);
-        const player = new Quicktube(videoId, videoGUID, videoDomain, options);
+
+        const player = new Quicktube(videoId, playerId, video, videoDomain, options);
         return player;
     });
 };
