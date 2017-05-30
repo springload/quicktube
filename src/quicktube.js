@@ -30,7 +30,7 @@ const createPlayerUrl = (playerEmbedUrl, playerId, options) => {
     let url = `${playerEmbedUrl}${playerId}?autoplay=1`;
     const optionKeys = Object.keys(options);
     optionKeys.forEach((key) => {
-        url += `&${key}=${options[key]}`;
+        url += `&${encodeURIComponent(key)}=${encodeURIComponent(options[key])}`;
     });
     return url;
 };
