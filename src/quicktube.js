@@ -344,8 +344,9 @@ window.onYouTubeIframeAPIReady = () => {
     // TODO investigate whether this is a set requirement
 };
 
-const insertScript = (url, hasBeenCreated) => {
-    if (!hasBeenCreated) {
+const insertScript = (url) => {
+    const isAlreadyInserted = document.querySelector(`[src="${url}"]`);
+    if (!isAlreadyInserted) {
         const newScriptTag = document.createElement('script');
         newScriptTag.src = url;
         FIRST_SCRIPT_TAG.parentNode.insertBefore(newScriptTag, FIRST_SCRIPT_TAG);
@@ -360,11 +361,11 @@ const quicktubeInit = () => {
 
         if (isVimeo) {
             // Inject the Vimeo Player API
-            insertScript(VIMEO_API, window.Vimeo);
+            insertScript(VIMEO_API);
             videoDomain = VIMEO_EMBED;
         } else {
             // Inject the YouTube API
-            insertScript(YOUTUBE_API, window.YT);
+            insertScript(YOUTUBE_API);
             videoDomain = YOUTUBE_EMBED;
         }
         const videoId = video.getAttribute('data-quicktube');
