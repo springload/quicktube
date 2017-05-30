@@ -65,7 +65,7 @@ class Quicktube {
         this.onPlayerError = this.onPlayerError.bind(this);
 
         // Booleans
-        this.isVimeo = this.videoEl.hasAttribute('data-quicktube-vimeo');
+        this.isVimeo = this.videoEl.getAttribute('data-quicktube-platform') === 'vimeo';
 
         // Settings
         this.options = Object.assign({
@@ -361,8 +361,10 @@ const insertApiScript = (url, hasBeenCreated) => {
 const quicktubeInit = () => {
     const videos = Array.prototype.slice.call(document.querySelectorAll('[data-quicktube]'));
     videos.forEach((video) => {
+        const isVimeo = video.getAttribute('data-quicktube-platform') === 'vimeo';
         let videoDomain;
-        if (video.hasAttribute('data-quicktube-vimeo')) {
+
+        if (isVimeo) {
             // Inject the Vimeo Player API
             insertApiScript(VIMEO_API, window.Vimeo);
             videoDomain = VIMEO_EMBED;
