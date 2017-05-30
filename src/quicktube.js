@@ -26,7 +26,7 @@ const trackEvent = (event) => {
     }
 };
 
-const createPlayerUrl = (playerEmbedUrl, playerId, options) => {
+const createPlayerURL = (playerEmbedUrl, playerId, options) => {
     let url = `${playerEmbedUrl}${playerId}?autoplay=1`;
     const optionKeys = Object.keys(options);
     optionKeys.forEach((key) => {
@@ -87,7 +87,7 @@ class Quicktube {
             autopause: 0,
         };
 
-        this.playerUrl = createPlayerUrl(videoEmbedUrl, this.videoId, playerOptions);
+        this.playerURL = createPlayerURL(videoEmbedUrl, this.videoId, playerOptions);
 
         // Initial actions
         // Need to have unique id's so that multiple of the same video can exist on a page without breaking
@@ -179,7 +179,7 @@ class Quicktube {
 
     createIframePlayer(iframeContainer) {
         const iframe = document.createElement('iframe');
-        iframe.src = this.playerUrl;
+        iframe.src = this.playerURL;
         iframe.width = '100%';
         iframe.id = this.videoGUID;
         iframe.className = IFRAME_CLASS;
