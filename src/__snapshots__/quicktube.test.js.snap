@@ -1,0 +1,85 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Quicktube init default options 1`] = `
+Object {
+  "activeClass": "quicktube--playing",
+  "pausedClass": "quicktube--paused",
+  "posterFrameHiddenClass": "quicktube__poster--hidden",
+  "trackAnalytics": false,
+}
+`;
+
+exports[`Quicktube loaded 1`] = `
+"
+<script></script>
+<div class=\\"quicktube\\" data-quicktube=\\"k6QanQUaDOo\\">
+    <div class=\\"quicktube__video\\" data-quicktube-video=\\"\\"></div>
+    <div data-quicktube-play=\\"k6QanQUaDOo\\" class=\\"quicktube__poster\\" data-quicktube-poster=\\"\\">
+        <button class=\\"quicktube__play quicktube__btn\\">
+            Play
+        </button>
+    </div>
+</div>
+<button class=\\"quicktube__play quicktube__btn\\" data-quicktube-stop=\\"k6QanQUaDOo\\">Stop button</button>
+"
+`;
+
+exports[`Quicktube play click 1`] = `
+"
+<script></script>
+<div class=\\"quicktube\\" data-quicktube=\\"k6QanQUaDOo\\">
+    <div class=\\"quicktube__video\\" data-quicktube-video=\\"\\"></div>
+    <div data-quicktube-play=\\"k6QanQUaDOo\\" class=\\"quicktube__poster\\" data-quicktube-poster=\\"\\">
+        <button class=\\"quicktube__play quicktube__btn\\">
+            Play
+        </button>
+    </div>
+</div>
+<button class=\\"quicktube__play quicktube__btn\\" data-quicktube-stop=\\"k6QanQUaDOo\\">Stop button</button>
+"
+`;
+
+exports[`Quicktube play keydown right key 1`] = `
+"
+<script></script>
+<div class=\\"quicktube\\" data-quicktube=\\"k6QanQUaDOo\\">
+    <div class=\\"quicktube__video\\" data-quicktube-video=\\"\\"></div>
+    <div data-quicktube-play=\\"k6QanQUaDOo\\" class=\\"quicktube__poster\\" data-quicktube-poster=\\"\\">
+        <button class=\\"quicktube__play quicktube__btn\\">
+            Play
+        </button>
+    </div>
+</div>
+<button class=\\"quicktube__play quicktube__btn\\" data-quicktube-stop=\\"k6QanQUaDOo\\">Stop button</button>
+"
+`;
+
+exports[`Quicktube play keydown wrong key 1`] = `
+"
+<script></script>
+<div class=\\"quicktube\\" data-quicktube=\\"k6QanQUaDOo\\">
+    <div class=\\"quicktube__video\\" data-quicktube-video=\\"\\"></div>
+    <div data-quicktube-play=\\"k6QanQUaDOo\\" class=\\"quicktube__poster\\" data-quicktube-poster=\\"\\">
+        <button class=\\"quicktube__play quicktube__btn\\">
+            Play
+        </button>
+    </div>
+</div>
+<button class=\\"quicktube__play quicktube__btn\\" data-quicktube-stop=\\"k6QanQUaDOo\\">Stop button</button>
+"
+`;
+
+exports[`Quicktube stop click 1`] = `
+"
+<script></script>
+<div class=\\"quicktube\\" data-quicktube=\\"k6QanQUaDOo\\">
+    <div class=\\"quicktube__video\\" data-quicktube-video=\\"\\"></div>
+    <div data-quicktube-play=\\"k6QanQUaDOo\\" class=\\"quicktube__poster\\" data-quicktube-poster=\\"\\">
+        <button class=\\"quicktube__play quicktube__btn\\">
+            Play
+        </button>
+    </div>
+</div>
+<button class=\\"quicktube__play quicktube__btn\\" data-quicktube-stop=\\"k6QanQUaDOo\\">Stop button</button>
+"
+`;

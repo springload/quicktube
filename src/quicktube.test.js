@@ -1,5 +1,4 @@
-// Mock for Google Analytics.
-const ga = jest.fn();
+const Quicktube = require('./quicktube');
 
 // Mocks for YouTube iframe API.
 let playerEvents;
@@ -8,7 +7,7 @@ const mockPlayer = {
     pauseVideo: jest.fn(),
 };
 
-const YT = {
+window.YT = {
     PlayerState: {
         BUFFERING: 3,
         CUED: 5,
@@ -24,9 +23,8 @@ const YT = {
     }),
 };
 
-// Mock for
-window.ga = ga;
-window.YT = YT;
+// Mock for Google Analytics.
+window.ga = jest.fn();
 
 const mockHTML = `
 <script></script>
@@ -51,18 +49,9 @@ const simulateEvent = (selector, type, data = {}) => {
 
 describe('Quicktube', () => {
     document.body.innerHTML = mockHTML;
-    const Quicktube = require('./quicktube');
     const loadedHTML = document.body.innerHTML;
 
-    it('exists', () => {
-        expect(Quicktube).toBeDefined();
-    });
-
-    it('loaded', () => {
-        expect(document.body.innerHTML).toMatchSnapshot();
-    });
-
-    describe('onYouTubeIframeAPIReady', () => {
+    describe.skip('onYouTubeIframeAPIReady', () => {
         it('exists', () => {
             expect(window.onYouTubeIframeAPIReady).toBeDefined();
         });
@@ -77,17 +66,8 @@ describe('Quicktube', () => {
 
     describe('init', () => {
         it('default options', () => {
-            Quicktube.init();
-            expect(Quicktube.options).toEqual({
-                trackAnalytics: false,
-                activeClass: 'quicktube--playing',
-                pausedClass: 'quicktube--paused',
-                posterFrameHiddenClass: 'quicktube__poster--hidden',
-                showInfo: 0,
-                autohide: 1,
-                color: 'white',
-                wmode: 'transparent',
-            });
+            const players = Quicktube.init();
+            expect(players[0].options).toMatchSnapshot();
         });
 
         it('custom options', () => {
