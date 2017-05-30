@@ -92,11 +92,10 @@ class Quicktube {
         // Need to have unique id's so that multiple of the same video can exist on a page without breaking
         const playEl = this.videoEl.querySelector('[data-quicktube-play]');
         playEl.setAttribute('data-play-guid', this.videoGUID);
-        const uniquePlayButton = document.querySelector(`[data-play-guid="${this.videoGUID}"]`);
 
-        uniquePlayButton.addEventListener('click', this.onClick);
+        playEl.addEventListener('click', this.onClick);
 
-        uniquePlayButton.addEventListener('keydown', (event) => {
+        playEl.addEventListener('keydown', (event) => {
             if (event.keyCode === KEY_CODES.ENTER) {
                 this.onClick();
             }
