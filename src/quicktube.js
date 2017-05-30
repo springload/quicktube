@@ -6,7 +6,7 @@ const YOUTUBE_API = 'https://www.youtube.com/iframe_api';
 const YOUTUBE_EMBED = 'https://www.youtube.com/embed/';
 const VIMEO_API = 'https://player.vimeo.com/api/player.js';
 const VIMEO_EMBED = 'https://player.vimeo.com/video/';
-const FIRST_SCRIPT_TAG = document.getElementsByTagName('script')[0];
+const FIRST_SCRIPT_TAG = document.querySelector('script');
 const IFRAME_CLASS = 'quicktube__iframe';
 
 // Mobile Safari exhibits a number of documented bugs with the
