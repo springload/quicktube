@@ -338,13 +338,14 @@ const insertScript = (url) => {
     }
 };
 
-const quicktubeInit = () => {
-    const videos = Array.prototype.slice.call(document.querySelectorAll('[data-quicktube]'));
-    videos.forEach((video, i) => {
-        const isVimeo = video.getAttribute('data-quicktube-platform') === 'vimeo';
-        const videoId = video.getAttribute('data-quicktube');
-        const playerId = video.getAttribute('data-quicktube-quid') || `quicktube-${i}`;
-        const options = JSON.parse(video.getAttribute('data-quicktube-options'));
+Quicktube.init = () => {
+    const players = Array.prototype.slice.call(document.querySelectorAll('[data-quicktube]'));
+
+    return players.map((player, i) => {
+        const isVimeo = player.getAttribute('data-quicktube-platform') === 'vimeo';
+        const videoId = player.getAttribute('data-quicktube');
+        const playerId = player.getAttribute('data-quicktube-quid') || `quicktube-${i}`;
+        const options = JSON.parse(player.getAttribute('data-quicktube-options'));
         let videoDomain;
 
         if (isVimeo) {
@@ -357,13 +358,8 @@ const quicktubeInit = () => {
             videoDomain = YOUTUBE_EMBED;
         }
 
-        const player = new Quicktube(videoId, playerId, video, videoDomain, options);
-        return player;
+        return new Quicktube(videoId, playerId, player, videoDomain, options);
     });
 };
 
-// Need to figure out the best way to export these to use inside tests as well as projects
-module.exports = {
-    init: quicktubeInit,
-    Quicktube: Quicktube,
-};
+module.exports = Quicktube;
