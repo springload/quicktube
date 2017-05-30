@@ -75,15 +75,15 @@ class Quicktube {
             posterFrameHiddenClass: 'quicktube__poster--hidden',
         }, options);
 
-        const playerOptions = !this.isVimeo ? {
+        const playerOptions = this.isVimeo ? {
+            autopause: 0,
+        } : {
             showInfo: 0,
             autohide: 1,
             color: 'white',
             playerapi: 'ytplayer',
             enablejsapi: 1,
             wmode: 'transparent',
-        } : {
-            autopause: 0,
         };
 
         this.playerURL = createPlayerURL(videoEmbedUrl, this.videoId, playerOptions);
