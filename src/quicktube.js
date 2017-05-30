@@ -6,7 +6,6 @@ const YOUTUBE_API = 'https://www.youtube.com/iframe_api';
 const YOUTUBE_EMBED = 'https://www.youtube.com/embed/';
 const VIMEO_API = 'https://player.vimeo.com/api/player.js';
 const VIMEO_EMBED = 'https://player.vimeo.com/video/';
-const FIRST_SCRIPT_TAG = document.querySelector('script');
 const IFRAME_CLASS = 'quicktube__iframe';
 
 // Mobile Safari exhibits a number of documented bugs with the
@@ -346,10 +345,12 @@ window.onYouTubeIframeAPIReady = () => {
 
 const insertScript = (url) => {
     const isAlreadyInserted = document.querySelector(`[src="${url}"]`);
+
     if (!isAlreadyInserted) {
-        const newScriptTag = document.createElement('script');
-        newScriptTag.src = url;
-        FIRST_SCRIPT_TAG.parentNode.insertBefore(newScriptTag, FIRST_SCRIPT_TAG);
+        const firstScript = document.querySelector('script');
+        const newScript = document.createElement('script');
+        newScript.src = url;
+        firstScript.parentNode.insertBefore(newScript, firstScript);
     }
 };
 
