@@ -104,14 +104,9 @@ class Quicktube {
 
     onClick() {
         const iframeContainer = this.videoEl.querySelector('[data-quicktube-video]');
-        const videoIframes = iframeContainer.getElementsByTagName('iframe');
-        // defines whether video has already been loaded and you want to play again
-        let iframe = false;
-        if (videoIframes.length > 0) {
-            iframe = videoIframes[0];
-        }
+        const hasPlayer = !!iframeContainer.querySelector('iframe');
 
-        if (!iframe) {
+        if (!hasPlayer) {
             this.createIframePlayer(iframeContainer);
 
             // TODO Figure out what this is doing and why!
