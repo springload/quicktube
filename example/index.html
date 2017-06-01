@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Quicktube</title>
+    <title>Quicktube.js</title>
     <link rel="stylesheet" href="example.css" />
     <link rel="stylesheet" href="../dist/quicktube.css" />
     <script>
@@ -56,7 +56,7 @@
             </div>
 
             <h2>Vimeo video</h2>
-            <div class="quicktube" data-quicktube="76979871" data-quicktube-platform="vimeo" data-quicktube-options='{"trackAnalytics": true, "activeClass": "playing", "pausedClass": "paused"}'>
+            <div class="quicktube" data-quicktube="76979871" data-quicktube-platform="vimeo">
                 <div class="quicktube__video" data-quicktube-video></div>
                 <div data-quicktube-play="76979871" class="quicktube__poster" data-quicktube-poster>
                     <!-- Optional poster frame image -->
@@ -68,7 +68,7 @@
             </div>
 
             <h2>Duplicated Youtube video</h2>
-            <div class="quicktube" data-quicktube="WtQ0g-GB-iQ" data-quicktube-platform="youtube">
+            <div class="quicktube" data-quicktube="WtQ0g-GB-iQ" data-quicktube-platform="youtube" data-quicktube-options='{"trackAnalytics": true}'>
                 <div class="quicktube__video" data-quicktube-video></div>
                 <div data-quicktube-play="WtQ0g-GB-iQ" class="quicktube__poster" data-quicktube-poster>
                     <button class="quicktube__play quicktube__btn">
@@ -78,7 +78,7 @@
             </div>
 
             <h2>Duplicated Vimeo video</h2>
-            <div class="quicktube" data-quicktube="76979871" data-quicktube-platform="vimeo" data-quicktube-options='{"trackAnalytics": true, "activeClass": "playing", "pausedClass": "paused"}'>
+            <div class="quicktube" data-quicktube="76979871" data-quicktube-platform="vimeo" data-quicktube-options='{"trackAnalytics": true}'>
                 <div class="quicktube__video" data-quicktube-video></div>
                 <div data-quicktube-play="76979871" class="quicktube__poster" data-quicktube-poster>
                     <!-- Optional poster frame image -->
@@ -105,6 +105,7 @@
             window.quicktube.init();
         });
     </script>
+
 </body>
 
 </html>

@@ -7,7 +7,10 @@ module.exports = {
     context: sourcePath,
     devtool: 'source-map',
     entry: {
-        quicktube: path.join(sourcePath, 'quicktube.js'),
+        quicktube: [
+            path.join(sourcePath, 'utils', 'polyfills.js'),
+            path.join(sourcePath, 'quicktube.js'),
+        ],
     },
     output: {
         path: distPath,

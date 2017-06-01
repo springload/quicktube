@@ -7,13 +7,9 @@
 }
 
 /* Class applied when video is playing */
-.quicktube--playing {
+.quicktube--playing {}
 
-}
-
-.quicktube--paused {
-
-}
+.quicktube--paused {}
 
     .quicktube__iframe {
         border: none;
@@ -42,6 +38,7 @@
         cursor: pointer;
         transition: opacity .1s linear, bottom 0s linear 0s;
         overflow: hidden;
+        background: #f3f3f3;
     }
 
     /* Class applied when poster image gets hidden */
