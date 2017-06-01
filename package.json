@@ -9,8 +9,9 @@
     "test:coverage": "jest --coverage",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "lint": "eslint",
-    "build": "webpack --config ./webpack/webpack.config.prod.js",
-    "watch": "webpack --config ./webpack/webpack.config.dev.js"
+    "copy:css": "cp src/quicktube.css dist/quicktube.css",
+    "build": "webpack --config ./webpack/webpack.config.prod.js && npm run copy:css",
+    "watch": "webpack --config ./webpack/webpack.config.dev.js && npm run copy:css"
   },
   "repository": {
     "type": "git",
