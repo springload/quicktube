@@ -3,7 +3,7 @@ import throttle from 'lodash/throttle';
 const KEY_CODES = {
     ENTER: 13,
 };
-
+const TIMEOUT_DELAY = 10000;
 const YOUTUBE_API = 'https://www.youtube.com/iframe_api';
 const YOUTUBE_EMBED = 'https://www.youtube.com/embed/';
 const VIMEO_API = 'https://player.vimeo.com/api/player.js';
@@ -65,7 +65,7 @@ class Quicktube {
         this.onPlayerPercent = this.onPlayerPercent.bind(this);
         this.throttleOnPlayerPercent = throttle(() => {
             this.onPlayerPercent(this.quicktubePlayer);
-        }, 1000);
+        }, TIMEOUT_DELAY);
 
         // Booleans
         this.isVimeo = this.videoEl.getAttribute('data-quicktube-platform') === 'vimeo';
@@ -258,11 +258,12 @@ class Quicktube {
                 });
 
                 this.quicktubePlayer.on('timeupdate', this.throttleOnPlayerPercent);
+
+                this.quicktubePlayer.on('error', () => {
+                    console.log(this.playerId, ': Vimeo Error!');
+                });
             });
 
-            this.quicktubePlayer.on('error', () => {
-                console.log(this.playerId, ': Vimeo Error!');
-            });
         } else {
             this.quicktubePlayer = new YT.Player(iframe, {
                 events: {
@@ -288,7 +289,7 @@ class Quicktube {
 
         if (event.data === YT.PlayerState.PLAYING) {
             // Report % played every second
-            setTimeout(this.onPlayerPercent(event.target), 1000);
+            setTimeout(this.onPlayerPercent(event.target), TIMEOUT_DELAY);
             this.onPlayerPlay();
         }
 
