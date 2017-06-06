@@ -36,7 +36,7 @@
     /* Poster image */
     .quicktube__poster {
         cursor: pointer;
-        transition: opacity .1s linear, bottom 0s linear 0s;
+        transition: opacity .2s linear, bottom 0s linear 0s;
         overflow: hidden;
         background: #f3f3f3;
     }
