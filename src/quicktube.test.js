@@ -191,148 +191,143 @@ describe('Quicktube', () => {
         });
     });
 
-    // describe.skip('play iOS', () => {
-    //     beforeEach(() => {
-    //         document.body.innerHTML = loadedHTML;
-    //         navigator.userAgent = 'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1';
-    //         Quicktube.init();
-    //     });
+    describe.skip('play iOS', () => {
+        beforeEach(() => {
+            document.body.innerHTML = loadedHTML;
+            navigator.userAgent = 'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1';
+            Quicktube.init();
+        });
 
-    //     it('click', () => {
-    //         simulateEvent('[data-quicktube-play]', 'click');
-    //         expect(document.body.innerHTML).toMatchSnapshot();
-    //     });
-    // });
+        it('click', () => {
+            simulateEvent('[data-quicktube-play]', 'click');
+            expect(document.body.innerHTML).toMatchSnapshot();
+        });
+    });
 
-    // describe('YT Player events', () => {
-    //     beforeEach(() => {
-    //         document.body.innerHTML = loadedHTML;
-    //         // const quicktube = Quicktube.init({ trackAnalytics: true });
-    //         simulateEvent('[data-quicktube-play]', 'click');
-    //         ga.mockClear();
-    //         mockPlayer.pauseVideo.mockClear();
-    //     });
+    describe.skip('YT Player events', () => {
+        beforeEach(() => {
+            document.body.innerHTML = loadedHTML;
+            simulateEvent('[data-quicktube-play]', 'click');
+            ga.mockClear();
+            mockPlayer.pauseVideo.mockClear();
+        });
 
-    //     describe('onReady', () => {
-    //         it('not playing - resume video', () => {
-    //             const playVideo = jest.fn();
-    //             playerEvents.onReady({ target: { playVideo } });
-    //             expect(playVideo).toHaveBeenCalled();
-    //         });
+        describe('onReady', () => {
+            it('not playing - resume video', () => {
+                const playVideo = jest.fn();
+                playerEvents.onReady({ target: { playVideo } });
+                expect(playVideo).toHaveBeenCalled();
+            });
 
-    //         it('playing - stop video', () => {
-    //             const playVideo = jest.fn();
-    //             playerEvents.onReady({ target: { playVideo } });
-    //             expect(playVideo).toHaveBeenCalled();
-    //             Quicktube.stopVideo('kittens');
-    //             expect(mockPlayer.pauseVideo).toHaveBeenCalled();
-    //         });
-    //     });
+            it('playing - stop video', () => {
+                const playVideo = jest.fn();
+                playerEvents.onReady({ target: { playVideo } });
+                expect(playVideo).toHaveBeenCalled();
+                Quicktube.stopVideo('kittens');
+                expect(mockPlayer.pauseVideo).toHaveBeenCalled();
+            });
+        });
 
-    //     describe('onStateChange', () => {
-    //         it('PLAYING', () => {
-    //             playerEvents.onStateChange({
-    //                 target: {
-    //                     getVideoData: jest.fn(() => ({ title: 'test title' })),
-    //                 },
-    //                 data: YT.PlayerState.PLAYING,
-    //             });
-    //             expect(document.body.innerHTML).toMatchSnapshot();
-    //             expect(ga.mock.calls[0]).toMatchSnapshot();
-    //         });
+        describe('onStateChange', () => {
+            it('PLAYING', () => {
+                playerEvents.onStateChange({
+                    target: {
+                        getVideoData: jest.fn(() => ({ title: 'test title' })),
+                    },
+                    data: YT.PlayerState.PLAYING,
+                });
+                expect(document.body.innerHTML).toMatchSnapshot();
+                expect(ga.mock.calls[0]).toMatchSnapshot();
+            });
 
-    //         describe('PLAYING monitoring', () => {
-    //             it('still PLAYING 0%', () => {
-    //                 jest.useFakeTimers();
-    //                 playerEvents.onStateChange({
-    //                     target: {
-    //                         getVideoData: jest.fn(() => ({ title: 'test title' })),
-    //                         getPlayerState: jest.fn(() => YT.PlayerState.PLAYING),
-    //                         getDuration: jest.fn(() => 100),
-    //                         getCurrentTime: jest.fn(() => 0),
-    //                         // lastP: '',
-    //                     },
-    //                     data: YT.PlayerState.PLAYING,
-    //                 });
-    //                 jest.runOnlyPendingTimers();
-    //                 expect(ga.mock.calls[1]).toMatchSnapshot();
-    //             });
+            describe('PLAYING monitoring', () => {
+                it('still PLAYING 0%', () => {
+                    jest.useFakeTimers();
+                    playerEvents.onStateChange({
+                        target: {
+                            getVideoData: jest.fn(() => ({ title: 'test title' })),
+                            getPlayerState: jest.fn(() => YT.PlayerState.PLAYING),
+                            getDuration: jest.fn(() => 100),
+                            getCurrentTime: jest.fn(() => 0),
+                        },
+                        data: YT.PlayerState.PLAYING,
+                    });
+                    jest.runOnlyPendingTimers();
+                    expect(ga.mock.calls[1]).toMatchSnapshot();
+                });
 
-    //             it('still PLAYING 25%', () => {
-    //                 jest.useFakeTimers();
-    //                 playerEvents.onStateChange({
-    //                     target: {
-    //                         getVideoData: jest.fn(() => ({ title: 'test title' })),
-    //                         getPlayerState: jest.fn(() => YT.PlayerState.PLAYING),
-    //                         getDuration: jest.fn(() => 100),
-    //                         getCurrentTime: jest.fn(() => 25),
-    //                         // lastP: '',
-    //                     },
-    //                     data: YT.PlayerState.PLAYING,
-    //                 });
-    //                 jest.runOnlyPendingTimers();
-    //                 expect(ga.mock.calls[1]).toMatchSnapshot();
-    //             });
+                it('still PLAYING 25%', () => {
+                    jest.useFakeTimers();
+                    playerEvents.onStateChange({
+                        target: {
+                            getVideoData: jest.fn(() => ({ title: 'test title' })),
+                            getPlayerState: jest.fn(() => YT.PlayerState.PLAYING),
+                            getDuration: jest.fn(() => 100),
+                            getCurrentTime: jest.fn(() => 25),
+                        },
+                        data: YT.PlayerState.PLAYING,
+                    });
+                    jest.runOnlyPendingTimers();
+                    expect(ga.mock.calls[1]).toMatchSnapshot();
+                });
 
-    //             it('still PLAYING 50%', () => {
-    //                 jest.useFakeTimers();
-    //                 playerEvents.onStateChange({
-    //                     target: {
-    //                         getVideoData: jest.fn(() => ({ title: 'test title' })),
-    //                         getPlayerState: jest.fn(() => YT.PlayerState.PLAYING),
-    //                         getDuration: jest.fn(() => 100),
-    //                         getCurrentTime: jest.fn(() => 50),
-    //                         // lastP: '',
-    //                     },
-    //                     data: YT.PlayerState.PLAYING,
-    //                 });
-    //                 jest.runOnlyPendingTimers();
-    //                 expect(ga.mock.calls[1]).toMatchSnapshot();
-    //             });
+                it('still PLAYING 50%', () => {
+                    jest.useFakeTimers();
+                    playerEvents.onStateChange({
+                        target: {
+                            getVideoData: jest.fn(() => ({ title: 'test title' })),
+                            getPlayerState: jest.fn(() => YT.PlayerState.PLAYING),
+                            getDuration: jest.fn(() => 100),
+                            getCurrentTime: jest.fn(() => 50),
+                        },
+                        data: YT.PlayerState.PLAYING,
+                    });
+                    jest.runOnlyPendingTimers();
+                    expect(ga.mock.calls[1]).toMatchSnapshot();
+                });
 
-    //             it('still PLAYING 100%', () => {
-    //                 jest.useFakeTimers();
-    //                 playerEvents.onStateChange({
-    //                     target: {
-    //                         getVideoData: jest.fn(() => ({ title: 'test title' })),
-    //                         getPlayerState: jest.fn(() => YT.PlayerState.PLAYING),
-    //                         getDuration: jest.fn(() => 100),
-    //                         getCurrentTime: jest.fn(() => 50),
-    //                         // lastP: '',
-    //                     },
-    //                     data: YT.PlayerState.PLAYING,
-    //                 });
-    //                 jest.runOnlyPendingTimers();
-    //                 expect(ga.mock.calls[1]).toMatchSnapshot();
-    //             });
-    //         });
+                it('still PLAYING 100%', () => {
+                    jest.useFakeTimers();
+                    playerEvents.onStateChange({
+                        target: {
+                            getVideoData: jest.fn(() => ({ title: 'test title' })),
+                            getPlayerState: jest.fn(() => YT.PlayerState.PLAYING),
+                            getDuration: jest.fn(() => 100),
+                            getCurrentTime: jest.fn(() => 50),
+                        },
+                        data: YT.PlayerState.PLAYING,
+                    });
+                    jest.runOnlyPendingTimers();
+                    expect(ga.mock.calls[1]).toMatchSnapshot();
+                });
+            });
 
-    //         it('PAUSED', () => {
-    //             playerEvents.onStateChange({
-    //                 target: {
-    //                     getVideoData: jest.fn(() => ({ title: 'test title' })),
-    //                 },
-    //                 data: YT.PlayerState.PAUSED,
-    //             });
-    //             expect(document.body.innerHTML).toMatchSnapshot();
-    //             expect(ga.mock.calls[0]).toMatchSnapshot();
-    //         });
+            it('PAUSED', () => {
+                playerEvents.onStateChange({
+                    target: {
+                        getVideoData: jest.fn(() => ({ title: 'test title' })),
+                    },
+                    data: YT.PlayerState.PAUSED,
+                });
+                expect(document.body.innerHTML).toMatchSnapshot();
+                expect(ga.mock.calls[0]).toMatchSnapshot();
+            });
 
-    //         it('ENDED', () => {
-    //             playerEvents.onStateChange({
-    //                 target: {
-    //                     getVideoData: jest.fn(() => ({ title: 'test title' })),
-    //                 },
-    //                 data: YT.PlayerState.ENDED,
-    //             });
-    //             expect(document.body.innerHTML).toMatchSnapshot();
-    //             expect(mockPlayer.pauseVideo).toHaveBeenCalled();
-    //         });
-    //     });
+            it('ENDED', () => {
+                playerEvents.onStateChange({
+                    target: {
+                        getVideoData: jest.fn(() => ({ title: 'test title' })),
+                    },
+                    data: YT.PlayerState.ENDED,
+                });
+                expect(document.body.innerHTML).toMatchSnapshot();
+                expect(mockPlayer.pauseVideo).toHaveBeenCalled();
+            });
+        });
 
-    //     it('onError', () => {
-    //         playerEvents.onError({ target: { src: 'test src' }, data: 'test data' });
-    //         expect(ga.mock.calls[0]).toMatchSnapshot();
-    //     });
-    // });
+        it('onError', () => {
+            playerEvents.onError({ target: { src: 'test src' }, data: 'test data' });
+            expect(ga.mock.calls[0]).toMatchSnapshot();
+        });
+    });
 });
