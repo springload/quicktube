@@ -3,6 +3,7 @@
 exports[`Quicktube init Analytics on 1`] = `
 Object {
   "activeClass": "quicktube--playing",
+  "hideOnVideoEnd": false,
   "pausedClass": "quicktube--paused",
   "posterFrameHiddenClass": "quicktube__poster--hidden",
   "trackAnalytics": true,
@@ -12,6 +13,7 @@ Object {
 exports[`Quicktube init Custom state classes 1`] = `
 Object {
   "activeClass": "is-playing",
+  "hideOnVideoEnd": false,
   "pausedClass": "is-paused",
   "posterFrameHiddenClass": "is-hidden",
   "trackAnalytics": true,
@@ -21,6 +23,17 @@ Object {
 exports[`Quicktube init Is vimeo 1`] = `
 Object {
   "activeClass": "quicktube--playing",
+  "hideOnVideoEnd": false,
+  "pausedClass": "quicktube--paused",
+  "posterFrameHiddenClass": "quicktube__poster--hidden",
+  "trackAnalytics": false,
+}
+`;
+
+exports[`Quicktube init Stop video on end 1`] = `
+Object {
+  "activeClass": "quicktube--playing",
+  "hideOnVideoEnd": true,
   "pausedClass": "quicktube--paused",
   "posterFrameHiddenClass": "quicktube__poster--hidden",
   "trackAnalytics": false,
@@ -30,6 +43,7 @@ Object {
 exports[`Quicktube init default options 1`] = `
 Object {
   "activeClass": "quicktube--playing",
+  "hideOnVideoEnd": false,
   "pausedClass": "quicktube--paused",
   "posterFrameHiddenClass": "quicktube__poster--hidden",
   "trackAnalytics": false,

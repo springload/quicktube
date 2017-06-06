@@ -115,6 +115,22 @@ describe('Quicktube', () => {
             expect(players[0].options).toMatchSnapshot();
         });
 
+        it('Stop video on end', () => {
+            document.body.innerHTML = `
+            <script></script>
+            <div class="quicktube" data-quicktube="k6QanQUaDOo" data-quicktube-platform="youtube" data-quicktube-options='{"hideOnVideoEnd": true}'>
+                <div class="quicktube__video" data-quicktube-video></div>
+                <div data-quicktube-play="k6QanQUaDOo" class="quicktube__poster" data-quicktube-poster>
+                    <button class="quicktube__play quicktube__btn">
+                        Play
+                    </button>
+                </div>
+            </div>
+            `;
+            const players = Quicktube.init();
+            expect(players[0].options).toMatchSnapshot();
+        });
+
         it('Custom state classes', () => {
             document.body.innerHTML = `
             <script></script>
@@ -201,6 +217,19 @@ describe('Quicktube', () => {
         it('click', () => {
             simulateEvent('[data-quicktube-play]', 'click');
             expect(document.body.innerHTML).toMatchSnapshot();
+        });
+    });
+
+    // TODO stop functions should only be available if hide on end option is set
+    describe.skip('stop', () => {
+        beforeEach(() => {
+            document.body.innerHTML = loadedHTML;
+        });
+
+        it('click', () => {
+            simulateEvent('[data-quicktube-stop]', 'click');
+            expect(document.body.innerHTML).toMatchSnapshot();
+            expect(Quicktube.quicktubePlayer).toBe(mockPlayer);
         });
     });
 

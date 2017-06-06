@@ -62,6 +62,7 @@ class Quicktube {
         this.onPlayerEnded = this.onPlayerEnded.bind(this);
         this.onPlayerError = this.onPlayerError.bind(this);
         this.onPlayerPercent = this.onPlayerPercent.bind(this);
+        this.stopVideo = this.stopVideo.bind(this);
         this.throttleOnPlayerPercent = throttle(() => {
             this.onPlayerPercent(this.quicktubePlayer);
         }, TIMEOUT_DELAY);
@@ -72,6 +73,7 @@ class Quicktube {
         // Settings
         this.options = Object.assign({
             trackAnalytics: false,
+            hideOnVideoEnd: false,
             activeClass: 'quicktube--playing',
             pausedClass: 'quicktube--paused',
             posterFrameHiddenClass: 'quicktube__poster--hidden',
@@ -146,8 +148,28 @@ class Quicktube {
         this.videoEl.removeAttribute('data-video-playing');
     }
 
+    stopVideo() {
+        if (!this.quicktubePlayer) {
+            return;
+        }
+
+        if (this.isVimeo) {
+            this.quicktubePlayer.unload();
+        } else {
+            this.quicktubePlayer.stopVideo();
+        }
+
+        this.removeActiveState();
+        this.showPosterFrame();
+        this.videoEl.classList.remove(this.options.pausedClass);
+    }
+
     hidePosterFrame() {
         this.videoPoster.classList.add(this.options.posterFrameHiddenClass);
+    }
+
+    showPosterFrame() {
+        this.videoPoster.classList.remove(this.options.posterFrameHiddenClass);
     }
 
     onPlayerPause() {
@@ -185,6 +207,10 @@ class Quicktube {
                 eventAction: this.pageTitle,
                 eventLabel: label,
             });
+        }
+
+        if (this.options.hideOnVideoEnd) {
+            this.stopVideo();
         }
     }
 
@@ -235,6 +261,10 @@ class Quicktube {
 
                 this.quicktubePlayer.on('pause', () => {
                     this.onPlayerPause();
+                });
+
+                this.quicktubePlayer.on('ended', () => {
+                    this.onPlayerEnded();
                 });
 
                 this.quicktubePlayer.on('timeupdate', this.throttleOnPlayerPercent);
