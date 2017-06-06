@@ -7,6 +7,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "test:watch:coverage": "jest --watch --coverage",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "lint": "eslint",
     "copy:css": "cp src/quicktube.css dist/quicktube.css",

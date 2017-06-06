@@ -55,7 +55,6 @@ class Quicktube {
 
         // Bound functions
         this.onClick = this.onClick.bind(this);
-        this.stopVideo = this.stopVideo.bind(this);
         this.onPlayerReady = this.onPlayerReady.bind(this);
         this.onYoutubePlayerStateChange = this.onYoutubePlayerStateChange.bind(this);
         this.onPlayerPlay = this.onPlayerPlay.bind(this);
@@ -147,27 +146,8 @@ class Quicktube {
         this.videoEl.removeAttribute('data-video-playing');
     }
 
-    stopVideo() {
-        if (!this.quicktubePlayer) {
-            return;
-        }
-
-        if (this.isVimeo) {
-            this.quicktubePlayer.unload();
-        } else {
-            this.quicktubePlayer.stopVideo();
-        }
-
-        this.removeActiveState();
-        this.showPosterFrame();
-    }
-
     hidePosterFrame() {
         this.videoPoster.classList.add(this.options.posterFrameHiddenClass);
-    }
-
-    showPosterFrame() {
-        this.videoPoster.classList.remove(this.options.posterFrameHiddenClass);
     }
 
     onPlayerPause() {
@@ -263,7 +243,6 @@ class Quicktube {
                     console.log(this.playerId, ': Vimeo Error!');
                 });
             });
-
         } else {
             this.quicktubePlayer = new YT.Player(iframe, {
                 events: {

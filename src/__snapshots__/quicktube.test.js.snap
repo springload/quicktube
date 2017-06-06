@@ -1,5 +1,32 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Quicktube init Analytics on 1`] = `
+Object {
+  "activeClass": "quicktube--playing",
+  "pausedClass": "quicktube--paused",
+  "posterFrameHiddenClass": "quicktube__poster--hidden",
+  "trackAnalytics": true,
+}
+`;
+
+exports[`Quicktube init Custom state classes 1`] = `
+Object {
+  "activeClass": "is-playing",
+  "pausedClass": "is-paused",
+  "posterFrameHiddenClass": "is-hidden",
+  "trackAnalytics": true,
+}
+`;
+
+exports[`Quicktube init Is vimeo 1`] = `
+Object {
+  "activeClass": "quicktube--playing",
+  "pausedClass": "quicktube--paused",
+  "posterFrameHiddenClass": "quicktube__poster--hidden",
+  "trackAnalytics": false,
+}
+`;
+
 exports[`Quicktube init default options 1`] = `
 Object {
   "activeClass": "quicktube--playing",
@@ -9,77 +36,74 @@ Object {
 }
 `;
 
-exports[`Quicktube loaded 1`] = `
+exports[`Quicktube play Click but already has iframe 1`] = `
 "
-<script></script>
-<div class=\\"quicktube\\" data-quicktube=\\"k6QanQUaDOo\\">
-    <div class=\\"quicktube__video\\" data-quicktube-video=\\"\\"></div>
-    <div data-quicktube-play=\\"k6QanQUaDOo\\" class=\\"quicktube__poster\\" data-quicktube-poster=\\"\\">
-        <button class=\\"quicktube__play quicktube__btn\\">
-            Play
-        </button>
-    </div>
-</div>
-<button class=\\"quicktube__play quicktube__btn\\" data-quicktube-stop=\\"k6QanQUaDOo\\">Stop button</button>
-"
+            <script src=\\"https://www.youtube.com/iframe_api\\"></script><script></script>
+            <div class=\\"quicktube quicktube--playing\\" data-quicktube=\\"k6QanQUaDOo\\" data-quicktube-platform=\\"youtube\\">
+                <div class=\\"quicktube__video\\" data-quicktube-video=\\"\\">
+                    <iframe src=\\"https://www.youtube.com/embed/k6QanQUaDOo?autoplay=1&amp;showInfo=0&amp;autohide=1&amp;color=white&amp;playerapi=ytplayer&amp;enablejsapi=1&amp;wmode=transparent\\" width=\\"100%\\" class=\\"quicktube__iframe\\"></iframe>
+                </div>
+                <div data-quicktube-play=\\"k6QanQUaDOo\\" class=\\"quicktube__poster quicktube__poster--hidden\\" data-quicktube-poster=\\"\\" data-play-guid=\\"quicktube-0\\">
+                    <button class=\\"quicktube__play quicktube__btn\\">
+                        Play
+                    </button>
+                </div>
+            </div>
+            "
 `;
 
 exports[`Quicktube play click 1`] = `
 "
-<script></script>
-<div class=\\"quicktube\\" data-quicktube=\\"k6QanQUaDOo\\">
-    <div class=\\"quicktube__video\\" data-quicktube-video=\\"\\"></div>
-    <div data-quicktube-play=\\"k6QanQUaDOo\\" class=\\"quicktube__poster\\" data-quicktube-poster=\\"\\">
+<script src=\\"https://www.youtube.com/iframe_api\\"></script><script></script>
+<div class=\\"quicktube quicktube--playing\\" data-quicktube=\\"k6QanQUaDOo\\" data-quicktube-platform=\\"youtube\\">
+    <div class=\\"quicktube__video\\" data-quicktube-video=\\"\\"><iframe src=\\"https://www.youtube.com/embed/k6QanQUaDOo?autoplay=1&amp;showInfo=0&amp;autohide=1&amp;color=white&amp;playerapi=ytplayer&amp;enablejsapi=1&amp;wmode=transparent\\" width=\\"100%\\" class=\\"quicktube__iframe\\"></iframe></div>
+    <div data-quicktube-play=\\"k6QanQUaDOo\\" class=\\"quicktube__poster quicktube__poster--hidden\\" data-quicktube-poster=\\"\\" data-play-guid=\\"quicktube-0\\">
         <button class=\\"quicktube__play quicktube__btn\\">
             Play
         </button>
     </div>
 </div>
-<button class=\\"quicktube__play quicktube__btn\\" data-quicktube-stop=\\"k6QanQUaDOo\\">Stop button</button>
 "
 `;
 
-exports[`Quicktube play keydown right key 1`] = `
+exports[`Quicktube play click and isVimeo 1`] = `
 "
-<script></script>
-<div class=\\"quicktube\\" data-quicktube=\\"k6QanQUaDOo\\">
-    <div class=\\"quicktube__video\\" data-quicktube-video=\\"\\"></div>
-    <div data-quicktube-play=\\"k6QanQUaDOo\\" class=\\"quicktube__poster\\" data-quicktube-poster=\\"\\">
+<script src=\\"https://player.vimeo.com/api/player.js\\"></script><script></script>
+<div class=\\"quicktube\\" data-quicktube=\\"76979871\\" data-quicktube-platform=\\"vimeo\\">
+    <div class=\\"quicktube__video\\" data-quicktube-video=\\"\\"><iframe src=\\"https://player.vimeo.com/video/76979871?autoplay=1&amp;autopause=0\\" width=\\"100%\\" class=\\"quicktube__iframe\\"></iframe></div>
+    <div data-quicktube-play=\\"76979871\\" class=\\"quicktube__poster\\" data-quicktube-poster=\\"\\" data-play-guid=\\"quicktube-0\\">
         <button class=\\"quicktube__play quicktube__btn\\">
             Play
         </button>
     </div>
 </div>
-<button class=\\"quicktube__play quicktube__btn\\" data-quicktube-stop=\\"k6QanQUaDOo\\">Stop button</button>
+"
+`;
+
+exports[`Quicktube play keydown correct key 1`] = `
+"
+<script src=\\"https://www.youtube.com/iframe_api\\"></script><script></script>
+<div class=\\"quicktube quicktube--playing\\" data-quicktube=\\"k6QanQUaDOo\\" data-quicktube-platform=\\"youtube\\">
+    <div class=\\"quicktube__video\\" data-quicktube-video=\\"\\"><iframe src=\\"https://www.youtube.com/embed/k6QanQUaDOo?autoplay=1&amp;showInfo=0&amp;autohide=1&amp;color=white&amp;playerapi=ytplayer&amp;enablejsapi=1&amp;wmode=transparent\\" width=\\"100%\\" class=\\"quicktube__iframe\\"></iframe></div>
+    <div data-quicktube-play=\\"k6QanQUaDOo\\" class=\\"quicktube__poster quicktube__poster--hidden\\" data-quicktube-poster=\\"\\" data-play-guid=\\"quicktube-0\\">
+        <button class=\\"quicktube__play quicktube__btn\\">
+            Play
+        </button>
+    </div>
+</div>
 "
 `;
 
 exports[`Quicktube play keydown wrong key 1`] = `
 "
-<script></script>
-<div class=\\"quicktube\\" data-quicktube=\\"k6QanQUaDOo\\">
+<script src=\\"https://www.youtube.com/iframe_api\\"></script><script></script>
+<div class=\\"quicktube\\" data-quicktube=\\"k6QanQUaDOo\\" data-quicktube-platform=\\"youtube\\">
     <div class=\\"quicktube__video\\" data-quicktube-video=\\"\\"></div>
-    <div data-quicktube-play=\\"k6QanQUaDOo\\" class=\\"quicktube__poster\\" data-quicktube-poster=\\"\\">
+    <div data-quicktube-play=\\"k6QanQUaDOo\\" class=\\"quicktube__poster\\" data-quicktube-poster=\\"\\" data-play-guid=\\"quicktube-0\\">
         <button class=\\"quicktube__play quicktube__btn\\">
             Play
         </button>
     </div>
 </div>
-<button class=\\"quicktube__play quicktube__btn\\" data-quicktube-stop=\\"k6QanQUaDOo\\">Stop button</button>
-"
-`;
-
-exports[`Quicktube stop click 1`] = `
-"
-<script></script>
-<div class=\\"quicktube\\" data-quicktube=\\"k6QanQUaDOo\\">
-    <div class=\\"quicktube__video\\" data-quicktube-video=\\"\\"></div>
-    <div data-quicktube-play=\\"k6QanQUaDOo\\" class=\\"quicktube__poster\\" data-quicktube-poster=\\"\\">
-        <button class=\\"quicktube__play quicktube__btn\\">
-            Play
-        </button>
-    </div>
-</div>
-<button class=\\"quicktube__play quicktube__btn\\" data-quicktube-stop=\\"k6QanQUaDOo\\">Stop button</button>
 "
 `;
