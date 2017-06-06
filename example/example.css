@@ -236,6 +236,13 @@ hr {
     cursor: pointer;
 }
 
+.quicktube__play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+}
+
 .quicktube__poster:hover .quicktube__btn,
 .quicktube__btn:hover {
     background-color: #222;

@@ -68,13 +68,6 @@
         }
 
     /* The play button */
-    .quicktube__play {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translateX(-50%) translateY(-50%);
-    }
-
     .no-js .quicktube__btn {
         display: none;
     }
