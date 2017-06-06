@@ -191,20 +191,6 @@ describe('Quicktube', () => {
         });
     });
 
-    // TODO remove when we have decided to officially remove this stop button option
-    // describe('stop', () => {
-    //     beforeEach(() => {
-    //         document.body.innerHTML = loadedHTML;
-    //         // const quicktube = Quicktube.init({ trackAnalytics: true });
-    //     });
-
-    //     it('click', () => {
-    //         simulateEvent('[data-quicktube-stop]', 'click');
-    //         expect(document.body.innerHTML).toMatchSnapshot();
-    //         expect(Quicktube.quicktubePlayer).toBe(mockPlayer);
-    //     });
-    // });
-
     // describe.skip('play iOS', () => {
     //     beforeEach(() => {
     //         document.body.innerHTML = loadedHTML;
