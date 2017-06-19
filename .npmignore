@@ -2,11 +2,11 @@ coverage
 server
 .babelrc
 examples
+example
 docs
 lib
 .npmignore
-webpack.config.prod.js
-webpack.config.dev.js
+webpack
 .nvmrc
 .travis.yml
 .eslintignore
@@ -17,3 +17,5 @@ bin
 .env
 *.test.js
 __snapshots__
+src
+*.map
