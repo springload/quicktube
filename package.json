@@ -1,41 +1,30 @@
 {
   "name": "quicktube",
   "version": "2.0.0",
-  "description": "A lightweight responsive youtube player",
-  "main": "./dist/quicktube.js",
-  "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
-    "test:watch:coverage": "jest --watch --coverage",
-    "coveralls": "cat ./coverage/lcov.info | coveralls",
-    "lint": "eslint",
-    "copy:css": "cp src/quicktube.css example/quicktube.css && cp src/quicktube.css dist/quicktube.css",
-    "build": "babel src --out-dir dist && npm run copy:css",
-    "dist": "npm run build -s",
-    "start": "npm run copy:css && webpack-dev-server --config=webpack/webpack.config.dev.js"
+  "description": "A lightweight embed video player, with support for YouTube and Vimeo",
+  "main": "./dist/quicktube",
+  "author": "Springload",
+  "license": "MIT",
+  "homepage": "https://springload.github.io/quicktube/",
+  "bugs": {
+    "url": "https://github.com/springload/quicktube/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/springload/Quicktube.js.git"
+    "url": "git+https://github.com/springload/quicktube.git"
   },
+  "keywords": [
+    "YouTube",
+    "Vimeo",
+    "player",
+    "embed",
+    "video"
+  ],
   "babel": {
     "presets": [
       "es2015"
     ]
   },
-  "keywords": [
-    "Youtube",
-    "player",
-    "API",
-    "video"
-  ],
-  "author": "Springload",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/springload/Quicktube.js/issues"
-  },
-  "homepage": "https://github.com/springload/Quicktube.js#readme",
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-eslint": "^7.1.1",
@@ -54,5 +43,17 @@
   "dependencies": {
     "lodash": "^4.17.4",
     "promise": "^7.1.1"
+  },
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:watch:coverage": "jest --watch --coverage",
+    "coveralls": "cat ./coverage/lcov.info | coveralls",
+    "lint": "eslint",
+    "copy:css": "cp src/quicktube.css example/quicktube.css && cp src/quicktube.css dist/quicktube.css",
+    "build": "babel src --out-dir dist && npm run copy:css",
+    "dist": "npm run build -s",
+    "start": "npm run copy:css && webpack-dev-server --config=webpack/webpack.config.dev.js"
   }
 }

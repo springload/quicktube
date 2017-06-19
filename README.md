@@ -1,14 +1,12 @@
-# Quicktube [![npm](https://img.shields.io/npm/v/quicktube.svg?style=flat-square)](https://www.npmjs.com/package/quicktube) [![Build Status](https://travis-ci.org/springload/Quicktube.js.svg?branch=master)](https://travis-ci.org/springload/Quicktube.js) [![Coverage Status](https://coveralls.io/repos/github/springload/Quicktube.js/badge.svg)](https://coveralls.io/github/springload/Quicktube.js)
+# [Quicktube](https://springload.github.io/quicktube/) [![npm](https://img.shields.io/npm/v/quicktube.svg?style=flat-square)](https://www.npmjs.com/package/quicktube) [![Build Status](https://travis-ci.org/springload/quicktube.svg?branch=master)](https://travis-ci.org/springload/quicktube) [![Coverage Status](https://coveralls.io/repos/github/springload/quicktube/badge.svg)](https://coveralls.io/github/springload/quicktube)
 
-> A lightweight responsive YouTube player. [Demo](https://rawgit.com/springload/Quicktube.js/master/index.html)
+> A lightweight embed video player, with support for YouTube and Vimeo. Check out our [online demo](https://springload.github.io/quicktube/)!
 
-## Installation
+## Usage
 
 ```sh
 npm install --save quicktube
 ```
-
-## Usage
 
 ### Initial setup
 
@@ -37,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
 }, false);
 ```
 
->:warning: Don't forget to include the [necessary CSS](https://github.com/springload/Quicktube.js/blob/master/quicktube.css).
+>:warning: Don't forget to include the [necessary CSS](https://github.com/springload/quicktube/blob/master/quicktube.css).
 
 ### API
 
@@ -57,7 +55,7 @@ window.addEventListener('quicktube:pause', () => {
 
 ### Install
 
-> Clone the project on your computer, and install [Node](https://nodejs.org). This project also uses [nvm](https://github.com/springload/frontend-starter-kit/blob/master/docs/useful-tooling.md#nvm).
+> Clone the project on your computer, and install [Node](https://nodejs.org). This project also uses [nvm](https://github.com/creationix/nvm).
 
 ```sh
 nvm install
