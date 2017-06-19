@@ -226,8 +226,8 @@ class Quicktube {
                     });
                 });
             } else if (event.getPlayerState() === YT.PlayerState.PLAYING) {
-                // Do we need this if? It may already be testing this before we even call the PlayerPercent function
-                // Yes, it fires twice without this?
+                // Do we need this? It may already be playing state before we even call the PlayerPercent function
+                // Yes, it fires twice without this if test
                 const videoDuration = event.getDuration();
                 const videoProgress = event.getCurrentTime();
 
@@ -270,7 +270,7 @@ class Quicktube {
                 this.quicktubePlayer.on('timeupdate', this.throttleOnPlayerPercent);
 
                 this.quicktubePlayer.on('error', () => {
-                    console.log(this.playerId, ': Vimeo Error!');
+                    this.onPlayerError();
                 });
             });
         } else {
@@ -338,12 +338,13 @@ class Quicktube {
 
     // catch all to report errors through the GTM data layer
     // once the error is exposed to GTM, it can be tracked in UA as an event!
-    onPlayerError(event) {
+    onPlayerError() {
         if (this.options.trackAnalytics) {
+            const label = `Video error - ${this.videoTitle}`;
             trackEvent({
-                eventCategory: 'Video error',
+                eventCategory: this.videoPlatform,
                 eventAction: 'GTM',
-                eventLabel: `youtube:${event.target.src}-${event.data}`,
+                eventLabel: label,
             });
         }
     }
