@@ -24,6 +24,7 @@
         "browser": true
     },
     "globals": {
-        "YT": true
+        "YT": true,
+        "Vimeo": true
     }
 }

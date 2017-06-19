@@ -1,17 +1,23 @@
+import throttle from 'lodash/throttle';
+
 const KEY_CODES = {
     ENTER: 13,
 };
+const TIMEOUT_DELAY = 10000;
+const YOUTUBE_API = 'https://www.youtube.com/iframe_api';
+const YOUTUBE_EMBED = 'https://www.youtube.com/embed/';
+const VIMEO_API = 'https://player.vimeo.com/api/player.js';
+const VIMEO_EMBED = 'https://player.vimeo.com/video/';
+const IFRAME_CLASS = 'quicktube__iframe';
 
 // Mobile Safari exhibits a number of documented bugs with the
 // youtube player API
 // https://groups.google.com/forum/#!topic/youtube-api-gdata/vPgKhCu4Vng
 const isMobileSafari = () => (/Apple.*Mobile.*Safari/).test(navigator.userAgent);
 
-const numberOfSegments = 4;
-
 const trackEvent = (event) => {
     const settings = Object.assign({
-        eventCategory: 'Youtube Videos',
+        eventCategory: 'Videos',
         eventAction: 'GTM',
         eventLabel: '',
     }, event);
@@ -21,89 +27,106 @@ const trackEvent = (event) => {
     }
 };
 
-const getCurrentSegment = (currentPosition, duration) => {
+const createPlayerURL = (playerEmbedUrl, videoId, options) => {
+    let url = `${playerEmbedUrl}${videoId}?autoplay=1`;
+    const optionKeys = Object.keys(options);
+    optionKeys.forEach((key) => {
+        url += `&${encodeURIComponent(key)}=${encodeURIComponent(options[key])}`;
+    });
+    return url;
+};
+
+const getCurrentSegment = (currentPosition, duration, numberOfSegments = 4) => {
     const percentage = (currentPosition / duration);
+    // Ensure value is rounded to nearest whole segment eg. 1, 2, 3 , 4
     return (Math.floor(percentage * numberOfSegments) / numberOfSegments).toFixed(2);
 };
 
 class Quicktube {
+    constructor(videoId, playerId, videoEl, videoEmbedUrl, options = {}) {
+        this.videoId = videoId;
+        this.videoEl = videoEl;
+        this.playerId = playerId;
+        this.videoPoster = this.videoEl.querySelector('[data-quicktube-poster]');
+        this.videoPlatform = this.videoEl.getAttribute('data-quicktube-platform');
+        this.videoTitle = undefined;
+        this.pageTitle = document.title;
+        this.segment = undefined;
 
-    constructor(videoId, options = {}) {
-        this._domain = 'https://www.youtube.com/embed/';
+        // Bound functions
+        this.onClick = this.onClick.bind(this);
+        this.onPlayerReady = this.onPlayerReady.bind(this);
+        this.onYoutubePlayerStateChange = this.onYoutubePlayerStateChange.bind(this);
+        this.onPlayerPlay = this.onPlayerPlay.bind(this);
+        this.onPlayerPause = this.onPlayerPause.bind(this);
+        this.onPlayerEnded = this.onPlayerEnded.bind(this);
+        this.onPlayerError = this.onPlayerError.bind(this);
+        this.onPlayerPercent = this.onPlayerPercent.bind(this);
+        this.stopVideo = this.stopVideo.bind(this);
+        this.throttleOnPlayerPercent = throttle(() => {
+            this.onPlayerPercent(this.quicktubePlayer);
+        }, TIMEOUT_DELAY);
+
+        // Booleans
+        this.isVimeo = this.videoEl.getAttribute('data-quicktube-platform') === 'vimeo';
+
+        // Settings
         this.options = Object.assign({
             trackAnalytics: false,
+            hideOnVideoEnd: false,
             activeClass: 'quicktube--playing',
             pausedClass: 'quicktube--paused',
             posterFrameHiddenClass: 'quicktube__poster--hidden',
+        }, options);
+
+        const playerOptions = this.isVimeo ? {
+            autopause: 0,
+        } : {
             showInfo: 0,
             autohide: 1,
             color: 'white',
+            playerapi: 'ytplayer',
+            enablejsapi: 1,
             wmode: 'transparent',
-        }, options);
+        };
 
-        // Concatenate in a more readable way :D
-        this._settings = `?autoplay=1\
-&showinfo=${this.options.showInfo}\
-&autohide=${this.options.autohide}\
-&color=${this.options.color}\
-&enablejsapi=1\
-&playerapiid=ytplayer\
-&wmode=${this.options.wmode}`;
+        this.playerURL = createPlayerURL(videoEmbedUrl, this.videoId, playerOptions);
 
-        this.iframeClass = 'quicktube__iframe';
-        this.videoId = videoId;
-        this.videoEl = document.querySelector(`[data-quicktube="${videoId}"]`);
-        this.poster = this.videoEl.querySelector('[data-quicktube-poster]');
-        this.isMobileSafari = isMobileSafari();
-        this.onClick = this.onClick.bind(this);
-        this.stopVideo = this.stopVideo.bind(this);
-        this.onPlayerReady = this.onPlayerReady.bind(this);
-        this.onPlayerStateChange = this.onPlayerStateChange.bind(this);
-        this.onPlayerError = this.onPlayerError.bind(this);
+        // Initial actions
+        // Need to have unique id's so that multiple of the same video can exist on a page without breaking
+        const playEl = this.videoEl.querySelector('[data-quicktube-play]');
+        playEl.setAttribute('data-play-guid', this.playerId);
 
-        const playButton = document.querySelector(`[data-quicktube-play="${videoId}"]`);
-        const stopButton = document.querySelector(`[data-quicktube-stop="${videoId}"]`);
+        playEl.addEventListener('click', this.onClick);
 
-        playButton.addEventListener('click', this.onClick);
-
-        playButton.addEventListener('keydown', (e) => {
-            if (e.keyCode === KEY_CODES.ENTER) {
+        playEl.addEventListener('keydown', (event) => {
+            if (event.keyCode === KEY_CODES.ENTER) {
                 this.onClick();
             }
-        });
-
-        stopButton.addEventListener('click', () => {
-            this.stopVideo();
         });
     }
 
     onClick() {
         const iframeContainer = this.videoEl.querySelector('[data-quicktube-video]');
-        const videoIframes = iframeContainer.getElementsByTagName('iframe');
+        const hasPlayer = !!iframeContainer.querySelector('iframe');
 
-        // defines whether video has already been loaded and you want to play again
-        let iframe = false;
-        if (videoIframes.length > 0) {
-            iframe = videoIframes[0];
-        }
-
-        if (!iframe) {
-            iframe = this.createIframePlayer();
-            iframeContainer.appendChild(iframe);
-            this.quicktubePlayer = new YT.Player(this.videoId, {
-                events: {
-                    onStateChange: this.onPlayerStateChange,
-                    onReady: this.onPlayerReady,
-                    onError: this.onPlayerError,
-                },
-            });
-            YT.gaLastAction = 'p';
+        if (!hasPlayer) {
+            this.createIframePlayer(iframeContainer);
         }
 
         // Only trigger force video play if not Mobile safari as playVideo function not supported
-        if (!this.isMobileSafari) {
-            if (this.quicktubePlayer.playVideo) {
-                this.quicktubePlayer.playVideo();
+        if (!isMobileSafari()) {
+            if (this.quicktubePlayer) {
+                if (this.isVimeo) {
+                    this.quicktubePlayer.play();
+                } else {
+                    // It doesn't have playVideo function in the initial state. Is added after video is ready
+                    const isLoaded = this.quicktubePlayer.playVideo;
+
+                    if (isLoaded) {
+                        this.quicktubePlayer.playVideo();
+                    }
+                }
             }
         }
 
@@ -130,167 +153,235 @@ class Quicktube {
             return;
         }
 
-        this.quicktubePlayer.stopVideo();
+        if (this.isVimeo) {
+            this.quicktubePlayer.unload();
+        } else {
+            this.quicktubePlayer.stopVideo();
+        }
+
         this.removeActiveState();
         this.showPosterFrame();
+        this.videoEl.classList.remove(this.options.pausedClass);
     }
 
     hidePosterFrame() {
-        this.poster.classList.add(this.options.posterFrameHiddenClass);
+        this.videoPoster.classList.add(this.options.posterFrameHiddenClass);
     }
 
     showPosterFrame() {
-        this.poster.classList.remove(this.options.posterFrameHiddenClass);
+        this.videoPoster.classList.remove(this.options.posterFrameHiddenClass);
     }
 
-    createIframePlayer() {
-        const iframe = document.createElement('iframe');
-        iframe.src = this._domain + this.videoId + this._settings;
-        iframe.width = '100%';
-        iframe.id = this.videoId;
-        iframe.className = this.iframeClass;
-        return iframe;
-    }
+    onPlayerPause() {
+        this.removeActiveState();
 
-
-    onPlayerReady(event) {
-        const isPlaying = this.videoEl.getAttribute('data-video-playing');
-        if (!this.isMobileSafari) {
-            if (isPlaying) {
-                // TODO evaluate if this is needed
-                // Not sure it ever gets to this point
-                this.stopVideo();
-            } else {
-                this.videoEl.setAttribute('data-video-playing', true);
-                event.target.playVideo();
-            }
-        }
-    }
-
-    // listen for play, pause, percentage play, and end states
-    onPlayerStateChange(event) {
-        if (event.data === YT.PlayerState.PLAYING) {
-            this.videoEl.setAttribute('data-video-playing', true);
-            this.addActiveState();
-            // Report % played every second
-            setTimeout(this.onPlayerPercent.bind(this, event.target), 1000);
-        }
-
-        if (event.data === YT.PlayerState.PAUSED) {
-            this.removeActiveState();
-        }
-
-        const videoData = event.target.getVideoData();
-        let label = videoData.title;
-        // Get title of the current page
-        const pageTitle = document.title;
-
-        // TODO figure out what this is all doing and test it
         if (this.options.trackAnalytics) {
-            if (event.data === YT.PlayerState.PLAYING && YT.gaLastAction === 'p') {
-                label = `Video Played - ${videoData.title}`;
-                trackEvent({
-                    event: 'youtube',
-                    eventAction: pageTitle,
-                    eventLabel: label,
-                });
-                YT.gaLastAction = '';
-            }
+            const label = `Video Paused - ${this.videoTitle}`;
+            trackEvent({
+                eventCategory: this.videoPlatform,
+                eventAction: this.pageTitle,
+                eventLabel: label,
+            });
+        }
+    }
 
-            if (event.data === YT.PlayerState.PAUSED) {
-                label = `Video Paused - ${videoData.title}`;
-                trackEvent({
-                    event: 'youtube',
-                    eventAction: pageTitle,
-                    eventLabel: label,
-                });
-                YT.gaLastAction = 'p';
-            }
+    onPlayerPlay() {
+        this.videoEl.setAttribute('data-video-playing', true);
+        this.addActiveState();
+
+        if (this.options.trackAnalytics) {
+            const label = `Video Played - ${this.videoTitle}`;
+            trackEvent({
+                eventCategory: this.videoPlatform,
+                eventAction: this.pageTitle,
+                eventLabel: label,
+            });
+        }
+    }
+
+    onPlayerEnded() {
+        if (this.options.trackAnalytics) {
+            const label = `Video Ended - ${this.videoTitle}`;
+            trackEvent({
+                eventCategory: this.videoPlatform,
+                eventAction: this.pageTitle,
+                eventLabel: label,
+            });
         }
 
-        if (event.data === YT.PlayerState.ENDED) {
+        if (this.options.hideOnVideoEnd) {
             this.stopVideo();
         }
     }
 
     // report the % played if it matches 0%, 25%, 50%, 75% or completed
     onPlayerPercent(originalEvent) {
-        const event = originalEvent;
-
         if (this.options.trackAnalytics) {
-            if (event.getPlayerState() === YT.PlayerState.PLAYING) {
+            const event = originalEvent;
+
+            if (this.isVimeo) {
+                event.getCurrentTime().then((seconds) => {
+                    event.getDuration().then((duration) => {
+                        this.trackSegment(event, duration, seconds);
+                    });
+                });
+            } else if (event.getPlayerState() === YT.PlayerState.PLAYING) {
+                // Do we need this? It may already be playing state before we even call the PlayerPercent function
+                // Yes, it fires twice without this if test
                 const videoDuration = event.getDuration();
                 const videoProgress = event.getCurrentTime();
-                let currentSegment;
 
-                // If less than 1.5 seconds from the end of the video
-                if (videoDuration - videoProgress <= 1.5) {
-                    currentSegment = 1;
-                } else {
-                    currentSegment = getCurrentSegment(videoProgress, videoDuration);
-                }
-
-                // Only fire tracking event at 0, .25, .50, .75 or 1 segment mark
-                if (!event.previousSegment || currentSegment > event.previousSegment) {
-                    const videoData = event.getVideoData();
-                    const pageTitle = document.title;
-                    event.previousSegment = currentSegment;
-                    const label = `${currentSegment * 100}% Video played - ${videoData.title}`;
-                    trackEvent({
-                        event: 'youtube',
-                        eventAction: pageTitle,
-                        eventLabel: label,
-                    });
-                }
-
-                if (event.previousSegment !== 1) {
-                    setTimeout(this.onPlayerPercent.bind(this, event), 1000);
-                }
+                this.trackSegment(event, videoDuration, videoProgress);
             }
         }
     }
 
-    // catch all to report errors through the GTM data layer
-    // once the error is exposed to GTM, it can be tracked in UA as an event!
-    onPlayerError(event) {
-        if (this.options.trackAnalytics) {
+    createIframePlayer(iframeContainer) {
+        const iframe = document.createElement('iframe');
+        iframe.src = this.playerURL;
+        iframe.width = '100%';
+        iframe.className = IFRAME_CLASS;
+        iframeContainer.appendChild(iframe);
+
+        if (this.isVimeo) {
+            this.quicktubePlayer = new Vimeo.Player(iframe);
+
+            this.quicktubePlayer.on('loaded', () => {
+                this.onPlayerReady();
+            });
+
+            // TODO Vimeo returns title with a promise, sigh! Figure out what best option is for
+            // writing a fail case since we'll still wanna track the events, just provide a default title as an alternative
+            this.quicktubePlayer.getVideoTitle().then((title) => {
+                this.videoTitle = title;
+
+                this.quicktubePlayer.on('play', () => {
+                    this.onPlayerPlay();
+                });
+
+                this.quicktubePlayer.on('pause', () => {
+                    this.onPlayerPause();
+                });
+
+                this.quicktubePlayer.on('ended', () => {
+                    this.onPlayerEnded();
+                });
+
+                this.quicktubePlayer.on('timeupdate', this.throttleOnPlayerPercent);
+
+                this.quicktubePlayer.on('error', () => {
+                    this.onPlayerError();
+                });
+            });
+        } else {
+            this.quicktubePlayer = new YT.Player(iframe, {
+                events: {
+                    onReady: this.onPlayerReady,
+                    onStateChange: this.onYoutubePlayerStateChange,
+                    onError: this.onPlayerError,
+                },
+            });
+        }
+    }
+
+    onPlayerReady() {
+        const isPlaying = this.videoEl.getAttribute('data-video-playing');
+        if (!isMobileSafari() && !isPlaying) {
+            this.videoEl.setAttribute('data-video-playing', true);
+        }
+    }
+
+    // listen for play, pause, percentage play, and end states
+    onYoutubePlayerStateChange(event) {
+        const videoData = event.target.getVideoData();
+        this.videoTitle = videoData.title;
+
+        if (event.data === YT.PlayerState.PLAYING) {
+            // Report % played every second
+            setTimeout(this.onPlayerPercent(event.target), TIMEOUT_DELAY);
+            this.onPlayerPlay();
+        }
+
+        if (event.data === YT.PlayerState.PAUSED) {
+            this.onPlayerPause();
+        }
+
+        if (event.data === YT.PlayerState.ENDED) {
+            this.onPlayerEnded();
+        }
+    }
+
+    trackSegment(event, videoDuration, videoProgress) {
+        let currentSegment;
+        // If less than 1.5 seconds from the end of the video
+        if (videoDuration - videoProgress <= 1.5) {
+            currentSegment = 1;
+        } else {
+            currentSegment = getCurrentSegment(videoProgress, videoDuration);
+        }
+
+        // Only fire tracking event at 0, .25, .50, .75 or 1 segment mark
+        if (!this.segment || currentSegment > this.segment) {
+            this.segment = currentSegment;
+            const label = `${currentSegment * 100}% Video played - ${this.videoTitle}`;
             trackEvent({
-                event: 'error',
-                eventAction: 'GTM',
-                eventLabel: `youtube:${event.target.src}-${event.data}`,
+                eventCategory: this.videoPlatform,
+                eventAction: this.pageTitle,
+                eventLabel: label,
+            });
+        }
+
+        if (this.segment !== 1 && this.videoPlatform === 'youtube') {
+            setTimeout(this.onPlayerPercent.bind(this, event), 1000);
+        }
+    }
+
+    onPlayerError() {
+        if (this.options.trackAnalytics) {
+            const label = `Video error - id: ${this.videoId}, page: ${this.pageTitle}`;
+            trackEvent({
+                eventCategory: this.videoPlatform,
+                eventAction: this.pageTitle,
+                eventLabel: label,
             });
         }
     }
 
 }
 
-// This is a requirement of the YouTube Player API for iframe embeds
-// https://developers.google.com/youtube/iframe_api_reference#Requirements
-window.onYouTubeIframeAPIReady = () => {
-    // TODO investigate whether this is a set requirement
+const insertScript = (url) => {
+    const isAlreadyInserted = document.querySelector(`[src="${url}"]`);
+
+    if (!isAlreadyInserted) {
+        const firstScript = document.querySelector('script');
+        const newScript = document.createElement('script');
+        newScript.src = url;
+        firstScript.parentNode.insertBefore(newScript, firstScript);
+    }
 };
 
-const quicktubeInit = () => {
-    // Inject the YouTube API onto the page.
-    if (!window.YT) {
-        const newScriptTag = document.createElement('script');
-        newScriptTag.src = 'https://www.youtube.com/iframe_api';
+Quicktube.init = () => {
+    const players = Array.prototype.slice.call(document.querySelectorAll('[data-quicktube]'));
 
-        const firstDocumentScript = document.getElementsByTagName('script')[0];
-        firstDocumentScript.parentNode.insertBefore(newScriptTag, firstDocumentScript);
-    }
+    return players.map((player, i) => {
+        const isVimeo = player.getAttribute('data-quicktube-platform') === 'vimeo';
+        const videoId = player.getAttribute('data-quicktube');
+        const playerId = player.getAttribute('data-quicktube-quid') || `quicktube-${i}`;
+        const options = JSON.parse(player.getAttribute('data-quicktube-options'));
+        let videoDomain;
 
-    const videos = Array.prototype.slice.call(document.querySelectorAll('[data-quicktube]'));
-    videos.forEach((video) => {
-        const videoId = video.getAttribute('data-quicktube');
-        const options = JSON.parse(video.getAttribute('data-quicktube-options'));
-        const player = new Quicktube(videoId, options);
-        return player;
+        if (isVimeo) {
+            // Inject the Vimeo Player API
+            insertScript(VIMEO_API);
+            videoDomain = VIMEO_EMBED;
+        } else {
+            // Inject the YouTube API
+            insertScript(YOUTUBE_API);
+            videoDomain = YOUTUBE_EMBED;
+        }
+
+        return new Quicktube(videoId, playerId, player, videoDomain, options);
     });
 };
 
-// Need to figure out the best way to export these to use inside tests as well as projects
-module.exports = {
-    init: quicktubeInit,
-    Quicktube: Quicktube,
-};
+module.exports = Quicktube;

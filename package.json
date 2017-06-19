@@ -7,10 +7,12 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "test:watch:coverage": "jest --watch --coverage",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "lint": "eslint",
-    "build": "webpack --config ./webpack/webpack.config.prod.js",
-    "watch": "webpack --config ./webpack/webpack.config.dev.js"
+    "copy:css": "cp src/quicktube.css example/quicktube.css",
+    "build": "webpack --config ./webpack/webpack.config.prod.js && npm run copy:css",
+    "start": "npm run copy:css && webpack-dev-server --config=webpack/webpack.config.dev.js"
   },
   "repository": {
     "type": "git",
@@ -45,6 +47,11 @@
     "eslint-plugin-jsx-a11y": "^4.0.0",
     "eslint-plugin-react": "^6.10.0",
     "jest": "^19.0.2",
-    "webpack": "^2.2.1"
+    "webpack": "^2.2.1",
+    "webpack-dev-server": "^2.4.5"
+  },
+  "dependencies": {
+    "lodash": "^4.17.4",
+    "promise": "^7.1.1"
   }
 }
