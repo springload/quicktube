@@ -336,14 +336,12 @@ class Quicktube {
         }
     }
 
-    // catch all to report errors through the GTM data layer
-    // once the error is exposed to GTM, it can be tracked in UA as an event!
     onPlayerError() {
         if (this.options.trackAnalytics) {
-            const label = `Video error - ${this.pageTitle}`;
+            const label = `Video error - id: ${this.videoId}, page: ${this.pageTitle}`;
             trackEvent({
                 eventCategory: this.videoPlatform,
-                eventAction: 'GTM',
+                eventAction: this.pageTitle,
                 eventLabel: label,
             });
         }
