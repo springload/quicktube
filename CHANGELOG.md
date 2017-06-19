@@ -1,8 +1,19 @@
-Changelog
-=========
+# Changelog
 
 > All notable changes to this project are documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
+
+## Unreleased
+
+## [[v2.0.0]](https://github.com/springload/Quicktube.js/releases/tag/v2.0.0)
+
+- Refactored completely to ES6, with new features.
+
+### Added
+
+- Add support for Vimeo.
+- Allow multiple videos playing simultaneously on a page.
+- Add config options for all the things 🌈.
 
 ## [[v1.0.1]](https://github.com/springload/Quicktube.js/releases/tag/v1.0.1)
 
