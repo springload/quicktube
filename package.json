@@ -12,6 +12,7 @@
     "lint": "eslint",
     "copy:css": "cp src/quicktube.css example/quicktube.css && cp src/quicktube.css dist/quicktube.css",
     "build": "babel src --out-dir dist && npm run copy:css",
+    "dist": "npm run build -s",
     "start": "npm run copy:css && webpack-dev-server --config=webpack/webpack.config.dev.js"
   },
   "repository": {
