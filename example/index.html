@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Quicktube.js</title>
     <link rel="stylesheet" href="example.css" />
-    <link rel="stylesheet" href="../dist/quicktube.css" />
+    <link rel="stylesheet" href="quicktube.css" />
     <script>
         document.documentElement.className = document.documentElement.className.replace("no-js", "js");
     </script>
@@ -31,15 +31,6 @@
         <a href="https://travis-ci.org/springload/Quicktube.js">
             <img alt="Build Status" src="https://travis-ci.org/springload/Quicktube.js.svg?branch=master">
         </a>
-
-        <a href="https://david-dm.org/springload/Quicktube.js">
-            <img src="https://david-dm.org/springload/Quicktube.js/status.svg" alt='dependencies status' />
-        </a>
-
-        <a href="https://david-dm.org/springload/Quicktube.js?type=dev">
-            <img src="https://david-dm.org/springload/Quicktube.js/dev-status.svg" alt="devDependencies status" />
-        </a>
-
       </div>
 
       <div class="page-content" role="main">
@@ -120,14 +111,12 @@
     </div>
 
 
-    <script src="../dist/quicktube.js"></script>
+    <script src="main.js"></script>
+
     <script>
-        // Remember to initialise QuickTube at some point in your app
-        document.addEventListener('DOMContentLoaded', function() {
-            window.quicktube.init();
-        });
+        window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+        ga('create','UA-79835767-5','auto');ga('send','pageview')
     </script>
-
+    <script src="https://www.google-analytics.com/analytics.js" async defer></script>
 </body>
-
 </html>
