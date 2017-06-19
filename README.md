@@ -73,3 +73,8 @@ git release vx.y.z
 irish-pub
 npm publish
 ```
+
+## Documentation
+
+- [Vimeo Player API](https://github.com/vimeo/player.js)
+- [YouTube iFrame Player API](https://developers.google.com/youtube/iframe_api_reference)
