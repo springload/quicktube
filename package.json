@@ -85,9 +85,9 @@
     "test:coverage": "jest --coverage",
     "test:watch:coverage": "jest --watch --coverage",
     "lint": "eslint",
-    "copy:css": "cp src/quicktube.css example/quicktube.css && cp src/quicktube.css dist/quicktube.css",
+    "copy:css": "cp src/quicktube.css examples/quicktube.css && cp src/quicktube.css dist/quicktube.css",
     "js": "babel src -d es && BABEL_ENV=test babel src -d dist",
-    "build": "npm run js -s && npm run copy:css -s",
+    "build": "npm run js -s && webpack --config=webpack/webpack.config.prod.js && npm run copy:css -s",
     "dist": "npm run build -s",
     "start": "npm run copy:css && webpack-dev-server --config=webpack/webpack.config.dev.js"
   }

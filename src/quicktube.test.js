@@ -1,4 +1,4 @@
-const Quicktube = require('./quicktube');
+const Quicktube = require('./quicktube').default;
 
 // Mocks for YouTube iframe API.
 let playerEvents;

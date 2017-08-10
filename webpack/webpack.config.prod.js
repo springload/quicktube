@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const config = require('./webpack.config.js');
 
 config.watch = false;
+config.devtool = false;
 config.plugins.push(new webpack.optimize.UglifyJsPlugin({
     compress: {
         screw_ie8: true, // React doesn't support IE8

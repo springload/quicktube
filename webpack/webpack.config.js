@@ -1,7 +1,7 @@
 const path = require('path');
 
 const sourcePath = path.join(__dirname, '..', 'src');
-const distPath = path.join(__dirname, '..', 'example');
+const distPath = path.join(__dirname, '..', 'examples');
 
 const stats = {
     // Add chunk information (setting this to `false` allows for a less verbose output)
@@ -27,7 +27,7 @@ module.exports = {
     },
     output: {
         path: distPath,
-        filename: '[name].js',
+        filename: '[name].bundle.js',
     },
     plugins: [],
     module: {
@@ -51,7 +51,7 @@ module.exports = {
 
     // https://webpack.js.org/configuration/dev-server/#devserver
     devServer: {
-        contentBase: path.join(__dirname, '..', 'example'),
+        contentBase: path.join(__dirname, '..', 'examples'),
         watchContentBase: true,
         compress: true,
         hot: true,
