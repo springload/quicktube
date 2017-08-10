@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
 }, false);
 ```
 
->:warning: Don't forget to include the [necessary CSS](https://github.com/springload/quicktube/blob/master/quicktube.css).
+>:warning: Don't forget to include the [necessary CSS](https://github.com/springload/quicktube/blob/master/quicktube.css), as well as the required [polyfills](https://github.com/springload/quicktube/blame/master/example/utils/polyfills.js) should your environment require it.
 
 ### API
 
