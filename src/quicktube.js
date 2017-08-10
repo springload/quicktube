@@ -3,6 +3,7 @@ import throttle from 'lodash/throttle';
 const KEY_CODES = {
     ENTER: 13,
 };
+
 const TIMEOUT_DELAY = 10000;
 const YOUTUBE_API = 'https://www.youtube.com/iframe_api';
 const YOUTUBE_EMBED = 'https://www.youtube.com/embed/';
@@ -384,4 +385,4 @@ Quicktube.init = () => {
     });
 };
 
-module.exports = Quicktube;
+export default Quicktube;

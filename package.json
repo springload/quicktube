@@ -2,7 +2,8 @@
   "name": "quicktube",
   "version": "2.0.0",
   "description": "A lightweight embed video player, with support for YouTube and Vimeo",
-  "main": "./dist/quicktube",
+  "main": "dist/quicktube.js",
+  "module": "es/quicktube.js",
   "author": "Springload",
   "license": "MIT",
   "homepage": "https://springload.github.io/quicktube/",
@@ -86,7 +87,8 @@
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "lint": "eslint",
     "copy:css": "cp src/quicktube.css example/quicktube.css && cp src/quicktube.css dist/quicktube.css",
-    "build": "babel src --out-dir dist && npm run copy:css",
+    "js": "babel src -d es && BABEL_ENV=test babel src -d dist",
+    "build": "npm run js -s && npm run copy:css -s",
     "dist": "npm run build -s",
     "start": "npm run copy:css && webpack-dev-server --config=webpack/webpack.config.dev.js"
   }
