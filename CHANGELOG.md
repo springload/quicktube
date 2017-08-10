@@ -5,6 +5,12 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ## Unreleased
 
+## [[v3.0.0]](https://github.com/springload/Quicktube.js/releases/tag/v2.0.1)
+
+### Added
+
+- Add ES2015 modules build under "module" property of package.json
+
 ## [[v2.0.0]](https://github.com/springload/Quicktube.js/releases/tag/v2.0.0)
 
 - Refactored completely to ES6, with new features.
