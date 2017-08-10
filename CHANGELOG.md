@@ -5,7 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ## Unreleased
 
-## [[v3.0.0]](https://github.com/springload/Quicktube.js/releases/tag/v2.0.1)
+## [[v3.0.0]](https://github.com/springload/Quicktube.js/releases/tag/v3.0.0)
 
 ### Added
 
