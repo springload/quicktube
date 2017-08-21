@@ -51,6 +51,35 @@ window.addEventListener('quicktube:pause', () => {
 }, false);
 ```
 
+### Advanced
+
+#### Usage with [CSP (Content Security Policy)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) headers
+
+Quicktube's code relies on the YouTube and Vimeo APIs (depending on which provider is used), for which origins need to be whitelisted in order to work with CSP.
+
+For YouTube, whitelist the following:
+
+```yaml
+# As script-src:
+https://www.youtube.com
+https://s.ytimg.com
+
+# As frame-src:
+https://www.youtube.com
+```
+
+And for Vimeo:
+
+```yaml
+# As script-src:
+https://player.vimeo.com
+
+# As `frame-src:
+https://player.vimeo.com
+```
+
+Note that the following are based on origins of the API scripts, and (undocumented) origins loaded by those scripts, as observed on our [online demo](https://springload.github.io/quicktube/).
+
 ## Development
 
 ### Install
