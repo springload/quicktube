@@ -84,6 +84,7 @@ class Quicktube {
             autopause: 0,
         } : {
             showinfo: 0,
+            rel: 0,
             autohide: 1,
             color: 'white',
             playerapi: 'ytplayer',
