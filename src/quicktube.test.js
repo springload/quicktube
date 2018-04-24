@@ -179,7 +179,7 @@ describe('Quicktube', () => {
             <script src="https://www.youtube.com/iframe_api"></script><script></script>
             <div class="quicktube" data-quicktube="k6QanQUaDOo" data-quicktube-platform="youtube">
                 <div class="quicktube__video" data-quicktube-video="">
-                    <iframe src="https://www.youtube.com/embed/k6QanQUaDOo?autoplay=1&amp;showInfo=0&amp;autohide=1&amp;color=white&amp;playerapi=ytplayer&amp;enablejsapi=1&amp;wmode=transparent" width="100%" class="quicktube__iframe"></iframe>
+                    <iframe src="https://www.youtube.com/embed/WtQ0g-GB-iQ?autoplay=1&showinfo=0&rel=0&autohide=1&color=white&playerapi=ytplayer&enablejsapi=1&wmode=transparent" width="100%" class="quicktube__iframe"></iframe>
                 </div>
                 <div data-quicktube-play="k6QanQUaDOo" class="quicktube__poster" data-quicktube-poster="">
                     <button class="quicktube__play quicktube__btn">
