@@ -5,6 +5,14 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ## Unreleased
 
+## [[v3.1.0]](https://github.com/springload/Quicktube.js/releases/tag/v3.1.0)
+
+- Fix bug [#10](https://github.com/springload/quicktube/issues/10)
+
+### Added
+
+- Added `rel=0` to stop related videos showing on pause and at the end of the video
+
 ## [[v3.0.0]](https://github.com/springload/Quicktube.js/releases/tag/v3.0.0)
 
 ### Added

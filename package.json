@@ -1,6 +1,6 @@
 {
   "name": "quicktube",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "A lightweight embed video player, with support for YouTube and Vimeo",
   "main": "dist/quicktube.js",
   "module": "es/quicktube.js",
