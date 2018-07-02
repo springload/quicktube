@@ -83,7 +83,8 @@ class Quicktube {
         const playerOptions = this.isVimeo ? {
             autopause: 0,
         } : {
-            showInfo: 0,
+            showinfo: 0,
+            rel: 0,
             autohide: 1,
             color: 'white',
             playerapi: 'ytplayer',

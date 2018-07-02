@@ -55,7 +55,7 @@ exports[`Quicktube play Click but already has iframe 1`] = `
             <script src=\\"https://www.youtube.com/iframe_api\\"></script><script></script>
             <div class=\\"quicktube quicktube--playing\\" data-quicktube=\\"k6QanQUaDOo\\" data-quicktube-platform=\\"youtube\\">
                 <div class=\\"quicktube__video\\" data-quicktube-video=\\"\\">
-                    <iframe src=\\"https://www.youtube.com/embed/k6QanQUaDOo?autoplay=1&amp;showInfo=0&amp;autohide=1&amp;color=white&amp;playerapi=ytplayer&amp;enablejsapi=1&amp;wmode=transparent\\" width=\\"100%\\" class=\\"quicktube__iframe\\"></iframe>
+                    <iframe src=\\"https://www.youtube.com/embed/WtQ0g-GB-iQ?autoplay=1&amp;showinfo=0&amp;rel=0&amp;autohide=1&amp;color=white&amp;playerapi=ytplayer&amp;enablejsapi=1&amp;wmode=transparent\\" width=\\"100%\\" class=\\"quicktube__iframe\\"></iframe>
                 </div>
                 <div data-quicktube-play=\\"k6QanQUaDOo\\" class=\\"quicktube__poster quicktube__poster--hidden\\" data-quicktube-poster=\\"\\" data-play-guid=\\"quicktube-0\\">
                     <button class=\\"quicktube__play quicktube__btn\\">
@@ -70,7 +70,7 @@ exports[`Quicktube play click 1`] = `
 "
 <script src=\\"https://www.youtube.com/iframe_api\\"></script><script></script>
 <div class=\\"quicktube quicktube--playing\\" data-quicktube=\\"k6QanQUaDOo\\" data-quicktube-platform=\\"youtube\\">
-    <div class=\\"quicktube__video\\" data-quicktube-video=\\"\\"><iframe src=\\"https://www.youtube.com/embed/k6QanQUaDOo?autoplay=1&amp;showInfo=0&amp;autohide=1&amp;color=white&amp;playerapi=ytplayer&amp;enablejsapi=1&amp;wmode=transparent\\" width=\\"100%\\" class=\\"quicktube__iframe\\"></iframe></div>
+    <div class=\\"quicktube__video\\" data-quicktube-video=\\"\\"><iframe src=\\"https://www.youtube.com/embed/k6QanQUaDOo?autoplay=1&amp;showinfo=0&amp;rel=0&amp;autohide=1&amp;color=white&amp;playerapi=ytplayer&amp;enablejsapi=1&amp;wmode=transparent\\" width=\\"100%\\" class=\\"quicktube__iframe\\"></iframe></div>
     <div data-quicktube-play=\\"k6QanQUaDOo\\" class=\\"quicktube__poster quicktube__poster--hidden\\" data-quicktube-poster=\\"\\" data-play-guid=\\"quicktube-0\\">
         <button class=\\"quicktube__play quicktube__btn\\">
             Play
@@ -98,7 +98,7 @@ exports[`Quicktube play keydown correct key 1`] = `
 "
 <script src=\\"https://www.youtube.com/iframe_api\\"></script><script></script>
 <div class=\\"quicktube quicktube--playing\\" data-quicktube=\\"k6QanQUaDOo\\" data-quicktube-platform=\\"youtube\\">
-    <div class=\\"quicktube__video\\" data-quicktube-video=\\"\\"><iframe src=\\"https://www.youtube.com/embed/k6QanQUaDOo?autoplay=1&amp;showInfo=0&amp;autohide=1&amp;color=white&amp;playerapi=ytplayer&amp;enablejsapi=1&amp;wmode=transparent\\" width=\\"100%\\" class=\\"quicktube__iframe\\"></iframe></div>
+    <div class=\\"quicktube__video\\" data-quicktube-video=\\"\\"><iframe src=\\"https://www.youtube.com/embed/k6QanQUaDOo?autoplay=1&amp;showinfo=0&amp;rel=0&amp;autohide=1&amp;color=white&amp;playerapi=ytplayer&amp;enablejsapi=1&amp;wmode=transparent\\" width=\\"100%\\" class=\\"quicktube__iframe\\"></iframe></div>
     <div data-quicktube-play=\\"k6QanQUaDOo\\" class=\\"quicktube__poster quicktube__poster--hidden\\" data-quicktube-poster=\\"\\" data-play-guid=\\"quicktube-0\\">
         <button class=\\"quicktube__play quicktube__btn\\">
             Play
