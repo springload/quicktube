@@ -61,13 +61,13 @@
     ]
   },
   "devDependencies": {
-    "babel-cli": "^6.24.1",
+    "babel-cli": "^6.26.0",
     "babel-eslint": "^7.1.1",
     "babel-loader": "^6.4.0",
-    "babel-preset-env": "^1.6.0",
+    "babel-preset-env": "^1.7.0",
     "eslint": "^3.17.1",
     "eslint-config-airbnb": "^14.1.0",
-    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-import": "^2.13.0",
     "eslint-plugin-jsx-a11y": "^4.0.0",
     "eslint-plugin-react": "^6.10.0",
     "jest": "^19.0.2",
@@ -77,7 +77,7 @@
     "webpack-dev-server": "^2.4.5"
   },
   "dependencies": {
-    "lodash": "^4.14.0"
+    "lodash": "^4.17.10"
   },
   "scripts": {
     "test": "jest",
