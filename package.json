@@ -67,14 +67,14 @@
     "babel-preset-env": "^1.7.0",
     "eslint": "^3.17.1",
     "eslint-config-airbnb": "^14.1.0",
-    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^4.0.0",
     "eslint-plugin-react": "^6.10.0",
     "jest": "^19.0.2",
     "object-assign": "^4.1.1",
-    "promise": "^7.1.1",
-    "webpack": "^2.2.1",
-    "webpack-dev-server": "^2.4.5"
+    "promise": "^7.3.1",
+    "webpack": "^2.7.0",
+    "webpack-dev-server": "^2.11.2"
   },
   "dependencies": {
     "lodash": "^4.17.10"
