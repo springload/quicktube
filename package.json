@@ -1,6 +1,6 @@
 {
   "name": "quicktube",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "description": "A lightweight embed video player, with support for YouTube and Vimeo",
   "main": "dist/quicktube.js",
   "module": "es/quicktube.js",
@@ -77,7 +77,7 @@
     "webpack-dev-server": "^2.11.2"
   },
   "dependencies": {
-    "lodash": "^4.17.10"
+    "lodash": "^4.17.21"
   },
   "scripts": {
     "test": "jest",
